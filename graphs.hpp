@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <cwchar>
 #include <clocale>
+#include <cstdlib>
 #include <sys/ioctl.h>
 #include <unistd.h>
 

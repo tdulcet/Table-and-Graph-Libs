@@ -1,7 +1,4 @@
 language: cpp
-compiler:
-  - clang
-  - gcc
 matrix:
   include:
   - os: linux
@@ -20,4 +17,4 @@ script:
   - ./clang_tables
   - clang++ -Wall -g -fsanitize=address graphs.cpp -o clang_graphs
   - ./clang_graphs
-  - cppcheck --error-exitcode=1 .
+  - cppcheck --enable=all --error-exitcode=1 .

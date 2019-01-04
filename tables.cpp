@@ -5,7 +5,6 @@
 // Run: ./tables
 
 #include <cctype>
-// #include <cstdlib>
 #include <cmath>
 #include <algorithm>
 #include "tables.hpp"
