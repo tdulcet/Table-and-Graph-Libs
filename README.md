@@ -6,7 +6,7 @@ C++ Console Table and Graph/Plot Libraries
 
 Copyright © 2018 Teal Dulcet
 
-These header only libraries use [box-drawing](https://en.wikipedia.org/wiki/Box-drawing_character#Unicode), [Braille](https://en.wikipedia.org/wiki/Braille_Patterns), [fraction](https://en.wikipedia.org/wiki/Number_Forms) and other Unicode characters and [terminal colors and formatting](https://misc.flogisoft.com/bash/tip_colors_and_formatting) to output tables and graphs/plots to the console.
+These header only libraries use [box-drawing](https://en.wikipedia.org/wiki/Box-drawing_character#Unicode), [Braille](https://en.wikipedia.org/wiki/Braille_Patterns), [fraction](https://en.wikipedia.org/wiki/Number_Forms) and other Unicode characters and [terminal colors and formatting](https://misc.flogisoft.com/bash/tip_colors_and_formatting) to output tables and graphs/plots to the console. All the tables and graphs are created with a single (one) function call and they do not require any special data structures.
 
 Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support these libraries and my other software development.
 
@@ -285,7 +285,7 @@ Option: `title`
 
 Default value: `NULL`
 
-The title is word wraped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
+The title is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
 #### Border style
 
@@ -317,9 +317,9 @@ Values:
 
 ### Other C++ Console Tables Libraries
 
-* [C++ Text Table](https://github.com/haarcuba/cpp-text-table) (must specify every cell individually in there data structure, limited options, no Unicode support, no header row or column support)
-* [Cpp Console Table](https://github.com/Oradle/CppConsoleTable) (must specify every cell individually in there data structure, no Unicode support, no header row or column support)
-* [ConsoleTable](https://github.com/766F6964/ConsoleTable) (requires C++11, must specify entire row at once in there data structure, no header column support)
+* [C++ Text Table](https://github.com/haarcuba/cpp-text-table) (must specify every cell individually in their data structure, limited options, no Unicode support, no header row or column support)
+* [Cpp Console Table](https://github.com/Oradle/CppConsoleTable) (must specify every cell individually in their data structure, no Unicode support, no header row or column support)
+* [ConsoleTable](https://github.com/766F6964/ConsoleTable) (requires C++11, must specify entire row at once in their data structure, no header column support)
 
 ## Graphs/Plots
 
@@ -468,7 +468,7 @@ Option: `title`
 
 Default value: `NULL`
 
-The title is word wraped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
+The title is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
 #### Axis/Border style
 

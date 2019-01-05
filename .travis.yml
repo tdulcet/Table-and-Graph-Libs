@@ -17,4 +17,4 @@ script:
   - ./clang_tables
   - clang++ -Wall -g -fsanitize=address graphs.cpp -o clang_graphs
   - ./clang_graphs
-  - cppcheck --enable=all --error-exitcode=1 .
+  - cppcheck --enable=all .
