@@ -1,10 +1,12 @@
 language: cpp
 matrix:
   include:
-  - os: linux
-    dist: trusty
+  # - os: linux
+    # dist: trusty
   - os: linux
     dist: xenial
+  - os: linux
+    dist: bionic
 install:
   - sudo apt-get -yqq update
   - sudo apt-get -yqq install cppcheck
