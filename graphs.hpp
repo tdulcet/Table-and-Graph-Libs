@@ -22,7 +22,7 @@ const char *const styles[][11] = {
 	{"━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}, //Heavy
 	{"═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"}, //Double
 	{"╌", "╎", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, //Light Dashed
-	{"╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}  //Heavy Dashed
+	{"╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}	 //Heavy Dashed
 };
 // {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}};//No border
 
@@ -181,35 +181,38 @@ size_t outputlabel(const long double label, ostringstream &strm)
 		}
 	}
 
-	if (!output and fmod(label, M_PI) == 0)
+	if (abs(label) >= DBL_EPSILON)
 	{
-		const char symbol[] = "π";
+		if (!output and fmod(label, M_PI) == 0)
+		{
+			const char symbol[] = "π";
 
-		intpart = label / M_PI;
+			intpart = label / M_PI;
 
-		if (intpart == -1)
-			strm << "-";
-		else if (intpart != 1)
-			strm << intpart;
+			if (intpart == -1)
+				strm << "-";
+			else if (intpart != 1)
+				strm << intpart;
 
-		strm << symbol;
+			strm << symbol;
 
-		output = true;
-	}
-	else if (!output and fmod(label, M_E) == 0)
-	{
-		const char symbol[] = "e";
+			output = true;
+		}
+		else if (!output and fmod(label, M_E) == 0)
+		{
+			const char symbol[] = "e";
 
-		intpart = label / M_E;
+			intpart = label / M_E;
 
-		if (intpart == -1)
-			strm << "-";
-		else if (intpart != 1)
-			strm << intpart;
+			if (intpart == -1)
+				strm << "-";
+			else if (intpart != 1)
+				strm << intpart;
 
-		strm << symbol;
+			strm << symbol;
 
-		output = true;
+			output = true;
+		}
 	}
 
 	if (!output)

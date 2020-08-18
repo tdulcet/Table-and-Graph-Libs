@@ -19,7 +19,7 @@ const char *const styles[][11] = {
 	{"━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}, //Heavy
 	{"═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"}, //Double
 	{"╌", "╎", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, //Light Dashed
-	{"╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}  //Heavy Dashed
+	{"╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}	 //Heavy Dashed
 };
 // {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}};//No border
 
@@ -433,8 +433,7 @@ int table(const long double xmin, const long double xmax, const long double xscl
 	const char *const aheaderrow[] = {"x", "y"};
 	// const char* const aheaderrow[] = {"", "x", "y"};
 
-	char **headerrow = NULL;
-	headerrow = new char *[columns];
+	char **headerrow = new char *[columns];
 
 	for (unsigned int j = 0; j < columns; ++j)
 	{

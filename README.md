@@ -230,44 +230,38 @@ int main()
 
 #### Header row
 
-Option: `headerrow`
-
+Option: `headerrow`\
 Default value: `false`
 
 Header rows are bolded and centered.
 
 #### Header column
 
-Option: `headercolumn`
-
+Option: `headercolumn`\
 Default value: `false`
 
 Header columns are bolded and centered.
 
 #### Table border
 
-Option: `tableborder`
-
+Option: `tableborder`\
 Default value: `true`
 
 #### Cell border
 
-Option: `cellborder`
-
+Option: `cellborder`\
 Default value: `false`
 
 Requires `tableborder` to be `true`.
 
 #### Cell padding
 
-Option: `padding`
-
+Option: `padding`\
 Default value: `1`
 
 #### Alignment
 
-Option: `alignment`
-
+Option: `alignment`\
 Values:
 
 * `left` (default)
@@ -275,22 +269,19 @@ Values:
 
 #### bool to alpha
 
-Option: `boolalpha`
-
+Option: `boolalpha`\
 Default value: `false`
 
 #### Title
 
-Option: `title`
-
+Option: `title`\
 Default value: `NULL`
 
 The title is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
 #### Border style
 
-Option: `style`
-
+Option: `style`\
 Values:
 
 0. ASCII
@@ -442,38 +433,33 @@ int main()
 
 #### Border/Axis
 
-Option: `border`
-
+Option: `border`\
 Default value: `true`
 
 #### Axis labels
 
-Option: `axislabel`
-
+Option: `axislabel`\
 Default value: `true`
 
 Requires `border` to be `true`.
 
 #### Axis units labels
 
-Option: `axisunitslabel`
-
+Option: `axisunitslabel`\
 Default value: `true`
 
 Requires `border` and `axislabel` to be `true`.
 
 #### Title
 
-Option: `title`
-
+Option: `title`\
 Default value: `NULL`
 
 The title is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
 #### Axis/Border style
 
-Option: `style`
-
+Option: `style`\
 Values:
 
 0. ASCII
@@ -500,8 +486,7 @@ Values:
 
 #### Graph/Plot Color
 
-Option: `color`
-
+Option: `color`\
 Values:
 
 0. System default
@@ -544,6 +529,7 @@ Pull requests welcome! Ideas for contributions:
 
 * Add more options
 	* Add an option to print a border around graphs/plots
+	* Add options to word wrap and truncate long text in table cells
 * Add more examples
 * Improve the performance
 * Handle newlines, tabs and formatted text in the tables
@@ -551,4 +537,6 @@ Pull requests welcome! Ideas for contributions:
 * Support more graph/plot colors
 	* Support combining colors when functions cross
 * Support plotting multiple arrays of different sizes
+* Update the `-t, --table` options of column command from [util-linux](https://en.wikipedia.org/wiki/Util-linux) to use the Table library
+* Create a new CLI tool that uses the Graph library
 * Port to other languages (C, Java, Rust, etc.)
