@@ -193,10 +193,10 @@ int table(const size_t rows, const size_t columns, char ***array, const tableopt
 	struct winsize w;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-	if (tableborder and (cellborder or headerrow or headercolumn))
-		width += (((2 * padding) + 1) * columns) + 1;
+	if (tableborder or cellborder or headerrow or headercolumn)
+		width += (((2 * padding) + 1) * columns) + (tableborder ? 1 : -1);
 	else
-		width += ((2 * padding) * columns) + 2;
+		width += (2 * padding) * columns;
 
 	if (width > w.ws_col)
 	{
@@ -229,18 +229,16 @@ int table(const size_t rows, const size_t columns, char ***array, const tableopt
 	{
 		for (unsigned int j = 0; j < columns; ++j)
 		{
-			if (tableborder)
-			{
-				if (j == 0 or cellborder or (i == 0 and headerrow) or (j == 1 and headercolumn))
-					cout << styles[style][1];
-				else
-					cout << " ";
-			}
+			if ((j == 0 and tableborder) or (j > 0 and cellborder) or (i == 0 and j > 0 and headerrow) or (j == 1 and headercolumn))
+				cout << styles[style][1];
+			else if (tableborder or (i > 0 and j > 0 and headerrow) or (j > 1 and headercolumn))
+				cout << " ";
+
+			const int difference = columnwidth[j] - strcol(array[i][j]);
 
 			if ((i == 0 and headerrow) or (j == 0 and headercolumn))
 			{
-				int difference = columnwidth[j] - strcol(array[i][j]);
-				int apadding = (difference / 2);
+				const int apadding = (difference / 2);
 
 				for (unsigned int k = 0; k < padding + apadding; ++k)
 					cout << " ";
@@ -255,7 +253,7 @@ int table(const size_t rows, const size_t columns, char ***array, const tableopt
 				for (unsigned int k = 0; k < padding; ++k)
 					cout << " ";
 
-				cout << aoptions.alignment << setw(columnwidth[j]) << array[i][j];
+				cout << aoptions.alignment << setw(difference + strlen(array[i][j])) << array[i][j];
 
 				for (unsigned int k = 0; k < padding; ++k)
 					cout << " ";
@@ -273,42 +271,47 @@ int table(const size_t rows, const size_t columns, char ***array, const tableopt
 				cout << styles[style][8];
 			else if (cellborder or (i == 0 and headerrow) or headercolumn)
 				cout << styles[style][5];
+		}
 
+		if ((i == (rows - 1) and tableborder) or (i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and headercolumn))
+		{
 			for (unsigned int j = 0; j < columns; ++j)
 			{
-				if (cellborder or i == (rows - 1) or (i == 0 and headerrow) or (j == 0 and headercolumn))
+				if ((i == (rows - 1) and tableborder) or (i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and j == 0 and headercolumn))
 					for (unsigned int k = 0; k < (2 * padding) + columnwidth[j]; ++k)
 						cout << styles[style][0];
-				else if (headercolumn)
+				else if (i < (rows - 1) and headercolumn)
 					for (unsigned int k = 0; k < (2 * padding) + columnwidth[j]; ++k)
 						cout << " ";
 
 				if (j == (columns - 1))
 				{
-					if (i == (rows - 1))
-						cout << styles[style][10];
-					else if (cellborder or (i == 0 and headerrow))
-						cout << styles[style][7];
-					else if (headercolumn)
-						cout << styles[style][1];
+					if (tableborder)
+					{
+						if (i == (rows - 1))
+							cout << styles[style][10];
+						else if (cellborder or (i == 0 and headerrow))
+							cout << styles[style][7];
+						else if (headercolumn)
+							cout << styles[style][1];
+					}
 
-					if (cellborder or (i == 0 and headerrow) or headercolumn)
-						cout << "\n";
+					cout << "\n";
 				}
 				else
 				{
-					if (i == (rows - 1))
+					if (i == (rows - 1) and tableborder)
 					{
 						if (cellborder or (j == 0 and headercolumn))
 							cout << styles[style][9];
 						else
 							cout << styles[style][0];
 					}
-					else if (cellborder or ((i == 0 and headerrow) and (j == 0 and headercolumn)))
+					else if ((i < (rows - 1) and cellborder) or ((i == 0 and headerrow) and (j == 0 and headercolumn)))
 						cout << styles[style][6];
 					else if (i == 0 and headerrow)
 						cout << styles[style][9];
-					else if (headercolumn)
+					else if (i < (rows - 1) and headercolumn)
 					{
 						if (j == 0)
 							cout << styles[style][7];
@@ -433,12 +436,12 @@ int table(const long double xmin, const long double xmax, const long double xscl
 	const char *const aheaderrow[] = {"x", "y"};
 	// const char* const aheaderrow[] = {"", "x", "y"};
 
+	const size_t length = (sizeof aheaderrow / sizeof aheaderrow[0]);
+
 	char **headerrow = new char *[columns];
 
 	for (unsigned int j = 0; j < columns; ++j)
 	{
-		const size_t length = (sizeof aheaderrow / sizeof aheaderrow[0]);
-
 		if (j < (length - 1) or numfunctions == 1)
 		{
 			headerrow[j] = new char[strlen(aheaderrow[j]) + 1];

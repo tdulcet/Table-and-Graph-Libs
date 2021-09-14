@@ -334,7 +334,7 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 				}
 				else if (axaxis)
 				{
-					if (axisunitslabel)
+					if (axislabel and axisunitslabel)
 					{
 						int adivisor = divisor;
 						if (i < yaxis)
@@ -362,7 +362,7 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 				}
 				else if (ayaxis)
 				{
-					if (axisunitslabel)
+					if (axislabel and axisunitslabel)
 					{
 						int adivisor = divisor;
 						if (j < xaxis)
@@ -388,7 +388,7 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 						output = true;
 					}
 				}
-				else if (yaxislabel and xaxislabel and axisunitslabel)
+				else if (yaxislabel and xaxislabel and axislabel and axisunitslabel)
 				{
 					cout << "0";
 					output = true;
@@ -461,9 +461,9 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 				unsigned int dot = 0;
 				unsigned short color = 0;
 
-				for (int k = 0; k < 2 and (j + k) < width; ++k)
+				for (unsigned int k = 0; k < 2 and k < (width - j); ++k)
 				{
-					for (int l = 0; l < 4 and (i + l) < height; ++l)
+					for (unsigned int l = 0; l < 4 and l < (height - i); ++l)
 					{
 						dot += (array[j + k][i + l] ? 1 : 0) * values[k][l];
 						if (color)

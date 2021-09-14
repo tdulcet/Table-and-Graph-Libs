@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/tdulcet/Tables-and-Graphs.svg?branch=master)](https://travis-ci.org/tdulcet/Tables-and-Graphs)
+[![Build Status](https://travis-ci.com/tdulcet/Tables-and-Graphs.svg?branch=master)](https://travis-ci.com/tdulcet/Tables-and-Graphs)
 
 # Tables and Graphs
 
@@ -8,7 +8,7 @@ Copyright © 2018 Teal Dulcet
 
 These header only libraries use [box-drawing](https://en.wikipedia.org/wiki/Box-drawing_character#Unicode), [Braille](https://en.wikipedia.org/wiki/Braille_Patterns), [fraction](https://en.wikipedia.org/wiki/Number_Forms) and other Unicode characters and [terminal colors and formatting](https://misc.flogisoft.com/bash/tip_colors_and_formatting) to output tables and graphs/plots to the console. All the tables and graphs are created with a single (one) function call and they do not require any special data structures.
 
-Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support these libraries and my other software development.
+❤️ Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support these libraries and my other software development.
 
 ## Tables
 
@@ -233,14 +233,14 @@ int main()
 Option: `headerrow`\
 Default value: `false`
 
-Header rows are bolded and centered.
+Header rows are bolded, centered and have a border.
 
 #### Header column
 
 Option: `headercolumn`\
 Default value: `false`
 
-Header columns are bolded and centered.
+Header columns are bolded, centered and have a border.
 
 #### Table border
 
@@ -251,8 +251,6 @@ Default value: `true`
 
 Option: `cellborder`\
 Default value: `false`
-
-Requires `tableborder` to be `true`.
 
 #### Cell padding
 
