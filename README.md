@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/tdulcet/Tables-and-Graphs.svg?branch=master)](https://travis-ci.com/tdulcet/Tables-and-Graphs)
+[![Actions Status](https://github.com/tdulcet/Tables-and-Graphs/workflows/CI/badge.svg?branch=master)](https://github.com/tdulcet/Tables-and-Graphs/actions)
 
 # Tables and Graphs
 
