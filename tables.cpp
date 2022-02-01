@@ -136,26 +136,12 @@ int main()
 	// Output char array as table
 	cout << "\nOutput char array as table\n\n";
 	{
-		const char *const aarray[rows][columns] = {
+		const char *const array[rows][columns] = {
 			{"Header row/column 1", "Header row 2", "Header row 3", "Header row 4", "Header row 5"},
 			{"Header column 2", "Data 1", "Data 2", "Data 3", "Data 4"},
 			{"Header column 3", "Data 5", "Data 6", "Data 7", "Data 8"},
 			{"Header column 4", "Data 9", "Data 10", "Data 11", "Data 12"},
 			{"Header column 5", "Data 13", "Data 14", "Data 15", "Data 16"}};
-
-		char ***array;
-		array = new char **[rows];
-		for (unsigned int i = 0; i < rows; ++i)
-			array[i] = new char *[columns];
-
-		for (unsigned int j = 0; j < columns; ++j)
-		{
-			for (unsigned int i = 0; i < rows; ++i)
-			{
-				array[i][j] = new char[strlen(aarray[i][j]) + 1];
-				strcpy(array[i][j], aarray[i][j]);
-			}
-		}
 
 		tableoptions aoptions;
 		aoptions.headerrow = true;
@@ -167,18 +153,6 @@ int main()
 
 			table(rows, columns, array, NULL, NULL, aoptions);
 		}
-
-		if (array != NULL)
-		{
-			for (unsigned int i = 0; i < rows; ++i)
-			{
-				for (unsigned int j = 0; j < columns; ++j)
-					delete[] array[i][j];
-
-				delete[] array[i];
-			}
-			delete[] array;
-		}
 	}
 	// Output array as table with separate header row and column
 	cout << "\nOutput array as table with separate header row and column\n\n";
@@ -186,7 +160,7 @@ int main()
 		const size_t rows = 4;
 		const size_t columns = 4;
 
-		const char *const aarray[rows][columns] = {
+		const char *const array[rows][columns] = {
 			{"Data 1", "Data 2", "Data 3", "Data 4"},
 			{"Data 5", "Data 6", "Data 7", "Data 8"},
 			{"Data 9", "Data 10", "Data 11", "Data 12"},
@@ -194,20 +168,6 @@ int main()
 
 		const char *const headerrow[] = {"Header row/column 1", "Header row 2", "Header row 3", "Header row 4", "Header row 5"};
 		const char *const headercolumn[] = {"Header column 2", "Header column 3", "Header column 4", "Header column 5"};
-
-		char ***array;
-		array = new char **[rows];
-		for (unsigned int i = 0; i < rows; ++i)
-			array[i] = new char *[columns];
-
-		for (unsigned int j = 0; j < columns; ++j)
-		{
-			for (unsigned int i = 0; i < rows; ++i)
-			{
-				array[i][j] = new char[strlen(aarray[i][j]) + 1];
-				strcpy(array[i][j], aarray[i][j]);
-			}
-		}
 
 		tableoptions aoptions;
 		aoptions.headerrow = true;
@@ -218,18 +178,6 @@ int main()
 			aoptions.style = k;
 
 			table(rows, columns, array, headerrow, headercolumn, aoptions);
-		}
-
-		if (array != NULL)
-		{
-			for (unsigned int i = 0; i < rows; ++i)
-			{
-				for (unsigned int j = 0; j < columns; ++j)
-					delete[] array[i][j];
-
-				delete[] array[i];
-			}
-			delete[] array;
 		}
 	}
 	{

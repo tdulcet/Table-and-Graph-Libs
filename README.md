@@ -3,7 +3,7 @@
 
 # Tables and Graphs
 
-C++ Console Table and Graph/Plot Libraries
+Console Table and Graph/Plot Libraries
 
 Copyright © 2018 Teal Dulcet
 
@@ -526,16 +526,22 @@ When graphing multiple functions, colors `2` - `14` are used inorder. Color `0` 
 
 Pull requests welcome! Ideas for contributions:
 
+Both:
 * Add more options
 	* Add an option to print a border around graphs/plots
 	* Add options to word wrap and truncate long text in table cells
+	* Add option to center text in table cells
 * Add more examples
 * Improve the performance
-* Handle newlines, tabs and formatted text in the tables
+* Handle newlines and tabs in the tables
 * Handle formatted text in the table and graph/plot titles
 * Support more graph/plot colors
+	* Support 24-bit color
 	* Support combining colors when functions cross
-* Support plotting multiple arrays of different sizes
 * Update the `-t, --table` options of column command from [util-linux](https://en.wikipedia.org/wiki/Util-linux) to use the Table library
 * Create a new CLI tool that uses the Graph library
 * Port to other languages (C, Java, Rust, etc.)
+
+C++:
+* Handle formatted text in the tables
+* Support plotting multiple arrays of different sizes

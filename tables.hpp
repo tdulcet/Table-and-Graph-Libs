@@ -330,11 +330,8 @@ int table(const size_t rows, const size_t columns, char ***array, const tableopt
 
 // Convert array to char array and output as table
 template <typename T>
-int table(size_t rows, size_t columns, T **array, const char *const headerrow[], const char *const headercolumn[], const tableoptions &aoptions)
+int table(size_t rows, size_t columns, const T &array, const char *const headerrow[], const char *const headercolumn[], const tableoptions &aoptions)
 {
-	if (array == NULL)
-		return 1;
-
 	unsigned int i = 0;
 	unsigned int j = 0;
 
