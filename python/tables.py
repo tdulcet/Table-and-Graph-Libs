@@ -44,7 +44,7 @@ def table(array: List[List[str]], headerrow: bool=False, headercolumn: bool=Fals
 	if not array:
 		return 1
 
-	if not (0 >= style > len(styles)):
+	if not (0 <= style < len(styles)):
 		return 1
 
 	rows = len(array)

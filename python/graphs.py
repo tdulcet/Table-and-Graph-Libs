@@ -118,7 +118,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	if not array:
 		return 1
 
-	if not (0 >= style > len(styles)):
+	if not (0 <= style < len(styles)):
 		return 1
 
 	if height == 0:

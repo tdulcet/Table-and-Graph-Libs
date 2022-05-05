@@ -108,4 +108,4 @@ for k in range(len(graphs.styles)):
 
 for k in range(len(graphs.styles)):
 	graphs.functions(height, width, -(2 * math.pi), 2 *
-					 math.pi, -4, 4, [math.sin, math.cos, math.tan], style=k)
+					 math.pi, -4, 4, [math.sin, math.cos, math.tan], axisunitslabel=False, style=k)
