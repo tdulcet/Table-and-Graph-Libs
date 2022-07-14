@@ -46,11 +46,11 @@ int main()
 
 	// Allocate and set array
 
-	tableoptions aoptions;
+	tables::options aoptions;
 	aoptions.headerrow = true;
 	aoptions.headercolumn = true;
 
-	table(rows, columns, array, nullptr, nullptr, aoptions);
+	tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 
 	// Deallocate array
 
@@ -77,11 +77,11 @@ int main()
 	string *headerrow = nullptr;
 	string *headercolumn = nullptr;
 
-	tableoptions aoptions;
+	tables::options aoptions;
 	aoptions.headerrow = true;
 	aoptions.headercolumn = true;
 
-	table(array, headerrow, headercolumn, aoptions);
+	tables::array(array, headerrow, headercolumn, aoptions);
 
 	return 0;
 }
@@ -112,11 +112,11 @@ int main()
 
 	// Allocate and set array
 
-	tableoptions aoptions;
+	tables::options aoptions;
 	aoptions.headerrow = true;
 	aoptions.headercolumn = true;
 
-	table(rows, columns, array, headerrow, headercolumn, aoptions);
+	tables::array(rows, columns, array, headerrow, headercolumn, aoptions);
 
 	// Deallocate array
 
@@ -143,13 +143,13 @@ int main()
 
 	// Set array
 
-	tableoptions aoptions;
+	tables::options aoptions;
 	aoptions.headerrow = true;
 	aoptions.headercolumn = true;
 	// or with C++20:
-	// tableoptions aoptions{.headerrow = true, .headercolumn = true};
+	// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-	table(array, headerrow, headercolumn, aoptions);
+	tables::array(array, headerrow, headercolumn, aoptions);
 
 	return 0;
 }
@@ -175,7 +175,7 @@ int main()
 
 	// Allocate and set array
 
-	table(rows, columns, array);
+	tables::array(rows, columns, array);
 
 	// Deallocate array
 
@@ -199,7 +199,7 @@ int main()
 
 	// Set array
 
-	table(array);
+	tables::array(array);
 
 	return 0;
 }
@@ -245,7 +245,7 @@ int main()
 
 	sort(array, array + rows, compare<int *>);
 
-	table(rows, columns, array);
+	tables::array(rows, columns, array);
 
 	// Deallocate array
 
@@ -287,7 +287,7 @@ int main()
 
 	sort(array.begin(), array.end(), compare<vector<int>>);
 
-	table(array);
+	tables::array(array);
 
 	return 0;
 }
@@ -315,10 +315,10 @@ int main()
 	double xmax = 10;
 	double xscl = 2;
 
-	tableoptions aoptions;
+	tables::options aoptions;
 	aoptions.headerrow = true;
 
-	table(xmin, xmax, xscl, afunction, aoptions);
+	tables::function(xmin, xmax, xscl, afunction, aoptions);
 
 	return 0;
 }
@@ -340,10 +340,10 @@ int main()
 	function<double(double)> afunction = [](auto x)
 	{ return x + 1; };
 
-	tableoptions aoptions;
+	tables::options aoptions;
 	aoptions.headerrow = true;
 
-	table(xmin, xmax, xscl, afunction, aoptions);
+	tables::function(xmin, xmax, xscl, afunction, aoptions);
 
 	return 0;
 }
@@ -382,10 +382,10 @@ int main()
 	// Function parameter and return value can be any data type, as long as they are the same
 	function<double(double)> functions[] = {function1, function2};
 
-	tableoptions aoptions;
+	tables::options aoptions;
 	aoptions.headerrow = true;
 
-	table(xmin, xmax, xscl, numfunctions, functions, aoptions);
+	tables::functions(xmin, xmax, xscl, numfunctions, functions, aoptions);
 
 	return 0;
 }
@@ -413,10 +413,10 @@ int main()
 											[](auto x)
 											{ return pow(x, 2); }};
 
-	tableoptions aoptions;
+	tables::options aoptions;
 	aoptions.headerrow = true;
 
-	table(xmin, xmax, xscl, numfunctions, functions, aoptions);
+	tables::functions(xmin, xmax, xscl, numfunctions, functions, aoptions);
 
 	return 0;
 }
@@ -549,7 +549,7 @@ int main()
 
 	// Allocate and set array
 
-	graph(height, width, xmin, xmax, ymin, ymax, rows, array);
+	graphs::array(height, width, xmin, xmax, ymin, ymax, rows, array);
 
 	// Deallocate array
 
@@ -580,7 +580,7 @@ int main()
 
 	// Set array
 
-	graph(height, width, xmin, xmax, ymin, ymax, array);
+	graphs::array(height, width, xmin, xmax, ymin, ymax, array);
 
 	return 0;
 }
@@ -590,7 +590,7 @@ If `xmin` and `xmax` are both `0`, they will be set to the respective minimum an
 
 ![](images/array%20to%20plot.png)
 
-Use `graph()` to plot multiple arrays, which can be of different sizes.
+Use `graphs::arrays()` to plot multiple arrays, which can be of different sizes.
 
 #### Output single function as graph
 
@@ -616,7 +616,7 @@ int main()
 	long double ymin = -20;
 	long double ymax = 20;
 
-	graph(height, width, xmin, xmax, ymin, ymax, afunction);
+	graphs::function(height, width, xmin, xmax, ymin, ymax, afunction);
 
 	return 0;
 }
@@ -642,7 +642,7 @@ int main()
 	function<double(double)> afunction = [](auto x)
 	{ return x + 1; };
 
-	graph(height, width, xmin, xmax, ymin, ymax, afunction);
+	graphs::function(height, width, xmin, xmax, ymin, ymax, afunction);
 
 	return 0;
 }
@@ -684,7 +684,7 @@ int main()
 	// Function parameter and return value can be any data type, as long as they are the same
 	function<double(double)> functions[] = {function1, function2};
 
-	graph(height, width, xmin, xmax, ymin, ymax, numfunctions, functions);
+	graphs::functions(height, width, xmin, xmax, ymin, ymax, numfunctions, functions);
 
 	return 0;
 }
@@ -715,7 +715,7 @@ int main()
 											[](auto x)
 											{ return pow(x, 2); }};
 
-	graph(height, width, xmin, xmax, ymin, ymax, numfunctions, functions);
+	graphs::functions(height, width, xmin, xmax, ymin, ymax, numfunctions, functions);
 
 	return 0;
 }

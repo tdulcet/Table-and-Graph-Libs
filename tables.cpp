@@ -94,13 +94,13 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				array[i][j] = rand();
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(rows, columns, array, nullptr, nullptr, aoptions);
+			tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 		}
 
 		if (array != nullptr)
@@ -118,13 +118,13 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				aarray[i][j] = rand();
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(aarray, headerrow, headercolumn, aoptions);
+			tables::array(aarray, headerrow, headercolumn, aoptions);
 		}
 	}
 	{
@@ -134,13 +134,13 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				array[i][j] = rand();
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(array, headerrow, headercolumn, aoptions);
+			tables::array(array, headerrow, headercolumn, aoptions);
 		}
 	}
 	{
@@ -153,13 +153,13 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				array[i][j] = static_cast<long double>(rand()) / static_cast<long double>(RAND_MAX);
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(rows, columns, array, nullptr, nullptr, aoptions);
+			tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 		}
 
 		if (array != nullptr)
@@ -177,13 +177,13 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				aarray[i][j] = static_cast<long double>(rand()) / static_cast<long double>(RAND_MAX);
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(aarray, headerrow, headercolumn, aoptions);
+			tables::array(aarray, headerrow, headercolumn, aoptions);
 		}
 	}
 	{
@@ -193,13 +193,13 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				array[i][j] = static_cast<long double>(rand()) / static_cast<long double>(RAND_MAX);
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(array, headerrow, headercolumn, aoptions);
+			tables::array(array, headerrow, headercolumn, aoptions);
 		}
 	}
 	// Output char array as table
@@ -212,16 +212,16 @@ int main()
 			{"Header column 4", "Data 9", "Data 10", "Data 11", "Data 12"},
 			{"Header column 5", "Data 13", "Data 14", "Data 15", "Data 16"}};
 
-		tableoptions aoptions;
+		tables::options aoptions;
 		aoptions.headerrow = true;
 		aoptions.headercolumn = true;
-		// tableoptions aoptions{.headerrow = true, .headercolumn = true};
+		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(array, headerrow, headercolumn, aoptions);
+			tables::array(array, headerrow, headercolumn, aoptions);
 		}
 	}
 	{
@@ -231,16 +231,16 @@ int main()
 															 {"Header column 4", "Data 9", "Data 10", "Data 11", "Data 12"},
 															 {"Header column 5", "Data 13", "Data 14", "Data 15", "Data 16"}}};
 
-		tableoptions aoptions;
+		tables::options aoptions;
 		aoptions.headerrow = true;
 		aoptions.headercolumn = true;
-		// tableoptions aoptions{.headerrow = true, .headercolumn = true};
+		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(aarray, headerrow, headercolumn, aoptions);
+			tables::array(aarray, headerrow, headercolumn, aoptions);
 		}
 	}
 	// Output array as table with separate header row and column
@@ -258,16 +258,16 @@ int main()
 		const char *const headerrow[] = {"Header row/column 1", "Header row 2", "Header row 3", "Header row 4", "Header row 5"};
 		const char *const headercolumn[] = {"Header column 2", "Header column 3", "Header column 4", "Header column 5"};
 
-		tableoptions aoptions;
+		tables::options aoptions;
 		aoptions.headerrow = true;
 		aoptions.headercolumn = true;
-		// tableoptions aoptions{.headerrow = true, .headercolumn = true};
+		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(array, headerrow, headercolumn, aoptions);
+			tables::array(array, headerrow, headercolumn, aoptions);
 		}
 	}
 	{
@@ -286,116 +286,116 @@ int main()
 		vector<string> aheadercolumn(headerrow, headerrow + 1);
 		aheadercolumn.insert(aheadercolumn.end(), headercolumn, headercolumn + columns - 1);
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			{
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.headerrow = true;
 				aoptions.headercolumn = true;
 				aoptions.cellborder = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.headerrow = true, .headercolumn = true, .cellborder = true, .style = k};
+				// tables::options aoptions{.headerrow = true, .headercolumn = true, .cellborder = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.headerrow = true;
 				aoptions.headercolumn = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.headerrow = true, .headercolumn = true, .style = k};
+				// tables::options aoptions{.headerrow = true, .headercolumn = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
 				string *headerrow = aheaderrow.data();
 				string *headercolumn = nullptr;
 
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.headerrow = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.headerrow = true, .style = k};
+				// tables::options aoptions{.headerrow = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
 				string *headerrow = nullptr;
 				string *headercolumn = aheadercolumn.data();
 
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.headercolumn = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.headercolumn = true, .style = k};
+				// tables::options aoptions{.headercolumn = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
 				string *headerrow = nullptr;
 				string *headercolumn = nullptr;
 
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.cellborder = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.cellborder = true, .style = k};
+				// tables::options aoptions{.cellborder = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
 				string *headerrow = nullptr;
 				string *headercolumn = nullptr;
 
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.tableborder = false;
 				aoptions.style = k;
-				// tableoptions aoptions{.tableborder = false, .style = k};
+				// tables::options aoptions{.tableborder = false, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.tableborder = false;
 				aoptions.headerrow = true;
 				aoptions.headercolumn = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.tableborder = false, .headerrow = true, .headercolumn = true, .style = k};
+				// tables::options aoptions{.tableborder = false, .headerrow = true, .headercolumn = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
 				string *headerrow = aheaderrow.data();
 				string *headercolumn = nullptr;
 
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.tableborder = false;
 				aoptions.headerrow = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.tableborder = false, .headerrow = true, .style = k};
+				// tables::options aoptions{.tableborder = false, .headerrow = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
 				string *headerrow = nullptr;
 				string *headercolumn = aheadercolumn.data();
 
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.tableborder = false;
 				aoptions.headercolumn = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.tableborder = false, .headercolumn = true, .style = k};
+				// tables::options aoptions{.tableborder = false, .headercolumn = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 			{
 				string *headerrow = nullptr;
 				string *headercolumn = nullptr;
 
-				tableoptions aoptions;
+				tables::options aoptions;
 				aoptions.tableborder = false;
 				aoptions.cellborder = true;
 				aoptions.style = k;
-				// tableoptions aoptions{.tableborder = false, .cellborder = true, .style = k};
+				// tables::options aoptions{.tableborder = false, .cellborder = true, .style = k};
 
-				table(aarray, headerrow, headercolumn, aoptions);
+				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
 		}
 	}
@@ -409,15 +409,15 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				array[i][j] = rand() % 2;
 
-		tableoptions aoptions;
+		tables::options aoptions;
 		aoptions.boolalpha = true;
-		// tableoptions aoptions{.boolalpha = true};
+		// tables::options aoptions{.boolalpha = true};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(rows, columns, array, nullptr, nullptr, aoptions);
+			tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 		}
 
 		if (array != nullptr)
@@ -446,13 +446,13 @@ int main()
 		// qsort(array, rows, sizeof(array[0]), compare<int *>);
 		sort(array, array + rows, compare<int *>);
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(rows, columns, array, nullptr, nullptr, aoptions);
+			tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 		}
 
 		if (array != nullptr)
@@ -475,13 +475,13 @@ int main()
 
 		sort(aarray.begin(), aarray.end(), compare<array<int, columns>>);
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(aarray, headerrow, headercolumn, aoptions);
+			tables::array(aarray, headerrow, headercolumn, aoptions);
 		}
 	}
 	{
@@ -496,42 +496,42 @@ int main()
 
 		sort(array.begin(), array.end(), compare<vector<int>>);
 
-		tableoptions aoptions;
+		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(array, headerrow, headercolumn, aoptions);
+			tables::array(array, headerrow, headercolumn, aoptions);
 		}
 	}
 	// Output single function as table
 	cout << "\nOutput single function as table\n\n";
 	{
-		tableoptions aoptions;
+		tables::options aoptions;
 		aoptions.headerrow = true;
-		// tableoptions aoptions{.headerrow = true};
+		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(xmin, xmax, xscl, afunction, aoptions);
+			tables::function(xmin, xmax, xscl, afunction, aoptions);
 		}
 	}
 	{
 		function<long double(long double)> afunction = [](auto x)
 		{ return x + 1; };
 
-		tableoptions aoptions;
+		tables::options aoptions;
 		aoptions.headerrow = true;
-		// tableoptions aoptions{.headerrow = true};
+		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(xmin, xmax, xscl, afunction, aoptions);
+			tables::function(xmin, xmax, xscl, afunction, aoptions);
 		}
 	}
 	// Output multiple functions as table
@@ -539,15 +539,15 @@ int main()
 	{
 		function<long double(long double)> functions[] = {function1, function2};
 
-		tableoptions aoptions;
+		tables::options aoptions;
 		aoptions.headerrow = true;
-		// tableoptions aoptions{.headerrow = true};
+		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(xmin, xmax, xscl, 2, functions, aoptions);
+			tables::functions(xmin, xmax, xscl, 2, functions, aoptions);
 		}
 	}
 	{
@@ -556,15 +556,15 @@ int main()
 														  [](auto x)
 														  { return pow(x, 2); }};
 
-		tableoptions aoptions;
+		tables::options aoptions;
 		aoptions.headerrow = true;
-		// tableoptions aoptions{.headerrow = true};
+		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
-			table(xmin, xmax, xscl, 2, functions, aoptions);
+			tables::functions(xmin, xmax, xscl, 2, functions, aoptions);
 		}
 	}
 

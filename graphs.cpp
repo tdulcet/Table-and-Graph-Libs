@@ -66,13 +66,13 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				array[i][j] = i + j; // rand();
 
-		graphoptions aoptions;
+		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
-			graph(height, width, xmin, xmax, ymin, ymax, rows, array, aoptions);
+			graphs::array(height, width, xmin, xmax, ymin, ymax, rows, array, aoptions);
 		}
 
 		if (array != nullptr)
@@ -90,13 +90,13 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				aarray[i][j] = i + j; // rand();
 
-		graphoptions aoptions;
+		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
-			graph(height, width, xmin, xmax, ymin, ymax, aarray, aoptions);
+			graphs::array(height, width, xmin, xmax, ymin, ymax, aarray, aoptions);
 		}
 	}
 	{
@@ -106,38 +106,38 @@ int main()
 			for (unsigned int j = 0; j < columns; ++j)
 				array[i][j] = i + j; // rand();
 
-		graphoptions aoptions;
+		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
-			graph(height, width, xmin, xmax, ymin, ymax, array, aoptions);
+			graphs::array(height, width, xmin, xmax, ymin, ymax, array, aoptions);
 		}
 	}
 	// Output single function as graph
 	cout << "\nOutput single function as graph\n\n";
 	{
-		graphoptions aoptions;
+		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
-			graph(height, width, xmin, xmax, ymin, ymax, afunction, aoptions);
+			graphs::function(height, width, xmin, xmax, ymin, ymax, afunction, aoptions);
 		}
 	}
 	{
 		function<long double(long double)> afunction = [](auto x)
 		{ return x + 1; };
 
-		graphoptions aoptions;
+		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
-			graph(height, width, xmin, xmax, ymin, ymax, afunction, aoptions);
+			graphs::function(height, width, xmin, xmax, ymin, ymax, afunction, aoptions);
 		}
 	}
 	// Output multiple functions as graph
@@ -145,13 +145,13 @@ int main()
 	{
 		function<long double(long double)> functions[] = {function1, function2};
 
-		graphoptions aoptions;
+		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
-			graph(height, width, xmin, xmax, ymin, ymax, 2, functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, 2, functions, aoptions);
 		}
 	}
 	{
@@ -160,13 +160,13 @@ int main()
 														  [](auto x)
 														  { return pow(x, 2); }};
 
-		graphoptions aoptions;
+		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
-			graph(height, width, xmin, xmax, ymin, ymax, 2, functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, 2, functions, aoptions);
 		}
 	}
 	{
@@ -177,15 +177,15 @@ int main()
 
 		function<long double(long double)> functions[] = {function3, function4, function5};
 
-		graphoptions aoptions;
+		graphs::options aoptions;
 		aoptions.axisunitslabel = false;
-		// graphoptions aoptions{.axisunitslabel = false};
+		// graphs::options aoptions{.axisunitslabel = false};
 
-		for (unsigned int k = 0; k < size(styles); ++k)
+		for (unsigned int k = 0; k < size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
-			graph(height, width, xmin, xmax, ymin, ymax, 3, functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, 3, functions, aoptions);
 		}
 
 		/* aoptions.style = 2;
@@ -195,7 +195,7 @@ int main()
 			cout << "\e[1;1H"
 				 << "\e[2J";
 
-			graph(k, k, xmin, xmax, ymin, ymax, 3, functions, aoptions);
+			graphs::functions(k, k, xmin, xmax, ymin, ymax, 3, functions, aoptions);
 
 			usleep(200000);
 		} */
