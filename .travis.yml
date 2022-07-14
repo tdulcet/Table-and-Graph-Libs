@@ -13,12 +13,12 @@ install:
   - sudo apt-get -yqq update
   - sudo apt-get -yqq install cppcheck
 script:
-  - g++ -Wall -g -Og -fsanitize=address,undefined tables.cpp -o gcc_tables
+  - g++ -std=c++17 -Wall -g -Og -fsanitize=address,undefined tables.cpp -o gcc_tables
   - ./gcc_tables
-  - g++ -Wall -g -Og -fsanitize=address,undefined graphs.cpp -o gcc_graphs
+  - g++ -std=c++17 -Wall -g -Og -fsanitize=address,undefined graphs.cpp -o gcc_graphs
   - ./gcc_graphs
-  - clang++ -Wall -g -Og -fsanitize=address,undefined,integer tables.cpp -o clang_tables
+  - clang++ -std=c++17 -Wall -g -Og -fsanitize=address,undefined,integer tables.cpp -o clang_tables
   - ./clang_tables
-  - clang++ -Wall -g -Og -fsanitize=address,undefined,integer graphs.cpp -o clang_graphs
+  - clang++ -std=c++17 -Wall -g -Og -fsanitize=address,undefined,integer graphs.cpp -o clang_graphs
   - ./clang_graphs
   - cppcheck --enable=all .

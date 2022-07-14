@@ -27,9 +27,9 @@ jobs:
         $CXX --version
     - name: Script
       run: |
-        $CXX -Wall -g -Og -fsanitize=address,undefined tables.cpp -o tables
+        $CXX -std=c++17 -Wall -g -Og -fsanitize=address,undefined tables.cpp -o tables
         ./tables
-        $CXX -Wall -g -Og -fsanitize=address,undefined graphs.cpp -o graphs
+        $CXX -std=c++17 -Wall -g -Og -fsanitize=address,undefined graphs.cpp -o graphs
         ./graphs
     - name: Cppcheck
       run: cppcheck --enable=all .

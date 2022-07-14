@@ -14,6 +14,7 @@
 #include <vector>
 #include <iterator>
 #include <numeric>
+#include <functional>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
