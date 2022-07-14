@@ -2,20 +2,20 @@
 
 ### Usage
 
-Requires Python 3.5 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`.
+Requires Python 3.5 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`. See the [tables.py](tables.py) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
 
 Run with: `python3 test.py`.
 
-#### Output char array as table
+#### Output str array as table
 
 ```py
 import tables
 
 # Set array
 
-tables.array(array, None, None, headerrow=True, headercolumn=True)
+tables.array(array, headerrow=True, headercolumn=True)
 ```
 
 Table cells can contain [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters), but not newlines and tabs.
@@ -42,9 +42,9 @@ Output same as example above.
 ```py
 import tables
 
-# Set array
+# Set array, can be any sequence data type
 
-tables.array(array, None, None)
+tables.array(array)
 ```
 
 ![](../images/array%20to%20table.png)
@@ -60,7 +60,7 @@ sortdimension = 0  # Column to sort by
 
 array = sorted(array, key=lambda x: x[sortdimension])
 
-tables.array(array, None, None)
+tables.array(array)
 ```
 
 ![](../images/sorted%20array%20to%20table.png)
@@ -81,6 +81,22 @@ tables.function(xmin, xmax, xscl, afunction, headerrow=True)
 ```
 
 ![](../images/function%20to%20table.png)
+
+#### Output lambda function as table
+
+```py
+import tables
+
+xmin = -10
+xmax = 10
+xscl = 2
+
+afunction = lambda x: x + 1
+
+tables.function(xmin, xmax, xscl, afunction, headerrow=True)
+```
+
+Output same as example above.
 
 #### Output multiple functions as table
 
@@ -104,6 +120,23 @@ tables.functions(xmin, xmax, xscl, functions, headerrow=True)
 ```
 
 ![](../images/multiple%20functions%20to%20table.png)
+
+#### Output multiple lambda functions as table
+
+```py
+import tables
+
+xmin = -10
+xmax = 10
+xscl = 2
+
+# Function parameter and return value can be any data type, as long as they are the same
+functions = [lambda x: 2 * x, lambda x: x ** 2]
+
+tables.functions(xmin, xmax, xscl, functions, headerrow=True)
+```
+
+Output same as example above.
 
 ### Options
 
@@ -182,7 +215,7 @@ Values:
 
 ### Usage
 
-Requires Python 3.5 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`.
+Requires Python 3.5 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`. See the [graphs.py](graphs.py) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
 
@@ -190,7 +223,7 @@ Run with: `python3 test.py`.
 
 If `height` is `0`, it will be set to the current height of the terminal (number of rows times four). If `width` is `0`, it will be set to the current width of the terminal (number of columns times two).
 
-#### Output array as plot
+#### Output single array as plot
 
 ```py
 import graphs
@@ -203,7 +236,7 @@ xmax = 20
 ymin = -20
 ymax = 20
 
-# Set array
+# Set array, can be any sequence data type, but must have exactly two columns
 
 graphs.array(height, width, xmin, xmax, ymin, ymax, array)
 ```
@@ -211,6 +244,8 @@ graphs.array(height, width, xmin, xmax, ymin, ymax, array)
 If `xmin` and `xmax` are both `0`, they will be set to the respective minimum and maximum values of x in the array. If `ymin` and `ymax` are both `0`, they will be set to the respective minimum and maximum values of y in the array.
 
 ![](../images/array%20to%20plot.png)
+
+Use `graphs.arrays()` to plot multiple arrays, which can be of different sizes.
 
 #### Output single function as graph
 
@@ -232,6 +267,26 @@ graphs.function(height, width, xmin, xmax, ymin, ymax, afunction)
 ```
 
 ![](../images/function%20to%20graph.png)
+
+#### Output lambda function as graph
+
+```py
+import graphs
+
+height = 160
+width = 160
+
+xmin = -20
+xmax = 20
+ymin = -20
+ymax = 20
+
+afunction = lambda x: x + 1
+
+graphs.function(height, width, xmin, xmax, ymin, ymax, afunction)
+```
+
+Output same as example above.
 
 #### Output multiple functions as graph
 
@@ -259,6 +314,27 @@ graphs.functions(height, width, xmin, xmax, ymin, ymax, functions)
 ```
 
 ![](../images/multiple%20functions%20to%20graph.png)
+
+#### Output multiple lambda functions as graph
+
+```py
+import graphs
+
+height = 160
+width = 160
+
+xmin = -20
+xmax = 20
+ymin = -20
+ymax = 20
+
+# Function parameter and return value can be any data type, as long as they are the same
+functions = [lambda x: 2 * x, lambda x: x ** 2]
+
+graphs.functions(height, width, xmin, xmax, ymin, ymax, functions)
+```
+
+Output same as example above.
 
 ### Options
 

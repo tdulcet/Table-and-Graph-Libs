@@ -4,25 +4,29 @@
 #include <sstream>
 #include <cstring>
 #include <cmath>
-#include <limits>
 #include <cfloat>
 #include <iomanip>
 #include <cwchar>
 #include <clocale>
 #include <cstdlib>
+#include <algorithm>
+#include <array>
+#include <vector>
+#include <iterator>
+#include <numeric>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
 using namespace std;
 
 const char *const styles[][11] = {
-	{"-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, //ASCII
-	{"—", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, //Basic
-	{"─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, //Light
-	{"━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}, //Heavy
-	{"═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"}, //Double
-	{"╌", "╎", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, //Light Dashed
-	{"╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}	 //Heavy Dashed
+	{"-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, // ASCII
+	{"—", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, // Basic
+	{"─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light
+	{"━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}, // Heavy
+	{"═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"}, // Double
+	{"╌", "╎", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light Dashed
+	{"╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}	 // Heavy Dashed
 };
 // {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}};//No border
 
@@ -38,31 +42,15 @@ const long double fractionvalues[] = {1.0L / 4.0L, 1.0L / 2.0L, 3.0L / 4.0L, 1.0
 
 struct graphoptions
 {
-	bool border;
-	bool axislabel;
-	bool axisunitslabel;
-	char *title;
-	unsigned int style;
-	unsigned int color;
-	graphoptions(void);
-	~graphoptions(void);
+	bool border = true;
+	bool axislabel = true;
+	bool axisunitslabel = true;
+	const char *title = nullptr;
+	unsigned int style = 2;
+	unsigned int color = 2;
 };
 
-graphoptions::graphoptions(void)
-{
-	border = true;
-	axislabel = true;
-	axisunitslabel = true;
-	style = 2;
-	color = 2;
-	title = NULL;
-}
-
-graphoptions::~graphoptions(void)
-{
-}
-
-const graphoptions graphdefaultoptions;
+const graphoptions defaultoptions;
 
 // Number of columns needed to represent the string
 // Adapted from: https://stackoverflow.com/a/31124065
@@ -76,8 +64,8 @@ int strcol(const char *const str)
 			cout << "Control character: " << (int)str[i] << "\n";
 		}
 
-	length = mbstowcs(NULL, str, 0);
-	if (length == (size_t)-1)
+	length = mbstowcs(nullptr, str, 0);
+	if (length == static_cast<size_t>(-1))
 	{
 		cerr << "\nError! mbstowcs failed. Invalid multibyte character.\n";
 		exit(1);
@@ -86,9 +74,9 @@ int strcol(const char *const str)
 
 	wchar_t *wcstring = new wchar_t[length];
 
-	if (mbstowcs(wcstring, str, length) == (size_t)-1)
+	if (mbstowcs(wcstring, str, length) == static_cast<size_t>(-1))
 	{
-		if (wcstring != NULL)
+		if (wcstring != nullptr)
 			delete[] wcstring;
 
 		cerr << "\nError! mbstowcs failed. Invalid multibyte character.\n";
@@ -102,7 +90,7 @@ int strcol(const char *const str)
 		exit(1);
 	}
 
-	if (wcstring != NULL)
+	if (wcstring != nullptr)
 		delete[] wcstring;
 
 	return width;
@@ -168,7 +156,7 @@ size_t outputlabel(const long double label, ostringstream &strm)
 	long double intpart = 0;
 	long double fractionpart = abs(modf(label, &intpart));
 
-	for (unsigned int i = 0; i < (sizeof fractions / sizeof fractions[0]) and !output; ++i)
+	for (unsigned int i = 0; i < size(fractions) and !output; ++i)
 	{
 		if (abs(fractionpart - fractionvalues[i]) < DBL_EPSILON)
 		{
@@ -224,9 +212,9 @@ size_t outputlabel(const long double label, ostringstream &strm)
 }
 
 // Output graph
-int graph(const size_t height, const size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, unsigned short **array, const graphoptions &aoptions)
+int graph(const size_t height, const size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const vector<vector<unsigned short>> &array, const graphoptions &aoptions)
 {
-	if (array == NULL)
+	if (!size(array))
 		return 1;
 
 	const bool border = aoptions.border;
@@ -235,7 +223,7 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 	const char *const title = aoptions.title;
 	const unsigned int style = aoptions.style;
 
-	if (style >= (sizeof styles / sizeof styles[0]))
+	if (style >= size(styles))
 		return 1;
 
 	if (height == 0)
@@ -282,7 +270,7 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 
 	setlocale(LC_CTYPE, "");
 
-	if (title != NULL and title[0] != '\0')
+	if (title != nullptr and title[0] != '\0')
 		cout << wrap(title, w.ws_col) << "\n";
 
 	for (unsigned int i = 0; i < height; i += 4)
@@ -296,12 +284,12 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 		if (border and axislabel and axisunitslabel)
 		{
 			bool output = false;
-			long double label;
+			long double label = 0;
 			int adivisor = divisor;
 			if (i < yaxis)
 				adivisor = -adivisor;
 
-			for (long double k = yaxis + adivisor; ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and (i >= 4 or !axislabel) and !output; k += adivisor)
+			for (long double k = yaxis + adivisor; ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and i >= 4 and !output; k += adivisor)
 			{
 				if (i <= k and (i + 4) > k)
 				{
@@ -340,7 +328,7 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 						if (i < yaxis)
 							adivisor = -adivisor;
 
-						for (long double k = yaxis + adivisor; ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and (i >= 4 or !axislabel) and !output; k += adivisor)
+						for (long double k = yaxis + adivisor; ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and i >= 4 and !output; k += adivisor)
 						{
 							if (i <= k and (i + 4) > k)
 							{
@@ -368,7 +356,7 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 						if (j < xaxis)
 							adivisor = -adivisor;
 
-						for (long double k = xaxis + adivisor; ((j < xaxis and k >= j) or (j > xaxis and k < (j + 2))) and (j < (width - 4) or !axislabel) and !output; k += adivisor)
+						for (long double k = xaxis + adivisor; ((j < xaxis and k >= j) or (j > xaxis and k < (j + 2))) and j < (width - 4) and !output; k += adivisor)
 						{
 							if (j <= k and (j + 2) > k)
 							{
@@ -400,7 +388,7 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 				}
 				else if (yaxislabel and axislabel and axisunitslabel)
 				{
-					long double label;
+					long double label = 0;
 					int adivisor = divisor;
 					if (j < xaxis)
 					{
@@ -497,19 +485,24 @@ int graph(const size_t height, const size_t width, const long double xmin, const
 	return 0;
 }
 
-// Convert array to graph and output
+// Convert one or more arrays to graph and output
 template <typename T>
-int graph(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T **array, const graphoptions &aoptions)
+int graphs(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &arrays, const graphoptions &aoptions = defaultoptions)
 {
-	if (rows == 0)
+	if (!size(arrays))
 		return 1;
 
-	if (array == NULL)
+	if (!all_of(begin(arrays), end(arrays), [](const auto &array)
+				{ return all_of(begin(array), end(array), [](const auto &x)
+								{ return size(x) == 2; }); }))
+	{
+		cerr << "Error: The arrays must have two columns.";
 		return 1;
+	}
 
 	const unsigned int color = aoptions.color;
 
-	if (color >= (sizeof colors / sizeof colors[0]))
+	if (color >= size(colors))
 		return 1;
 
 	struct winsize w;
@@ -538,32 +531,22 @@ int graph(size_t height, size_t width, long double xmin, long double xmax, long 
 
 	if (xmin == 0 and xmax == 0)
 	{
-		xmin = numeric_limits<T>::max();
-		xmax = numeric_limits<T>::min();
-
-		for (unsigned int i = 0; i < rows; ++i)
-		{
-			if (array[i][0] < xmin)
-				xmin = array[i][0];
-
-			if (array[i][0] > xmax)
-				xmax = array[i][0];
-		}
+		const auto compare = [](const auto &a, const auto &b)
+		{ return a[0] < b[0]; };
+		const auto result = accumulate(begin(arrays), end(arrays), make_pair(arrays[0][0], arrays[0][0]), [compare](const auto &current, const auto &array)
+									   { const auto minmax = minmax_element(begin(array), end(array), compare); return make_pair(min(current.first, *minmax.first, compare), max(current.second, *minmax.second, compare)); });
+		xmin = result.first[0];
+		xmax = result.second[0];
 	}
 
 	if (ymin == 0 and ymax == 0)
 	{
-		ymin = numeric_limits<T>::max();
-		ymax = numeric_limits<T>::min();
-
-		for (unsigned int i = 0; i < rows; ++i)
-		{
-			if (array[i][1] < ymin)
-				ymin = array[i][1];
-
-			if (array[i][1] > ymax)
-				ymax = array[i][1];
-		}
+		const auto compare = [](const auto &a, const auto &b)
+		{ return a[1] < b[1]; };
+		const auto result = accumulate(begin(arrays), end(arrays), make_pair(arrays[0][0], arrays[0][0]), [compare](const auto &current, const auto &array)
+									   { const auto minmax = minmax_element(begin(array), end(array), compare); return make_pair(min(current.first, *minmax.first, compare), max(current.second, *minmax.second, compare)); });
+		ymin = result.first[1];
+		ymax = result.second[1];
 	}
 
 	if (xmin >= xmax)
@@ -583,46 +566,65 @@ int graph(size_t height, size_t width, long double xmin, long double xmax, long 
 	const long double xaxis = width - (xmax * xscl);
 	const long double yaxis = ymax * yscl;
 
-	unsigned short **aarray;
-	aarray = new unsigned short *[width];
-	for (unsigned int i = 0; i < width; ++i)
-		aarray[i] = new unsigned short[height];
+	vector<vector<unsigned short>> aarray(width, vector<unsigned short>(height, 0));
 
-	for (unsigned int i = 0; i < width; ++i)
-		for (unsigned int j = 0; j < height; ++j)
-			aarray[i][j] = 0;
-
-	for (unsigned int i = 0; i < rows; ++i)
+	for (unsigned int j = 0; j < size(arrays); ++j)
 	{
-		if (array[i][0] >= xmin and array[i][0] < xmax and array[i][1] >= ymin and array[i][1] < ymax)
-		{
-			const long long x = (array[i][0] * xscl) + xaxis;
-			const long long y = (yaxis - (array[i][1] * yscl)) - 1;
+		auto array = arrays[j];
+		const unsigned int color = (j % (size(colors) - 2)) + 3;
 
-			aarray[x][y] = color + 1;
+		for (unsigned int i = 0; i < size(array); ++i)
+		{
+			if (array[i][0] >= xmin and array[i][0] < xmax and array[i][1] >= ymin and array[i][1] < ymax)
+			{
+				const long long x = (array[i][0] * xscl) + xaxis;
+				const long long y = (yaxis - (array[i][1] * yscl)) - 1;
+
+				if (aarray[x][y])
+				{
+					if (aarray[x][y] != color)
+						aarray[x][y] = 1;
+				}
+				else
+					aarray[x][y] = color;
+			}
 		}
 	}
 
-	int code = graph(height, width, xmin, xmax, ymin, ymax, aarray, aoptions);
+	return graph(height, width, xmin, xmax, ymin, ymax, aarray, aoptions);
+}
 
-	if (aarray != NULL)
-	{
-		for (unsigned int i = 0; i < width; ++i)
-			delete[] aarray[i];
+// Convert single array to graph and output
+template <typename T>
+int graph(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const graphoptions &aoptions = defaultoptions)
+{
+	const std::array<T, 1> aaarray = {aarray};
 
-		delete[] aarray;
-	}
+	return graphs(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
+}
 
-	return code;
+// Convert single array to graph and output
+template <typename T>
+int graph(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T **aarray, const graphoptions &aoptions = defaultoptions)
+{
+	if (rows == 0)
+		return 1;
+
+	const size_t columns = 2;
+	vector<std::array<T, columns>> aaarray(rows);
+	for (unsigned int i = 0; i < rows; ++i)
+		copy(aarray[i], aarray[i] + columns, aaarray[i].begin());
+
+	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
 }
 
 // Convert one or more functions to graph and output
 template <typename T>
-int graph(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const size_t numfunctions, T (*functions[])(T), const graphoptions &aoptions)
+int graph(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const size_t numfunctions, function<T(T)> functions[], const graphoptions &aoptions = defaultoptions)
 {
 	const unsigned int color = aoptions.color;
 
-	if (color >= (sizeof colors / sizeof colors[0]))
+	if (color >= size(colors))
 		return 1;
 
 	if (numfunctions == 0)
@@ -671,18 +673,11 @@ int graph(size_t height, size_t width, const long double xmin, const long double
 	const long double xaxis = width - (xmax * xscl);
 	const long double yaxis = ymax * yscl;
 
-	unsigned short **array;
-	array = new unsigned short *[width];
-	for (unsigned int i = 0; i < width; ++i)
-		array[i] = new unsigned short[height];
-
-	for (unsigned int i = 0; i < width; ++i)
-		for (unsigned int j = 0; j < height; ++j)
-			array[i][j] = 0;
+	vector<vector<unsigned short>> array(width, vector<unsigned short>(height, 0));
 
 	for (unsigned int j = 0; j < numfunctions; ++j)
 	{
-		unsigned short acolor = numfunctions == 1 ? color + 1 : (j % ((sizeof colors / sizeof colors[0]) - 2)) + 3;
+		unsigned short acolor = numfunctions == 1 ? color + 1 : (j % (size(colors) - 2)) + 3;
 
 		for (long double i = 0; i < rows; i += 0.5)
 		{
@@ -705,25 +700,23 @@ int graph(size_t height, size_t width, const long double xmin, const long double
 		}
 	}
 
-	int code = graph(height, width, xmin, xmax, ymin, ymax, array, aoptions);
-
-	if (array != NULL)
-	{
-		for (unsigned int i = 0; i < width; ++i)
-			delete[] array[i];
-
-		delete[] array;
-	}
-
-	return code;
+	return graph(height, width, xmin, xmax, ymin, ymax, array, aoptions);
 }
 
 // Convert single function to function array and output
 template <typename T>
-int graph(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, T afunction(T), const graphoptions &aoptions)
+int graph(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const function<T(T)> &afunction, const graphoptions &aoptions = defaultoptions)
 {
-	T(*functions[])
-	(T) = {afunction};
+	std::function<T(T)> afunctions[] = {afunction};
 
-	return graph(height, width, xmin, xmax, ymin, ymax, 1, functions, aoptions);
+	return graph(height, width, xmin, xmax, ymin, ymax, 1, afunctions, aoptions);
+}
+
+// Convert single function to function array and output
+template <typename T>
+int graph(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, T afunction(T), const graphoptions &aoptions = defaultoptions)
+{
+	std::function<T(T)> afunctions[] = {afunction};
+
+	return graph(height, width, xmin, xmax, ymin, ymax, 1, afunctions, aoptions);
 }

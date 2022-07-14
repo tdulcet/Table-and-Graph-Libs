@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Teal Dulcet, CS546
@@ -39,7 +39,7 @@ def strcol(str: str) -> int:
 	# return len(str)
 
 
-def table(array: List[List[str]], headerrow: bool=False, headercolumn: bool=False, tableborder: bool=True, cellborder: bool=False, padding: int=1, alignment: bool=False, title: Optional[str]=None, style: int=2) -> int:
+def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: bool = False, title: Optional[str] = None, style: int = 2) -> int:
 	"""Output char array as table"""
 	if not array:
 		return 1
@@ -158,7 +158,7 @@ def table(array: List[List[str]], headerrow: bool=False, headercolumn: bool=Fals
 	return 0
 
 
-def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]], aheadercolumn: Optional[Sequence[Any]], headerrow: bool=False, headercolumn: bool=False, tableborder: bool=True, cellborder: bool=False, padding: int=1, alignment: bool=False, title: Optional[str]=None, style: int=2) -> int:
+def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] = None, aheadercolumn: Optional[Sequence[Any]] = None, headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: bool = False, title: Optional[str] = None, style: int = 2) -> int:
 	"""Convert array to char array and output as table"""
 	if not aarray:
 		return 1
@@ -220,9 +220,9 @@ def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]], 
 	return table(aaarray, headerrow=headerrow, headercolumn=headercolumn, tableborder=tableborder, cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)
 
 
-def functions(xmin: float, xmax: float, xscl: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool=False, headercolumn: bool=False, tableborder: bool=True, cellborder: bool=False, padding: int=1, alignment: bool=False, title: Optional[str]=None, style: int=2) -> int:
+def functions(xmin: float, xmax: float, xscl: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: bool = False, title: Optional[str] = None, style: int = 2) -> int:
 	"""Convert one or more functions to array and output as table"""
-	if len(afunctions) == 0:
+	if not afunctions:
 		return 1
 
 	if xmin >= xmax:
@@ -258,6 +258,6 @@ def functions(xmin: float, xmax: float, xscl: float, afunctions: Sequence[Callab
 	return array(aarray, aheaderrow, None, headerrow=headerrow, headercolumn=headercolumn, tableborder=tableborder, cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)
 
 
-def function(xmin: float, xmax: float, xscl: float, afunction: Callable[[float], float], headerrow: bool=False, headercolumn: bool=False, tableborder: bool=True, cellborder: bool=False, padding: int=1, alignment: bool=False, title: Optional[str]=None, style: int=2) -> int:
+def function(xmin: float, xmax: float, xscl: float, afunction: Callable[[float], float], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: bool = False, title: Optional[str] = None, style: int = 2) -> int:
 	"""Convert single function to array and output as table"""
 	return functions(xmin, xmax, xscl, [afunction], headerrow=headerrow, headercolumn=headercolumn, tableborder=tableborder, cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)

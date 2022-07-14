@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Teal Dulcet, CS546
@@ -78,11 +78,16 @@ for k in range(len(tables.styles)):
 print("\nOutput single function as table\n")
 for k in range(len(tables.styles)):
 	tables.function(xmin, xmax, xscl, afunction, headerrow=True, style=k)
+for k in range(len(tables.styles)):
+	tables.function(xmin, xmax, xscl, lambda x: x + 1, headerrow=True, style=k)
 
 print("\nOutput multiple functions as table\n")
 for k in range(len(tables.styles)):
 	tables.functions(xmin, xmax, xscl, [
 					 function1, function2], headerrow=True, style=k)
+for k in range(len(tables.styles)):
+	tables.functions(xmin, xmax, xscl, [
+					 lambda x: 2 * x, lambda x: x ** 2], headerrow=True, style=k)
 
 height = 160
 width = 160
@@ -92,20 +97,26 @@ xmax = 20
 ymin = -20
 ymax = 20
 
-print("\nOutput array as plot\n")
-array = [[i + j for j in range(2)] for i in range(10)]
+print("\nOutput single array as plot\n")
+array = [range(i, i + 2) for i in range(10)]
 for k in range(len(graphs.styles)):
 	graphs.array(height, width, xmin, xmax, ymin, ymax, array, style=k)
 
 print("\nOutput single function as graph\n")
 for k in range(len(graphs.styles)):
 	graphs.function(height, width, xmin, xmax, ymin, ymax, afunction, style=k)
+for k in range(len(graphs.styles)):
+	graphs.function(height, width, xmin, xmax, ymin,
+					ymax, lambda x: x + 1, style=k)
 
 print("\nOutput multiple functions as graph\n")
 for k in range(len(graphs.styles)):
 	graphs.functions(height, width, xmin, xmax, ymin,
 					 ymax, [function1, function2], style=k)
+for k in range(len(graphs.styles)):
+	graphs.functions(height, width, xmin, xmax, ymin, ymax, [
+					 lambda x: 2 * x, lambda x: x ** 2], style=k)
 
 for k in range(len(graphs.styles)):
-	graphs.functions(height, width, -(2 * math.pi), 2 *
-					 math.pi, -4, 4, [math.sin, math.cos, math.tan], axisunitslabel=False, style=k)
+	graphs.functions(height, width, -(2 * math.pi), 2 * math.pi, -4,
+					 4, [math.sin, math.cos, math.tan], axisunitslabel=False, style=k)

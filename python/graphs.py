@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Teal Dulcet, CS546
@@ -113,7 +113,7 @@ def outputlabel(label: float) -> Tuple[int, str]:
 	return length, strm
 
 
-def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool=True, axislabel: bool=True, axisunitslabel: bool=True, style: int=2, title: Optional[str]=None) -> int:
+def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: int = 2, title: Optional[str] = None) -> int:
 	"""Output graph"""
 	if not array:
 		return 1
@@ -175,7 +175,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 			adivisor = -divisor if i < yaxis else divisor
 
 			k = yaxis + adivisor
-			while ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and (i >= 4 or not axislabel) and not output:
+			while ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and i >= 4 and not output:
 				if (i <= k and (i + 4) > k):
 					label = ymax - (k / yscl)
 
@@ -202,7 +202,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 						adivisor = -divisor if i < yaxis else divisor
 
 						k = yaxis + adivisor
-						while ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and (i >= 4 or not axislabel) and not output:
+						while ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and i >= 4 and not output:
 							if i <= k and (i + 4) > k:
 								strm += styles[style][7]
 								output = True
@@ -220,7 +220,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 						adivisor = -divisor if j < xaxis else divisor
 
 						k = xaxis + adivisor
-						while ((j < xaxis and k >= j) or (j > xaxis and k < (j + 2))) and (j < (width - 4) or not axislabel) and not output:
+						while ((j < xaxis and k >= j) or (j > xaxis and k < (j + 2))) and j < (width - 4) and not output:
 							if j <= k and (j + 2) > k:
 								strm += styles[style][3]
 								output = True
@@ -314,7 +314,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	return 0
 
 
-def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool=True, axislabel: bool=True, axisunitslabel: bool=True, style: int=2, color: int=2, title: Optional[str]=None) -> int:
+def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: int = 2, color: int = 2, title: Optional[str] = None) -> int:
 	"""Convert one or more arrays to graph and output"""
 	if not aarrays:
 		return 1
@@ -327,6 +327,12 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 		return 1
 
 	w = shutil.get_terminal_size()
+
+	if height == 0:
+		height = w.lines * 4
+
+	if width == 0:
+		width = w.columns * 2
 
 	aheight = height // 4
 	awidth = width // 2
@@ -365,7 +371,8 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 	aaarray = [[0 for j in range(height)] for i in range(width)]
 
 	for j, aarray in enumerate(aarrays):
-		acolor = color + 1 if len(aarrays) == 1 else (j % (len(colors) - 2)) + 3
+		acolor = color + 1 if len(aarrays) == 1 else (j %
+													  (len(colors) - 2)) + 3
 
 		for i in aarray:
 			if i[0] >= xmin and i[0] < xmax and i[1] >= ymin and i[1] < ymax:
@@ -381,17 +388,17 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border=border, axislabel=axislabel, axisunitslabel=axisunitslabel, style=style, title=title)
 
 
-def array(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool=True, axislabel: bool=True, axisunitslabel: bool=True, style: int=2, color: int=2, title: Optional[str]=None) -> int:
+def array(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: int = 2, color: int = 2, title: Optional[str] = None) -> int:
 	"""Convert single array to graph and output"""
 	return arrays(height, width, xmin, xmax, ymin, ymax, [aarray], border=border, axislabel=axislabel, axisunitslabel=axisunitslabel, style=style, color=color, title=title)
 
 
-def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool=True, axislabel: bool=True, axisunitslabel: bool=True, style: int=2, color: int=2, title: Optional[str]=None) -> int:
+def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: int = 2, color: int = 2, title: Optional[str] = None) -> int:
 	"""Convert one or more functions to graph and output"""
 	if color < 0 or color >= len(colors):
 		return 1
 
-	if len(afunctions) == 0:
+	if not afunctions:
 		return 1
 
 	w = shutil.get_terminal_size()
@@ -402,8 +409,8 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 	if width == 0:
 		width = w.columns * 2
 
-	aheight = height / 4
-	awidth = width / 2
+	aheight = height // 4
+	awidth = width // 2
 
 	if aheight > w.lines:
 		print("The height of the graph ({0}) is greater then the height of the terminal ({1}).".format(
@@ -453,6 +460,6 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 	return graph(height, width, xmin, xmax, ymin, ymax, array, border=border, axislabel=axislabel, axisunitslabel=axisunitslabel, style=style, title=title)
 
 
-def function(height, width, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool=True, axislabel: bool=True, axisunitslabel: bool=True, style: int=2, color: int=2, title: Optional[str]=None) -> int:
+def function(height, width, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: int = 2, color: int = 2, title: Optional[str] = None) -> int:
 	"""Convert single function to function array and output"""
 	return functions(height, width, xmin, xmax, ymin, ymax, [afunction], border=border, axislabel=axislabel, axisunitslabel=axisunitslabel, style=style, color=color, title=title)

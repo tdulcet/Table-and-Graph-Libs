@@ -9,19 +9,28 @@ Copyright © 2018 Teal Dulcet
 
 These header only libraries use [box-drawing](https://en.wikipedia.org/wiki/Box-drawing_character#Unicode), [Braille](https://en.wikipedia.org/wiki/Braille_Patterns), [fraction](https://en.wikipedia.org/wiki/Number_Forms) and other Unicode characters and [terminal colors and formatting](https://misc.flogisoft.com/bash/tip_colors_and_formatting) to output tables and graphs/plots to the console. All the tables and graphs are created with a single (one) function call and they do not require any special data structures.
 
+See the [python](python) directory for Python ports of the libraries.
+
 ❤️ Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support these libraries and my other software development.
 
 ## Tables
 
 ### Usage
 
+Requires support for C++17. See the [tables.hpp](tables.hpp) file for full usage information.
+
 Complete versions of all of the examples below and more can be found in the [tables.cpp](tables.cpp) file.
 
-Compile with: `g++ -Wall -g -O3 tables.cpp -o tables`.
+Compile with:
 
-Run with: `./tables`.
+GCC: `g++ -std=c++17 -Wall -g -O3 tables.cpp -o tables`\
+Clang: `clang++ -std=c++17 -Wall -g -O3 tables.cpp -o tables`
+
+Run with: `./tables`
 
 #### Output char array as table
+
+##### C style char array
 
 ```cpp
 #include "tables.hpp"
@@ -36,15 +45,44 @@ int main()
 	char ***array;
 
 	// Allocate and set array
-	
+
 	tableoptions aoptions;
 	aoptions.headerrow = true;
 	aoptions.headercolumn = true;
 
-	table(rows, columns, array, NULL, NULL, aoptions);
+	table(rows, columns, array, nullptr, nullptr, aoptions);
 
 	// Deallocate array
-	
+
+	return 0;
+}
+```
+
+##### C++ string array
+
+```cpp
+#include "tables.hpp"
+
+using namespace std;
+
+int main()
+{
+	size_t rows = 5;
+	size_t columns = 5;
+
+	vector<vector<string>> array(rows, vector<string>(columns));
+
+	// Set array
+
+	string *headerrow = nullptr;
+	string *headercolumn = nullptr;
+
+	tableoptions aoptions;
+	aoptions.headerrow = true;
+	aoptions.headercolumn = true;
+
+	table(array, headerrow, headercolumn, aoptions);
+
 	return 0;
 }
 ```
@@ -55,6 +93,8 @@ Table cells can contain [Unicode characters](https://en.wikipedia.org/wiki/List_
 
 #### Output array as table with separate header row and column
 
+##### C style char array
+
 ```cpp
 #include "tables.hpp"
 
@@ -64,14 +104,14 @@ int main()
 {
 	size_t rows = 4;
 	size_t columns = 4;
-	
+
 	const char* headerrow[] = {"Header row/column 1", "Header row 2", "Header row 3", "Header row 4", "Header row 5"};
 	const char* headercolumn[] = {"Header column 2", "Header column 3", "Header column 4", "Header column 5"};
 
 	char ***array;
 
 	// Allocate and set array
-	
+
 	tableoptions aoptions;
 	aoptions.headerrow = true;
 	aoptions.headercolumn = true;
@@ -79,7 +119,38 @@ int main()
 	table(rows, columns, array, headerrow, headercolumn, aoptions);
 
 	// Deallocate array
-	
+
+	return 0;
+}
+```
+
+##### C++ string array
+
+```cpp
+#include "tables.hpp"
+
+using namespace std;
+
+int main()
+{
+	size_t rows = 5;
+	size_t columns = 5;
+
+	string headerrow[] = {"Header row/column 1", "Header row 2", "Header row 3", "Header row 4", "Header row 5"};
+	string headercolumn[] = {"Header column 2", "Header column 3", "Header column 4", "Header column 5"};
+
+	vector<vector<string>> array(rows, vector<string>(columns));
+
+	// Set array
+
+	tableoptions aoptions;
+	aoptions.headerrow = true;
+	aoptions.headercolumn = true;
+	// or with C++20:
+	// tableoptions aoptions{.headerrow = true, .headercolumn = true};
+
+	table(array, headerrow, headercolumn, aoptions);
+
 	return 0;
 }
 ```
@@ -87,6 +158,8 @@ int main()
 Output same as example above.
 
 #### Output array as table
+
+##### C style pointer
 
 ```cpp
 #include "tables.hpp"
@@ -102,10 +175,32 @@ int main()
 
 	// Allocate and set array
 
-	table(rows, columns, array, NULL, NULL, tabledefaultoptions);
+	table(rows, columns, array);
 
 	// Deallocate array
-	
+
+	return 0;
+}
+```
+
+##### C++ array/vector
+
+```cpp
+#include "tables.hpp"
+
+using namespace std;
+
+int main()
+{
+	size_t rows = 5;
+	size_t columns = 5;
+
+	vector<vector<double>> array(rows, vector<double>(columns)); // array can be any data type
+
+	// Set array
+
+	table(array);
+
 	return 0;
 }
 ```
@@ -113,6 +208,8 @@ int main()
 ![](images/array%20to%20table.png)
 
 #### Output sorted array as table
+
+##### C style pointer
 
 ```cpp
 #include <algorithm>
@@ -124,7 +221,7 @@ int dimensions; // Number of columns
 int sortdimension; // Column to sort by
 
 template <typename T>
-bool compare(const T *a, const T *b)
+bool compare(const T &a, const T &b)
 {
 	if (a[sortdimension] == b[sortdimension])
 		for (int i = 0; i < dimensions; ++i)
@@ -142,16 +239,56 @@ int main()
 	int **array; // array can be any data type
 
 	// Allocate and set array
-	
+
 	dimensions = columns;
 	sortdimension = 0;
-	
-	sort(array, array + rows, compare<int>);
 
-	table(rows, columns, array, NULL, NULL, tabledefaultoptions);
+	sort(array, array + rows, compare<int *>);
+
+	table(rows, columns, array);
 
 	// Deallocate array
-	
+
+	return 0;
+}
+```
+
+##### C++ array/vector
+
+```cpp
+#include <algorithm>
+#include "tables.hpp"
+
+using namespace std;
+
+int sortdimension; // Column to sort by
+
+template <typename T>
+bool compare(const T &a, const T &b)
+{
+	if (a[sortdimension] == b[sortdimension])
+		for (int i = 0; i < size(a); ++i)
+			if (sortdimension != i and a[i] != b[i])
+				return a[i] < b[i];
+
+	return a[sortdimension] < b[sortdimension];
+}
+
+int main()
+{
+	size_t rows = 5;
+	size_t columns = 5;
+
+	vector<vector<int>> array(rows, vector<int>(columns)); // array can be any data type
+
+	// Set array
+
+	sortdimension = 0;
+
+	sort(array.begin(), array.end(), compare<vector<int>>);
+
+	table(array);
+
 	return 0;
 }
 ```
@@ -159,6 +296,8 @@ int main()
 ![](images/sorted%20array%20to%20table.png)
 
 #### Output single function as table
+
+##### C style function pointer
 
 ```cpp
 #include "tables.hpp"
@@ -175,12 +314,37 @@ int main()
 	double xmin = -10;
 	double xmax = 10;
 	double xscl = 2;
-	
+
 	tableoptions aoptions;
 	aoptions.headerrow = true;
-	
+
 	table(xmin, xmax, xscl, afunction, aoptions);
-	
+
+	return 0;
+}
+```
+
+##### C++ lambda function
+
+```cpp
+#include "tables.hpp"
+
+using namespace std;
+
+int main()
+{
+	double xmin = -10;
+	double xmax = 10;
+	double xscl = 2;
+
+	function<double(double)> afunction = [](auto x)
+	{ return x + 1; };
+
+	tableoptions aoptions;
+	aoptions.headerrow = true;
+
+	table(xmin, xmax, xscl, afunction, aoptions);
+
 	return 0;
 }
 ```
@@ -188,6 +352,8 @@ int main()
 ![](images/function%20to%20table.png)
 
 #### Output multiple functions as table
+
+##### C style function pointer
 
 ```cpp
 #include <cmath>
@@ -210,17 +376,48 @@ int main()
 	double xmin = -10;
 	double xmax = 10;
 	double xscl = 2;
-	
+
 	size_t numfunctions = 2;
-	
+
 	// Function parameter and return value can be any data type, as long as they are the same
-	double (*functions[])(double) = {function1, function2};
-	
+	function<double(double)> functions[] = {function1, function2};
+
 	tableoptions aoptions;
 	aoptions.headerrow = true;
-	
+
 	table(xmin, xmax, xscl, numfunctions, functions, aoptions);
-	
+
+	return 0;
+}
+```
+
+##### C++ lambda function
+
+```cpp
+#include <cmath>
+#include "tables.hpp"
+
+using namespace std;
+
+int main()
+{
+	double xmin = -10;
+	double xmax = 10;
+	double xscl = 2;
+
+	size_t numfunctions = 2;
+
+	// Function parameter and return value can be any data type, as long as they are the same
+	function<double(double)> functions[] = {[](auto x)
+											{ return 2 * x; },
+											[](auto x)
+											{ return pow(x, 2); }};
+
+	tableoptions aoptions;
+	aoptions.headerrow = true;
+
+	table(xmin, xmax, xscl, numfunctions, functions, aoptions);
+
 	return 0;
 }
 ```
@@ -274,7 +471,7 @@ Default value: `false`
 #### Title
 
 Option: `title`\
-Default value: `NULL`
+Default value: `nullptr`
 
 The title is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
@@ -315,15 +512,21 @@ Values:
 
 ### Usage
 
+Requires support for C++17. See the [graphs.hpp](graphs.hpp) file for full usage information.
+
 Complete versions of all of the examples below and more can be found in the [graphs.cpp](graphs.cpp) file.
 
-Compile with: `g++ -Wall -g -O3 graphs.cpp -o graphs`.
+Compile with:
+GCC: `g++ -std=c++17 -Wall -g -O3 graphs.cpp -o graphs`\
+Clang: `clang++ -std=c++17 -Wall -g -O3 graphs.cpp -o graphs`
 
-Run with: `./graphs`.
+Run with: `./graphs`
 
 If `height` is `0`, it will be set to the current height of the terminal (number of rows times four). If `width` is `0`, it will be set to the current width of the terminal (number of columns times two).
 
-#### Output array as plot
+#### Output single array as plot
+
+##### C style pointer
 
 ```cpp
 #include "graphs.hpp"
@@ -346,10 +549,39 @@ int main()
 
 	// Allocate and set array
 
-	graph(height, width, xmin, xmax, ymin, ymax, rows, array, graphdefaultoptions);
+	graph(height, width, xmin, xmax, ymin, ymax, rows, array);
 
 	// Deallocate array
-	
+
+	return 0;
+}
+```
+
+##### C++ array/vector
+
+```cpp
+#include "graphs.hpp"
+
+using namespace std;
+
+int main()
+{
+	size_t height = 160;
+	size_t width = 160;
+
+	long double xmin = -20;
+	long double xmax = 20;
+	long double ymin = -20;
+	long double ymax = 20;
+
+	size_t rows = 10;
+
+	vector<vector<double>> array(rows, vector<double>(2)); // array can be any data type, but must have exactly two columns
+
+	// Set array
+
+	graph(height, width, xmin, xmax, ymin, ymax, array);
+
 	return 0;
 }
 ```
@@ -358,7 +590,11 @@ If `xmin` and `xmax` are both `0`, they will be set to the respective minimum an
 
 ![](images/array%20to%20plot.png)
 
+Use `graph()` to plot multiple arrays, which can be of different sizes.
+
 #### Output single function as graph
+
+##### C style function pointer
 
 ```cpp
 #include "graphs.hpp"
@@ -380,8 +616,34 @@ int main()
 	long double ymin = -20;
 	long double ymax = 20;
 
-	graph(height, width, xmin, xmax, ymin, ymax, afunction, graphdefaultoptions);
-	
+	graph(height, width, xmin, xmax, ymin, ymax, afunction);
+
+	return 0;
+}
+```
+
+##### C++ lambda function
+
+```cpp
+#include "graphs.hpp"
+
+using namespace std;
+
+int main()
+{
+	size_t height = 160;
+	size_t width = 160;
+
+	long double xmin = -20;
+	long double xmax = 20;
+	long double ymin = -20;
+	long double ymax = 20;
+
+	function<double(double)> afunction = [](auto x)
+	{ return x + 1; };
+
+	graph(height, width, xmin, xmax, ymin, ymax, afunction);
+
 	return 0;
 }
 ```
@@ -389,6 +651,8 @@ int main()
 ![](images/function%20to%20graph.png)
 
 #### Output multiple functions as graph
+
+##### C style function pointer
 
 ```cpp
 #include "graphs.hpp"
@@ -414,14 +678,45 @@ int main()
 	long double xmax = 20;
 	long double ymin = -20;
 	long double ymax = 20;
-	
-	size_t numfunctions = 2;
-	
-	// Function parameter and return value can be any data type, as long as they are the same
-	double (*functions[])(double) = {function1, function2};
 
-	graph(height, width, xmin, xmax, ymin, ymax, numfunctions, functions, graphdefaultoptions);
-	
+	size_t numfunctions = 2;
+
+	// Function parameter and return value can be any data type, as long as they are the same
+	function<double(double)> functions[] = {function1, function2};
+
+	graph(height, width, xmin, xmax, ymin, ymax, numfunctions, functions);
+
+	return 0;
+}
+```
+
+##### C++ lambda function
+
+```cpp
+#include "graphs.hpp"
+
+using namespace std;
+
+int main()
+{
+	size_t height = 160;
+	size_t width = 160;
+
+	long double xmin = -20;
+	long double xmax = 20;
+	long double ymin = -20;
+	long double ymax = 20;
+
+	size_t numfunctions = 2;
+
+	// Function parameter and return value can be any data type, as long as they are the same
+	function<double(double)> functions[] = {[](auto x)
+											{ return 2 * x; },
+											[](auto x)
+											{ return pow(x, 2); }};
+
+	graph(height, width, xmin, xmax, ymin, ymax, numfunctions, functions);
+
 	return 0;
 }
 ```
@@ -452,7 +747,7 @@ Requires `border` and `axislabel` to be `true`.
 #### Title
 
 Option: `title`\
-Default value: `NULL`
+Default value: `nullptr`
 
 The title is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
@@ -543,5 +838,4 @@ Both:
 * Port to other languages (C, Java, Rust, etc.)
 
 C++:
-* Handle formatted text in the tables
-* Support plotting multiple arrays of different sizes
+* Support tables with the `wchar_t`, `char16_t` and `char32_t` C data types and the `wstring`, `u16string` and `u32string` C++ data types.
