@@ -55,6 +55,12 @@ namespace graphs
 
 	const options defaultoptions;
 
+	template <typename T>
+	auto size(const T &array)
+	{
+		return distance(begin(array), end(array));
+	}
+
 	// Number of columns needed to represent the string
 	// Adapted from: https://stackoverflow.com/a/31124065
 	int strcol(const char *const str)
@@ -159,7 +165,7 @@ namespace graphs
 		long double intpart = 0;
 		long double fractionpart = abs(modf(label, &intpart));
 
-		for (unsigned int i = 0; i < size(fractions) and !output; ++i)
+		for (unsigned int i = 0; i < graphs::size(fractions) and !output; ++i)
 		{
 			if (abs(fractionpart - fractionvalues[i]) < DBL_EPSILON)
 			{
@@ -217,7 +223,7 @@ namespace graphs
 	// Output graph
 	int graph(const size_t height, const size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const vector<vector<unsigned short>> &array, const options &aoptions)
 	{
-		if (!size(array))
+		if (!graphs::size(array))
 			return 1;
 
 		const bool border = aoptions.border;
@@ -226,7 +232,7 @@ namespace graphs
 		const char *const title = aoptions.title;
 		const unsigned int style = aoptions.style;
 
-		if (style >= size(styles))
+		if (style >= graphs::size(styles))
 			return 1;
 
 		if (height == 0)
@@ -492,12 +498,12 @@ namespace graphs
 	template <typename T>
 	int arrays(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &arrays, const options &aoptions = defaultoptions)
 	{
-		if (!size(arrays))
+		if (!graphs::size(arrays))
 			return 1;
 
 		if (!all_of(begin(arrays), end(arrays), [](const auto &array)
 					{ return all_of(begin(array), end(array), [](const auto &x)
-									{ return size(x) == 2; }); }))
+									{ return graphs::size(x) == 2; }); }))
 		{
 			cerr << "Error: The arrays must have two columns.";
 			return 1;
@@ -505,7 +511,7 @@ namespace graphs
 
 		const unsigned int color = aoptions.color;
 
-		if (color >= size(colors))
+		if (color >= graphs::size(colors))
 			return 1;
 
 		struct winsize w;
@@ -571,12 +577,12 @@ namespace graphs
 
 		vector<vector<unsigned short>> aarray(width, vector<unsigned short>(height, 0));
 
-		for (unsigned int j = 0; j < size(arrays); ++j)
+		for (unsigned int j = 0; j < graphs::size(arrays); ++j)
 		{
 			auto array = arrays[j];
-			const unsigned int color = (j % (size(colors) - 2)) + 3;
+			const unsigned int color = (j % (graphs::size(colors) - 2)) + 3;
 
-			for (unsigned int i = 0; i < size(array); ++i)
+			for (unsigned int i = 0; i < graphs::size(array); ++i)
 			{
 				if (array[i][0] >= xmin and array[i][0] < xmax and array[i][1] >= ymin and array[i][1] < ymax)
 				{
@@ -627,7 +633,7 @@ namespace graphs
 	{
 		const unsigned int color = aoptions.color;
 
-		if (color >= size(colors))
+		if (color >= graphs::size(colors))
 			return 1;
 
 		if (numfunctions == 0)
@@ -680,7 +686,7 @@ namespace graphs
 
 		for (unsigned int j = 0; j < numfunctions; ++j)
 		{
-			unsigned short acolor = numfunctions == 1 ? color + 1 : (j % (size(colors) - 2)) + 3;
+			unsigned short acolor = numfunctions == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
 
 			for (long double i = 0; i < rows; i += 0.5)
 			{

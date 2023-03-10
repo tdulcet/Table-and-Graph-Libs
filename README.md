@@ -17,14 +17,14 @@ See the [python](python) directory for Python ports of the libraries.
 
 ### Usage
 
-Requires support for C++17. See the [tables.hpp](tables.hpp) file for full usage information.
+Requires support for C++14. See the [tables.hpp](tables.hpp) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [tables.cpp](tables.cpp) file.
 
 Compile with:
 
-GCC: `g++ -std=c++17 -Wall -g -O3 tables.cpp -o tables`\
-Clang: `clang++ -std=c++17 -Wall -g -O3 tables.cpp -o tables`
+GCC: `g++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`\
+Clang: `clang++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`
 
 Run with: `./tables`
 
@@ -267,7 +267,7 @@ template <typename T>
 bool compare(const T &a, const T &b)
 {
 	if (a[sortdimension] == b[sortdimension])
-		for (int i = 0; i < size(a); ++i)
+		for (int i = 0; i < tables::size(a); ++i)
 			if (sortdimension != i and a[i] != b[i])
 				return a[i] < b[i];
 
@@ -512,13 +512,13 @@ Values:
 
 ### Usage
 
-Requires support for C++17. See the [graphs.hpp](graphs.hpp) file for full usage information.
+Requires support for C++14. See the [graphs.hpp](graphs.hpp) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [graphs.cpp](graphs.cpp) file.
 
 Compile with:
-GCC: `g++ -std=c++17 -Wall -g -O3 graphs.cpp -o graphs`\
-Clang: `clang++ -std=c++17 -Wall -g -O3 graphs.cpp -o graphs`
+GCC: `g++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`\
+Clang: `clang++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`
 
 Run with: `./graphs`
 

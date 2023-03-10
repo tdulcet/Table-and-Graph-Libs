@@ -1,6 +1,6 @@
 // Teal Dulcet, CS546
 
-// Compile: g++ -Wall -g -O3 -std=c++17 tables.cpp -o tables
+// Compile: g++ -Wall -g -O3 -std=c++14 tables.cpp -o tables
 
 // Run: ./tables
 
@@ -96,7 +96,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -120,7 +120,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -136,7 +136,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -155,7 +155,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -179,7 +179,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -195,7 +195,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -217,7 +217,7 @@ int main()
 		aoptions.headercolumn = true;
 		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -236,7 +236,7 @@ int main()
 		aoptions.headercolumn = true;
 		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -263,7 +263,7 @@ int main()
 		aoptions.headercolumn = true;
 		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -286,7 +286,7 @@ int main()
 		vector<string> aheadercolumn(headerrow, headerrow + 1);
 		aheadercolumn.insert(aheadercolumn.end(), headercolumn, headercolumn + columns - 1);
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			{
 				tables::options aoptions;
@@ -413,7 +413,7 @@ int main()
 		aoptions.boolalpha = true;
 		// tables::options aoptions{.boolalpha = true};
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -448,7 +448,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -477,7 +477,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -498,7 +498,7 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -512,7 +512,7 @@ int main()
 		aoptions.headerrow = true;
 		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -527,7 +527,7 @@ int main()
 		aoptions.headerrow = true;
 		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -543,7 +543,7 @@ int main()
 		aoptions.headerrow = true;
 		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -560,7 +560,7 @@ int main()
 		aoptions.headerrow = true;
 		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < size(tables::styles); ++k)
+		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
 		{
 			aoptions.style = k;
 
