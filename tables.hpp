@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <vector>
 #include <iterator>
+#include <numeric>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <regex>
@@ -16,6 +17,19 @@
 namespace tables
 {
 	using namespace std;
+
+	enum style_type
+	{
+		style_ASCII,
+		style_basic,
+		style_light,
+		style_heavy,
+		style_double,
+		style_light_dashed,
+		style_heavy_dashed
+	};
+
+	enum style_type const style_types[] = {style_ASCII, style_basic, style_light, style_heavy, style_double, style_light_dashed, style_heavy_dashed};
 
 	const char *const styles[][11] = {
 		{"-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, // ASCII
@@ -28,7 +42,7 @@ namespace tables
 	};
 	// {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}};//No border
 
-	regex ansi(R"(\x1B\[(?:[0-9]+(?:;[0-9]+)*)?m)");
+	const regex ansi(R"(\x1B\[(?:[0-9]+(?:;[0-9]+)*)?m)");
 
 	struct options
 	{
@@ -40,13 +54,14 @@ namespace tables
 		ios_base &(*alignment)(ios_base &) = left;
 		bool boolalpha = false;
 		const char *title = nullptr;
-		unsigned int style = 2;
+		style_type style = style_light;
+		bool check = true;
 	};
 
 	const options defaultoptions;
 
 	template <typename T>
-	auto size(const T &array)
+	constexpr size_t size(const T &array)
 	{
 		return distance(begin(array), end(array));
 	}
@@ -74,11 +89,11 @@ namespace tables
 		}
 		++length;
 
-		wchar_t *wcstring = new wchar_t[length];
+		auto *wcstring = new wchar_t[length];
 
 		if (mbstowcs(wcstring, str, length) == static_cast<size_t>(-1))
 		{
-			if (wcstring != nullptr)
+			if (wcstring)
 				delete[] wcstring;
 
 			cerr << "\nError! mbstowcs failed. Invalid multibyte character.\n";
@@ -92,7 +107,7 @@ namespace tables
 			exit(1);
 		}
 
-		if (wcstring != nullptr)
+		if (wcstring)
 			delete[] wcstring;
 
 		return width;
@@ -103,8 +118,7 @@ namespace tables
 	// Adapted from: https://stackoverflow.com/a/42016346 and https://stackoverflow.com/a/13094734
 	string wrap(const char *const str, const size_t line_length)
 	{
-		char words[strlen(str) + 1];
-		strcpy(words, str);
+		string words = str;
 		string wrapped;
 
 		size_t index = 0;
@@ -127,7 +141,7 @@ namespace tables
 				}
 
 				char temp[templinelen + 1];
-				strncpy(temp, words + (index - linelen), templinelen);
+				strncpy(temp, words.data() + (index - linelen), templinelen);
 				temp[templinelen] = '\0';
 
 				size_t width = strcol(temp);
@@ -163,76 +177,83 @@ namespace tables
 		const bool cellborder = aoptions.cellborder;
 		const unsigned int padding = aoptions.padding;
 		const char *const title = aoptions.title;
-		const unsigned int style = aoptions.style;
-
-		if (style >= tables::size(styles))
-			return 1;
+		const style_type style = aoptions.style;
 
 		const size_t rows = array.size();
 		const size_t columns = array[0].size();
 
 		int columnwidth[columns];
-		for (unsigned int j = 0; j < columns; ++j)
+		for (size_t j = 0; j < columns; ++j)
 			columnwidth[j] = 0;
 
-		int width = 0;
+		setlocale(LC_ALL, "");
 
-		setlocale(LC_CTYPE, "");
-
-		for (unsigned int j = 0; j < columns; ++j)
+		for (size_t j = 0; j < columns; ++j)
 		{
-			for (unsigned int i = 0; i < rows; ++i)
+			for (size_t i = 0; i < rows; ++i)
 			{
-				int cellwidth = strcol(array[i][j].c_str());
+				const int cellwidth = strcol(array[i][j].c_str());
 				if (cellwidth > columnwidth[j])
 					columnwidth[j] = cellwidth;
 			}
-
-			width += columnwidth[j];
 		}
 
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+		size_t width = accumulate(columnwidth, columnwidth + columns, 0ul);
 
 		if (tableborder or cellborder or headerrow or headercolumn)
 			width += (((2 * padding) + 1) * columns) + (tableborder ? 1 : -1);
 		else
 			width += (2 * padding) * columns;
 
-		if (width > w.ws_col)
+		if (aoptions.check)
 		{
-			cerr << "The width of the table (" << width << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
-			return 1;
+			if (width > w.ws_col)
+			{
+				cerr << "The width of the table (" << width << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
+				return 1;
+			}
 		}
 
-		if (title != nullptr and title[0] != '\0')
-			cout << wrap(title, w.ws_col) << "\n";
+		if (title and title[0] != '\0')
+			cout << wrap(title, width) << "\n";
+
+		if (aoptions.alignment)
+			cout << aoptions.alignment;
 
 		if (tableborder)
 		{
 			cout << styles[style][2];
 
-			for (unsigned int j = 0; j < columns; ++j)
+			for (size_t j = 0; j < columns; ++j)
 			{
-				for (unsigned int k = 0; k < (2 * padding) + columnwidth[j]; ++k)
+				for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
 					cout << styles[style][0];
 
-				if (j == (columns - 1))
-					cout << styles[style][4] << "\n";
-				else if (cellborder or headerrow or (j == 0 and headercolumn))
-					cout << styles[style][3];
-				else
-					cout << styles[style][0];
+				if (j < (columns - 1))
+				{
+					if (cellborder or headerrow or (j == 0 and headercolumn))
+						cout << styles[style][3];
+					else
+						cout << styles[style][0];
+				}
 			}
+
+			cout << styles[style][4] << "\n";
 		}
 
-		for (unsigned int i = 0; i < rows; ++i)
+		for (size_t i = 0; i < rows; ++i)
 		{
-			for (unsigned int j = 0; j < columns; ++j)
+			if (tableborder)
+				cout << styles[style][1];
+
+			for (size_t j = 0; j < columns; ++j)
 			{
-				if ((j == 0 and tableborder) or (j > 0 and cellborder) or (i == 0 and j > 0 and headerrow) or (j == 1 and headercolumn))
+				if ((j and cellborder) or (i == 0 and j and headerrow) or (j == 1 and headercolumn))
 					cout << styles[style][1];
-				else if (tableborder or (i > 0 and j > 0 and headerrow) or (j > 1 and headercolumn))
+				else if (j and (tableborder or (i and headerrow) or headercolumn))
 					cout << " ";
 
 				const int difference = columnwidth[j] - strcol(array[i][j].c_str());
@@ -251,7 +272,7 @@ namespace tables
 				{
 					cout << string(padding, ' ');
 
-					cout << aoptions.alignment << setw(difference + array[i][j].length()) << array[i][j];
+					cout << setw(difference + array[i][j].length()) << array[i][j];
 
 					cout << string(padding, ' ');
 				}
@@ -272,29 +293,15 @@ namespace tables
 
 			if ((i == (rows - 1) and tableborder) or (i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and headercolumn))
 			{
-				for (unsigned int j = 0; j < columns; ++j)
+				for (size_t j = 0; j < columns; ++j)
 				{
 					if ((i == (rows - 1) and tableborder) or (i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and j == 0 and headercolumn))
-						for (unsigned int k = 0; k < (2 * padding) + columnwidth[j]; ++k)
+						for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
 							cout << styles[style][0];
 					else if (i < (rows - 1) and headercolumn)
 						cout << string((2 * padding) + columnwidth[j], ' ');
 
-					if (j == (columns - 1))
-					{
-						if (tableborder)
-						{
-							if (i == (rows - 1))
-								cout << styles[style][10];
-							else if (cellborder or (i == 0 and headerrow))
-								cout << styles[style][7];
-							else if (headercolumn)
-								cout << styles[style][1];
-						}
-
-						cout << "\n";
-					}
-					else
+					if (j < (columns - 1))
 					{
 						if (i == (rows - 1) and tableborder)
 						{
@@ -316,6 +323,19 @@ namespace tables
 						}
 					}
 				}
+
+				if (tableborder)
+				{
+					if (i == (rows - 1))
+						cout << styles[style][10];
+					else if (cellborder or (i == 0 and headerrow))
+						cout << styles[style][7];
+					else if (headercolumn)
+						cout << styles[style][1];
+				}
+
+				if (i < (rows - 1))
+					cout << "\n";
 			}
 		}
 
@@ -331,30 +351,30 @@ namespace tables
 		if (!tables::size(aarray))
 			return 1;
 
-		unsigned int i = 0;
-		unsigned int j = 0;
+		size_t i = 0;
+		size_t j = 0;
 
 		size_t rows = tables::size(aarray);
 		size_t columns = tables::size(aarray[0]);
 
-		if (!all_of(begin(aarray), end(aarray), [columns](auto &x)
+		if (!all_of(begin(aarray), end(aarray), [columns](const auto &x)
 					{ return tables::size(x) == columns; }))
 		{
-			cerr << "Error: The rows of the array must have the same number of columns.";
+			cerr << "Error: The rows of the array must have the same number of columns.\n";
 			return 1;
 		}
 
-		if (headerrow != nullptr)
+		if (headerrow)
 			++rows;
 
-		if (headercolumn != nullptr)
+		if (headercolumn)
 			++columns;
 
 		vector<vector<string>> aaarray(rows, vector<string>(columns));
 
-		if (headerrow != nullptr)
+		if (headerrow)
 		{
-			for (unsigned int j = 0; j < columns; ++j)
+			for (size_t j = 0; j < columns; ++j)
 			{
 				aaarray[i][j] = headerrow[j];
 			}
@@ -362,13 +382,13 @@ namespace tables
 			++i;
 		}
 
-		for (unsigned int ii = 0; i < rows; ++i)
+		for (size_t ii = 0; i < rows; ++i)
 		{
-			if (headercolumn != nullptr)
+			if (headercolumn)
 			{
-				unsigned int ii = i;
+				size_t ii = i;
 
-				if (headerrow != nullptr)
+				if (headerrow)
 					--ii;
 
 				aaarray[i][j] = headercolumn[ii];
@@ -376,7 +396,7 @@ namespace tables
 				++j;
 			}
 
-			for (unsigned int jj = 0; j < columns; ++j)
+			for (size_t jj = 0; j < columns; ++j)
 			{
 				ostringstream strm;
 
@@ -400,7 +420,7 @@ namespace tables
 	int array(const size_t rows, const size_t columns, T **aarray, const char *const headerrow[] = nullptr, const char *const headercolumn[] = nullptr, const options &aoptions = defaultoptions)
 	{
 		vector<vector<T>> aaarray(rows, vector<T>(columns));
-		for (unsigned int i = 0; i < rows; ++i)
+		for (size_t i = 0; i < rows; ++i)
 			copy(aarray[i], aarray[i] + columns, aaarray[i].begin());
 
 		string *aheaderrow = nullptr;
@@ -434,7 +454,7 @@ namespace tables
 
 	// Convert one or more functions to array and output as table
 	template <typename T>
-	int functions(const long double xmin, const long double xmax, const long double xscl, const size_t numfunctions, function<T(T)> functions[], const options &aoptions = defaultoptions)
+	int functions(const long double xmin, const long double xmax, const long double xstep, const size_t numfunctions, function<T(T)> functions[], const options &aoptions = defaultoptions)
 	{
 		if (numfunctions == 0)
 			return 1;
@@ -445,13 +465,13 @@ namespace tables
 			return 1;
 		}
 
-		if (xscl <= 0)
+		if (xstep <= 0)
 		{
-			cerr << "xscl must be greater than zero.\n";
+			cerr << "xstep must be greater than zero.\n";
 			return 1;
 		}
 
-		const size_t rows = ((xmax - xmin) * xscl) + 1;
+		const size_t rows = ((xmax - xmin) / xstep) + 1;
 		const size_t columns = numfunctions + 1;
 
 		const char *const aheaderrow[] = {"x", "y"};
@@ -459,9 +479,9 @@ namespace tables
 
 		const size_t length = tables::size(aheaderrow);
 
-		string *headerrow = new string[columns];
+		auto *headerrow = new string[columns];
 
-		for (unsigned int j = 0; j < columns; ++j)
+		for (size_t j = 0; j < columns; ++j)
 		{
 			if (j < (length - 1) or numfunctions == 1)
 			{
@@ -478,7 +498,7 @@ namespace tables
 		string *headercolumn = nullptr;
 		// headercolumn = new string[rows + 1];
 
-		// for (unsigned int i = 0; i < rows + 1; ++i)
+		// for (size_t i = 0; i < rows + 1; ++i)
 		// {
 		// ostringstream strm;
 		// strm << i + 1;
@@ -487,22 +507,22 @@ namespace tables
 
 		vector<vector<T>> aarray(rows, vector<T>(columns));
 
-		for (unsigned int i = 0; i < rows; ++i)
+		for (size_t i = 0; i < rows; ++i)
 		{
-			aarray[i][0] = (i / xscl) + xmin;
+			aarray[i][0] = (i * xstep) + xmin;
 
-			for (unsigned int j = 0; j < numfunctions; ++j)
+			for (size_t j = 0; j < numfunctions; ++j)
 				aarray[i][j + 1] = (functions[j])(aarray[i][0]);
 		}
 
 		int code = array(aarray, headerrow, headercolumn, aoptions);
 
-		if (headerrow != nullptr)
+		if (headerrow)
 		{
 			delete[] headerrow;
 		}
 
-		// if (headercolumn != nullptr)
+		// if (headercolumn)
 		// {
 		// delete[] headercolumn;
 		// }
@@ -512,20 +532,20 @@ namespace tables
 
 	// Convert single function to array and output as table
 	template <typename T>
-	int function(const long double xmin, const long double xmax, const long double xscl, const function<T(T)> &afunction, const options &aoptions = defaultoptions)
+	int function(const long double xmin, const long double xmax, const long double xstep, const function<T(T)> &afunction, const options &aoptions = defaultoptions)
 	{
 		std::function<T(T)> afunctions[] = {afunction};
 
-		return functions(xmin, xmax, xscl, 1, afunctions, aoptions);
+		return functions(xmin, xmax, xstep, 1, afunctions, aoptions);
 	}
 
 	// Convert single function to array and output as table
 	template <typename T>
-	int function(const long double xmin, const long double xmax, const long double xscl, T afunction(T), const options &aoptions = defaultoptions)
+	int function(const long double xmin, const long double xmax, const long double xstep, T afunction(T), const options &aoptions = defaultoptions)
 	{
 		std::function<T(T)> afunctions[] = {afunction};
 
-		return functions(xmin, xmax, xscl, 1, afunctions, aoptions);
+		return functions(xmin, xmax, xstep, 1, afunctions, aoptions);
 	}
 
 }

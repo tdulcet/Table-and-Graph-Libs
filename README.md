@@ -22,9 +22,8 @@ Requires support for C++14. See the [tables.hpp](tables.hpp) file for full usage
 Complete versions of all of the examples below and more can be found in the [tables.cpp](tables.cpp) file.
 
 Compile with:
-
-GCC: `g++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`\
-Clang: `clang++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`
+* GCC: `g++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`
+* Clang: `clang++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`
 
 Run with: `./tables`
 
@@ -313,12 +312,12 @@ int main()
 {
 	double xmin = -10;
 	double xmax = 10;
-	double xscl = 2;
+	double xstep = 0.5;
 
 	tables::options aoptions;
 	aoptions.headerrow = true;
 
-	tables::function(xmin, xmax, xscl, afunction, aoptions);
+	tables::function(xmin, xmax, xstep, afunction, aoptions);
 
 	return 0;
 }
@@ -335,7 +334,7 @@ int main()
 {
 	double xmin = -10;
 	double xmax = 10;
-	double xscl = 2;
+	double xstep = 0.5;
 
 	function<double(double)> afunction = [](auto x)
 	{ return x + 1; };
@@ -343,7 +342,7 @@ int main()
 	tables::options aoptions;
 	aoptions.headerrow = true;
 
-	tables::function(xmin, xmax, xscl, afunction, aoptions);
+	tables::function(xmin, xmax, xstep, afunction, aoptions);
 
 	return 0;
 }
@@ -375,7 +374,7 @@ int main()
 {
 	double xmin = -10;
 	double xmax = 10;
-	double xscl = 2;
+	double xstep = 0.5;
 
 	size_t numfunctions = 2;
 
@@ -385,7 +384,7 @@ int main()
 	tables::options aoptions;
 	aoptions.headerrow = true;
 
-	tables::functions(xmin, xmax, xscl, numfunctions, functions, aoptions);
+	tables::functions(xmin, xmax, xstep, numfunctions, functions, aoptions);
 
 	return 0;
 }
@@ -403,7 +402,7 @@ int main()
 {
 	double xmin = -10;
 	double xmax = 10;
-	double xscl = 2;
+	double xstep = 0.5;
 
 	size_t numfunctions = 2;
 
@@ -416,7 +415,7 @@ int main()
 	tables::options aoptions;
 	aoptions.headerrow = true;
 
-	tables::functions(xmin, xmax, xscl, numfunctions, functions, aoptions);
+	tables::functions(xmin, xmax, xstep, numfunctions, functions, aoptions);
 
 	return 0;
 }
@@ -460,8 +459,10 @@ Default value: `1`
 Option: `alignment`\
 Values:
 
+* `nullptr`
 * `left` (default)
 * `right`
+* `internal` (integer and floating-point types only)
 
 #### bool to alpha
 
@@ -480,27 +481,34 @@ The title is word wrapped based on the current width of the terminal, using [thi
 Option: `style`\
 Values:
 
-0. ASCII
+0. `style_ASCII`: ASCII
 
 	![](images/ASCII%20table.png)
-1. Basic
+1. `style_basic`: Basic
 
 	![](images/basic%20table.png)
-2. Light (default)
+2. `style_light`: Light (default)
 
 	![](images/light%20table.png)
-3. Heavy
+3. `style_heavy`: Heavy
 
 	![](images/heavy%20table.png)
-4. Double
+4. `style_double`: Double
 
 	![](images/double%20table.png)
-5. Light Dashed
+5. `style_light_dashed`: Light Dashed
 
 	![](images/light%20dashed%20table.png)
-6. Heavy Dashed
+6. `style_heavy_dashed`: Heavy Dashed
 
 	![](images/heavy%20dashed%20table.png)
+
+#### Check size
+
+Option: `check`\
+Default value: `true`
+
+Check that the width of the table is not greater then the width of the terminal.
 
 ### Other C++ Console Tables Libraries
 
@@ -517,8 +525,8 @@ Requires support for C++14. See the [graphs.hpp](graphs.hpp) file for full usage
 Complete versions of all of the examples below and more can be found in the [graphs.cpp](graphs.cpp) file.
 
 Compile with:
-GCC: `g++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`\
-Clang: `clang++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`
+* GCC: `g++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`
+* Clang: `clang++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`
 
 Run with: `./graphs`
 
@@ -756,25 +764,25 @@ The title is word wrapped based on the current width of the terminal, using [thi
 Option: `style`\
 Values:
 
-0. ASCII
+0. `style_ASCII`: ASCII
 
 	![](images/ASCII%20graph.png)
-1. Basic
+1. `style_basic`: Basic
 
 	![](images/basic%20graph.png)
-2. Light (default)
+2. `style_light`: Light (default)
 
 	![](images/light%20graph.png)
-3. Heavy
+3. `style_heavy`: Heavy
 
 	![](images/heavy%20graph.png)
-4. Double
+4. `style_double`: Double
 
 	![](images/double%20graph.png)
-5. Light Dashed
+5. `style_light_dashed`: Light Dashed
 
 	![](images/light%20dashed%20graph.png)
-6. Heavy Dashed
+6. `style_heavy_dashed`: Heavy Dashed
 
 	![](images/heavy%20dashed%20graph.png)
 
@@ -783,27 +791,25 @@ Values:
 Option: `color`\
 Values:
 
-0. System default
-1. Black
-2. Red (default)
-3. Green
-4. Yellow
-5. Blue
-6. Cyan
-7. Light gray
-8. Dark gray
-9. Light red
-10. Light green
-11. Light yellow
-12. Light blue
-13. Light cyan
-14. White
+0. `color_default`: System default
+1. `color_black`: Black
+2. `color_red`: Red (default)
+3. `color_green`: Green
+4. `color_yellow`: Yellow
+5. `color_blue`: Blue
+6. `color_cyan`: Cyan
+7. `color_light_gray`: Light gray
+8. `color_dark_gray`: Dark gray
+9. `color_light_red`: Light red
+10. `color_light_green`: Light green
+11. `color_light_yellow`: Light yellow
+12. `color_light_blue`: Light blue
+13. `color_light_cyan`: Light cyan
+14. `color_white`: White
 
 See [here](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text) for examples of the colors.
 
-Only used for plots and when graphing a single function.
-
-When graphing multiple functions, colors `2` - `14` are used inorder. Color `0` is used where the functions cross.
+Only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 14 are used inorder. The system default color is used where the plots cross.
 
 ##### Plot
 
@@ -812,6 +818,13 @@ When graphing multiple functions, colors `2` - `14` are used inorder. Color `0` 
 ##### Graph
 
 ![](images/graph%20colors.png)
+
+#### Check size
+
+Option: `check`\
+Default value: `true`
+
+Check that the width and height of the graph are not greater then the respective width and height of the terminal.
 
 ### Other C++ Console Graphs/Plots Libraries
 

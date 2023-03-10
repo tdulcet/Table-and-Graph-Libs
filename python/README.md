@@ -2,7 +2,7 @@
 
 ### Usage
 
-Requires Python 3.5 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`. See the [tables.py](tables.py) file for full usage information.
+Requires Python 3.6 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`. See the [tables.py](tables.py) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
 
@@ -75,9 +75,9 @@ def afunction(x):
 
 xmin = -10
 xmax = 10
-xscl = 2
+xstep = 0.5
 
-tables.function(xmin, xmax, xscl, afunction, headerrow=True)
+tables.function(xmin, xmax, xstep, afunction, headerrow=True)
 ```
 
 ![](../images/function%20to%20table.png)
@@ -89,11 +89,11 @@ import tables
 
 xmin = -10
 xmax = 10
-xscl = 2
+xstep = 0.5
 
 afunction = lambda x: x + 1
 
-tables.function(xmin, xmax, xscl, afunction, headerrow=True)
+tables.function(xmin, xmax, xstep, afunction, headerrow=True)
 ```
 
 Output same as example above.
@@ -111,12 +111,12 @@ def function2(x):
 
 xmin = -10
 xmax = 10
-xscl = 2
+xstep = 0.5
 
 # Function parameter and return value can be any data type, as long as they are the same
 functions = [function1, function2]
 
-tables.functions(xmin, xmax, xscl, functions, headerrow=True)
+tables.functions(xmin, xmax, xstep, functions, headerrow=True)
 ```
 
 ![](../images/multiple%20functions%20to%20table.png)
@@ -128,12 +128,12 @@ import tables
 
 xmin = -10
 xmax = 10
-xscl = 2
+xstep = 0.5
 
 # Function parameter and return value can be any data type, as long as they are the same
 functions = [lambda x: 2 * x, lambda x: x ** 2]
 
-tables.functions(xmin, xmax, xscl, functions, headerrow=True)
+tables.functions(xmin, xmax, xstep, functions, headerrow=True)
 ```
 
 Output same as example above.
@@ -174,7 +174,8 @@ Default value: `1`
 Option: `alignment`\
 Values:
 
-* `False` (left, default)
+* `None` (default)
+* `False` (left)
 * `True` (right)
 
 #### Title
@@ -189,33 +190,40 @@ The title is word wrapped based on the current width of the terminal. Handles ne
 Option: `style`\
 Values:
 
-0. ASCII
+0. `style_types.ASCII`: ASCII
 
 	![](../images/ASCII%20table.png)
-1. Basic
+1. `style_types.basic`: Basic
 
 	![](../images/basic%20table.png)
-2. Light (default)
+2. `style_types.light`: Light (default)
 
 	![](../images/light%20table.png)
-3. Heavy
+3. `style_types.heavy`: Heavy
 
 	![](../images/heavy%20table.png)
-4. Double
+4. `style_types.double`: Double
 
 	![](../images/double%20table.png)
-5. Light Dashed
+5. `style_types.light_dashed`: Light Dashed
 
 	![](../images/light%20dashed%20table.png)
-6. Heavy Dashed
+6. `style_types.heavy_dashed`: Heavy Dashed
 
 	![](../images/heavy%20dashed%20table.png)
+
+#### Check size
+
+Option: `check`\
+Default value: `True`
+
+Check that the width of the table is not greater then the width of the terminal.
 
 ## Graphs/Plots
 
 ### Usage
 
-Requires Python 3.5 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`. See the [graphs.py](graphs.py) file for full usage information.
+Requires Python 3.6 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`. See the [graphs.py](graphs.py) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
 
@@ -369,25 +377,25 @@ The title is word wrapped based on the current width of the terminal. Handles ne
 Option: `style`\
 Values:
 
-0. ASCII
+0. `style_types.ASCII`: ASCII
 
 	![](../images/ASCII%20graph.png)
-1. Basic
+1. `style_types.basic`: Basic
 
 	![](../images/basic%20graph.png)
-2. Light (default)
+2. `style_types.light`: Light (default)
 
 	![](../images/light%20graph.png)
-3. Heavy
+3. `style_types.heavy`: Heavy
 
 	![](../images/heavy%20graph.png)
-4. Double
+4. `style_types.double`: Double
 
 	![](../images/double%20graph.png)
-5. Light Dashed
+5. `style_types.light_dashed`: Light Dashed
 
 	![](../images/light%20dashed%20graph.png)
-6. Heavy Dashed
+6. `style_types.heavy_dashed`: Heavy Dashed
 
 	![](../images/heavy%20dashed%20graph.png)
 
@@ -396,27 +404,25 @@ Values:
 Option: `color`\
 Values:
 
-0. System default
-1. Black
-2. Red (default)
-3. Green
-4. Yellow
-5. Blue
-6. Cyan
-7. Light gray
-8. Dark gray
-9. Light red
-10. Light green
-11. Light yellow
-12. Light blue
-13. Light cyan
-14. White
+0. `color_types.default`: System default
+1. `color_types.black`: Black
+2. `color_types.red`: Red (default)
+3. `color_types.green`: Green
+4. `color_types.yellow`: Yellow
+5. `color_types.blue`: Blue
+6. `color_types.cyan`: Cyan
+7. `color_types.dark_gray`: Light gray
+8. `color_types.dark_gray`: Dark gray
+9. `color_types.light_red`: Light red
+10. `color_types.light_green`: Light green
+11. `color_types.light_yellow`: Light yellow
+12. `color_types.light_blue`: Light blue
+13. `color_types.light_cyan`: Light cyan
+14. `color_types.white`: White
 
 See [here](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text) for examples of the colors.
 
-Only used for plots and when graphing a single function.
-
-When graphing multiple functions, colors `2` - `14` are used inorder. Color `0` is used where the functions cross.
+Only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 14 are used inorder. The system default color is used where the plots cross.
 
 ##### Plot
 
@@ -425,3 +431,10 @@ When graphing multiple functions, colors `2` - `14` are used inorder. Color `0` 
 ##### Graph
 
 ![](../images/graph%20colors.png)
+
+#### Check size
+
+Option: `check`\
+Default value: `True`
+
+Check that the width and height of the graph are not greater then the respective width and height of the terminal.

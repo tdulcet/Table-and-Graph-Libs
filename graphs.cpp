@@ -68,14 +68,14 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
+		for (const graphs::style_type style : graphs::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			graphs::array(height, width, xmin, xmax, ymin, ymax, rows, array, aoptions);
 		}
 
-		if (array != nullptr)
+		if (array)
 		{
 			for (unsigned int i = 0; i < rows; ++i)
 				delete[] array[i];
@@ -92,9 +92,9 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
+		for (const graphs::style_type style : graphs::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			graphs::array(height, width, xmin, xmax, ymin, ymax, aarray, aoptions);
 		}
@@ -108,9 +108,9 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
+		for (const graphs::style_type style : graphs::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			graphs::array(height, width, xmin, xmax, ymin, ymax, array, aoptions);
 		}
@@ -120,9 +120,9 @@ int main()
 	{
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
+		for (const graphs::style_type style : graphs::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			graphs::function(height, width, xmin, xmax, ymin, ymax, afunction, aoptions);
 		}
@@ -133,9 +133,9 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
+		for (const graphs::style_type style : graphs::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			graphs::function(height, width, xmin, xmax, ymin, ymax, afunction, aoptions);
 		}
@@ -147,11 +147,11 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
+		for (const graphs::style_type style : graphs::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
-			graphs::functions(height, width, xmin, xmax, ymin, ymax, 2, functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, graphs::size(functions), functions, aoptions);
 		}
 	}
 	{
@@ -162,11 +162,11 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
+		for (const graphs::style_type style : graphs::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
-			graphs::functions(height, width, xmin, xmax, ymin, ymax, 2, functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, graphs::size(functions), functions, aoptions);
 		}
 	}
 	{
@@ -181,11 +181,11 @@ int main()
 		aoptions.axisunitslabel = false;
 		// graphs::options aoptions{.axisunitslabel = false};
 
-		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
+		for (const graphs::style_type style : graphs::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
-			graphs::functions(height, width, xmin, xmax, ymin, ymax, 3, functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, graphs::size(functions), functions, aoptions);
 		}
 
 		/* aoptions.style = 2;
@@ -195,7 +195,7 @@ int main()
 			cout << "\e[1;1H"
 				 << "\e[2J";
 
-			graphs::functions(k, k, xmin, xmax, ymin, ymax, 3, functions, aoptions);
+			graphs::functions(k, k, xmin, xmax, ymin, ymax, graphs::size(functions), functions, aoptions);
 
 			usleep(200000);
 		} */

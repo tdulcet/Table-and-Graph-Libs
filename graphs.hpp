@@ -22,6 +22,19 @@ namespace graphs
 {
 	using namespace std;
 
+	enum style_type
+	{
+		style_ASCII,
+		style_basic,
+		style_light,
+		style_heavy,
+		style_double,
+		style_light_dashed,
+		style_heavy_dashed
+	};
+
+	enum style_type const style_types[] = {style_ASCII, style_basic, style_light, style_heavy, style_double, style_light_dashed, style_heavy_dashed};
+
 	const char *const styles[][11] = {
 		{"-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, // ASCII
 		{"—", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, // Basic
@@ -33,6 +46,27 @@ namespace graphs
 	};
 	// {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}};//No border
 
+	enum color_type
+	{
+		color_default,
+		color_black,
+		color_red,
+		color_green,
+		color_yellow,
+		color_blue,
+		color_cyan,
+		color_light_gray,
+		color_dark_gray,
+		color_light_red,
+		color_light_green,
+		color_light_yellow,
+		color_light_blue,
+		color_light_cyan,
+		color_white
+	};
+
+	enum color_type const color_types[] = {color_default, color_black, color_red, color_green, color_yellow, color_blue, color_cyan, color_light_gray, color_dark_gray, color_light_red, color_light_green, color_light_yellow, color_light_blue, color_light_cyan, color_white};
+
 	const char *const colors[] = {"\e[39m", "\e[30m", "\e[31m", "\e[32m", "\e[33m", "\e[34m", "\e[35m", "\e[36m", "\e[37m", "\e[90m", "\e[91m", "\e[92m", "\e[93m", "\e[94m", "\e[95m", "\e[96m", "\e[97m"};
 
 	const char *const dots[] = {"⠀", "⠁", "⠂", "⠃", "⠄", "⠅", "⠆", "⠇", "⠈", "⠉", "⠊", "⠋", "⠌", "⠍", "⠎", "⠏", "⠐", "⠑", "⠒", "⠓", "⠔", "⠕", "⠖", "⠗", "⠘", "⠙", "⠚", "⠛", "⠜", "⠝", "⠞", "⠟", "⠠", "⠡", "⠢", "⠣", "⠤", "⠥", "⠦", "⠧", "⠨", "⠩", "⠪", "⠫", "⠬", "⠭", "⠮", "⠯", "⠰", "⠱", "⠲", "⠳", "⠴", "⠵", "⠶", "⠷", "⠸", "⠹", "⠺", "⠻", "⠼", "⠽", "⠾", "⠿", "⡀", "⡁", "⡂", "⡃", "⡄", "⡅", "⡆", "⡇", "⡈", "⡉", "⡊", "⡋", "⡌", "⡍", "⡎", "⡏", "⡐", "⡑", "⡒", "⡓", "⡔", "⡕", "⡖", "⡗", "⡘", "⡙", "⡚", "⡛", "⡜", "⡝", "⡞", "⡟", "⡠", "⡡", "⡢", "⡣", "⡤", "⡥", "⡦", "⡧", "⡨", "⡩", "⡪", "⡫", "⡬", "⡭", "⡮", "⡯", "⡰", "⡱", "⡲", "⡳", "⡴", "⡵", "⡶", "⡷", "⡸", "⡹", "⡺", "⡻", "⡼", "⡽", "⡾", "⡿", "⢀", "⢁", "⢂", "⢃", "⢄", "⢅", "⢆", "⢇", "⢈", "⢉", "⢊", "⢋", "⢌", "⢍", "⢎", "⢏", "⢐", "⢑", "⢒", "⢓", "⢔", "⢕", "⢖", "⢗", "⢘", "⢙", "⢚", "⢛", "⢜", "⢝", "⢞", "⢟", "⢠", "⢡", "⢢", "⢣", "⢤", "⢥", "⢦", "⢧", "⢨", "⢩", "⢪", "⢫", "⢬", "⢭", "⢮", "⢯", "⢰", "⢱", "⢲", "⢳", "⢴", "⢵", "⢶", "⢷", "⢸", "⢹", "⢺", "⢻", "⢼", "⢽", "⢾", "⢿", "⣀", "⣁", "⣂", "⣃", "⣄", "⣅", "⣆", "⣇", "⣈", "⣉", "⣊", "⣋", "⣌", "⣍", "⣎", "⣏", "⣐", "⣑", "⣒", "⣓", "⣔", "⣕", "⣖", "⣗", "⣘", "⣙", "⣚", "⣛", "⣜", "⣝", "⣞", "⣟", "⣠", "⣡", "⣢", "⣣", "⣤", "⣥", "⣦", "⣧", "⣨", "⣩", "⣪", "⣫", "⣬", "⣭", "⣮", "⣯", "⣰", "⣱", "⣲", "⣳", "⣴", "⣵", "⣶", "⣷", "⣸", "⣹", "⣺", "⣻", "⣼", "⣽", "⣾", "⣿"};
@@ -40,8 +74,13 @@ namespace graphs
 	const int values[][4] = {{0x1, 0x2, 0x4, 0x40}, {0x8, 0x10, 0x20, 0x80}};
 
 	const char *const fractions[] = {"¼", "½", "¾", "⅐", "⅑", "⅒", "⅓", "⅔", "⅕", "⅖", "⅗", "⅘", "⅙", "⅚", "⅛", "⅜", "⅝", "⅞"};
-
 	const long double fractionvalues[] = {1.0L / 4.0L, 1.0L / 2.0L, 3.0L / 4.0L, 1.0L / 7.0L, 1.0L / 9.0L, 1.0L / 10.0L, 1.0L / 3.0L, 2.0L / 3.0L, 1.0L / 5.0L, 2.0L / 5.0L, 3.0L / 5.0L, 4.0L / 5.0L, 1.0L / 6.0L, 5.0L / 6.0L, 1.0L / 8.0L, 3.0L / 8.0L, 5.0L / 8.0L, 7.0L / 8.0L};
+
+	const char *const constants[] = {"π", "e"};
+	const long double constantvalues[] = {M_PI, M_E};
+
+	const long double max_bit = scalbn(1.0L, LDBL_MANT_DIG - 1);
+	const long double MAX = max_bit + (max_bit - 1);
 
 	struct options
 	{
@@ -49,14 +88,15 @@ namespace graphs
 		bool axislabel = true;
 		bool axisunitslabel = true;
 		const char *title = nullptr;
-		unsigned int style = 2;
-		unsigned int color = 2;
+		style_type style = style_light;
+		color_type color = color_red;
+		bool check = true;
 	};
 
 	const options defaultoptions;
 
 	template <typename T>
-	auto size(const T &array)
+	constexpr size_t size(const T &array)
 	{
 		return distance(begin(array), end(array));
 	}
@@ -81,11 +121,11 @@ namespace graphs
 		}
 		++length;
 
-		wchar_t *wcstring = new wchar_t[length];
+		auto *wcstring = new wchar_t[length];
 
 		if (mbstowcs(wcstring, str, length) == static_cast<size_t>(-1))
 		{
-			if (wcstring != nullptr)
+			if (wcstring)
 				delete[] wcstring;
 
 			cerr << "\nError! mbstowcs failed. Invalid multibyte character.\n";
@@ -99,7 +139,7 @@ namespace graphs
 			exit(1);
 		}
 
-		if (wcstring != nullptr)
+		if (wcstring)
 			delete[] wcstring;
 
 		return width;
@@ -110,8 +150,7 @@ namespace graphs
 	// Adapted from: https://stackoverflow.com/a/42016346 and https://stackoverflow.com/a/13094734
 	string wrap(const char *const str, const size_t line_length)
 	{
-		char words[strlen(str) + 1];
-		strcpy(words, str);
+		string words = str;
 		string wrapped;
 
 		size_t index = 0;
@@ -134,7 +173,7 @@ namespace graphs
 				}
 
 				char temp[templinelen + 1];
-				strncpy(temp, words + (index - linelen), templinelen);
+				strncpy(temp, words.data() + (index - linelen), templinelen);
 				temp[templinelen] = '\0';
 
 				size_t width = strcol(temp);
@@ -158,62 +197,54 @@ namespace graphs
 	}
 
 	// Convert fractions and constants to Unicode characters
-	size_t outputlabel(const long double label, ostringstream &strm)
+	size_t outputfraction(const long double number, ostringstream &strm)
 	{
 		bool output = false;
 
-		long double intpart = 0;
-		long double fractionpart = abs(modf(label, &intpart));
-
-		for (unsigned int i = 0; i < graphs::size(fractions) and !output; ++i)
+		const long double n = abs(number);
+		if (n <= MAX)
 		{
-			if (abs(fractionpart - fractionvalues[i]) < DBL_EPSILON)
+			long double intpart = 0;
+			long double fractionpart = abs(modf(number, &intpart));
+
+			for (size_t i = 0; i < graphs::size(fractions) and !output; ++i)
 			{
-				if (intpart != 0)
-					strm << intpart;
+				if (abs(fractionpart - fractionvalues[i]) <= DBL_EPSILON * n)
+				{
+					if (intpart == 0 and number < 0)
+						strm << "-";
+					else if (intpart != 0)
+						strm << setprecision(LDBL_DIG) << intpart;
 
-				strm << fractions[i];
+					strm << fractions[i];
 
-				output = true;
+					output = true;
+				}
 			}
-		}
 
-		if (abs(label) >= DBL_EPSILON)
-		{
-			if (!output and fmod(label, M_PI) == 0)
+			if (n > DBL_EPSILON)
 			{
-				const char symbol[] = "π";
+				for (size_t i = 0; i < graphs::size(constants) and !output; ++i)
+				{
+					if (abs(fmod(number, constantvalues[i])) <= DBL_EPSILON * n)
+					{
+						intpart = number / constantvalues[i];
 
-				intpart = label / M_PI;
+						if (intpart == -1)
+							strm << "-";
+						else if (intpart != 1)
+							strm << setprecision(LDBL_DIG) << intpart;
 
-				if (intpart == -1)
-					strm << "-";
-				else if (intpart != 1)
-					strm << intpart;
+						strm << constants[i];
 
-				strm << symbol;
-
-				output = true;
-			}
-			else if (!output and fmod(label, M_E) == 0)
-			{
-				const char symbol[] = "e";
-
-				intpart = label / M_E;
-
-				if (intpart == -1)
-					strm << "-";
-				else if (intpart != 1)
-					strm << intpart;
-
-				strm << symbol;
-
-				output = true;
+						output = true;
+					}
+				}
 			}
 		}
 
 		if (!output)
-			strm << label;
+			strm << number;
 
 		size_t length = strcol(strm.str().c_str());
 
@@ -230,10 +261,7 @@ namespace graphs
 		const bool axislabel = aoptions.axislabel;
 		const bool axisunitslabel = aoptions.axisunitslabel;
 		const char *const title = aoptions.title;
-		const unsigned int style = aoptions.style;
-
-		if (style >= graphs::size(styles))
-			return 1;
+		const style_type style = aoptions.style;
 
 		if (height == 0)
 			return 1;
@@ -244,19 +272,22 @@ namespace graphs
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-		const int aheight = height / 4;
-		const int awidth = width / 2;
-
-		if (aheight > w.ws_row)
+		if (aoptions.check)
 		{
-			cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
-			return 1;
-		}
+			const size_t aheight = height / 4;
+			const size_t awidth = width / 2;
 
-		if (awidth > w.ws_col)
-		{
-			cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
-			return 1;
+			if (aheight > w.ws_row)
+			{
+				cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
+				return 1;
+			}
+
+			if (awidth > w.ws_col)
+			{
+				cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
+				return 1;
+			}
 		}
 
 		if (xmin >= xmax)
@@ -271,38 +302,39 @@ namespace graphs
 			return 1;
 		}
 
-		const long double xscl = width / (xmax - xmin);
-		const long double yscl = height / (ymax - ymin);
-		const long double xaxis = width - (xmax * xscl);
-		const long double yaxis = ymax * yscl;
-		const int divisor = 2 * 4 * ((width / 160.0) > 1 ? (width / 160) + 1 : 1);
+		const long double xstep = (xmax - xmin) / width;
+		const long double ystep = (ymax - ymin) / height;
+		const long double xaxis = xmin > 0 ? 0 : xmax < 0 ? width
+														  : width - (xmax / xstep);
+		const long double yaxis = ymin > 0 ? height : ymax < 0 ? 0
+															   : ymax / ystep;
+		const int xdivisor = 2 * 4 * ((width / 160) + 2);
+		const int ydivisor = 2 * 4 * ((height / 160) + 2);
 
-		setlocale(LC_CTYPE, "");
+		setlocale(LC_ALL, "");
 
-		if (title != nullptr and title[0] != '\0')
-			cout << wrap(title, w.ws_col) << "\n";
+		if (title and title[0] != '\0')
+			cout << wrap(title, width / 2) << "\n";
 
-		for (unsigned int i = 0; i < height; i += 4)
+		for (size_t i = 0; i < height; i += 4)
 		{
-			const bool ayaxis = (i <= yaxis and (i + 4) > yaxis);
-			const bool yaxislabel = (i <= (yaxis + 4) and (i + 4) > (yaxis + 4));
+			const bool ayaxis = yaxis <= (height - 4) ? i <= yaxis and (i + 4) > yaxis : i < yaxis and (i + 4) >= yaxis;
+			const bool yaxislabel = yaxis <= (height - 4) ? i <= (yaxis + 4) and (i + 4) > (yaxis + 4) : i < (yaxis - 4) and (i + 4) >= (yaxis - 4);
 
 			ostringstream ylabelstrm;
 			size_t ylabellength = 0;
 
-			if (border and axislabel and axisunitslabel)
+			if (border and axislabel and axisunitslabel and yaxis >= 0 and yaxis <= height)
 			{
 				bool output = false;
 				long double label = 0;
-				int adivisor = divisor;
-				if (i < yaxis)
-					adivisor = -adivisor;
+				int adivisor = i < yaxis ? -ydivisor : ydivisor;
 
-				for (long double k = yaxis + adivisor; ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and i >= 4 and !output; k += adivisor)
+				for (long double k = yaxis + adivisor; (i < yaxis ? k >= i : k < (i + 4)) and i >= 4 and !output; k += adivisor)
 				{
 					if (i <= k and (i + 4) > k)
 					{
-						label = ymax - (k / yscl);
+						label = ymax - ((k > height ? height : k) * ystep);
 
 						output = true;
 					}
@@ -310,15 +342,15 @@ namespace graphs
 
 				if (output)
 				{
-					ylabellength = outputlabel(label, ylabelstrm);
+					ylabellength = outputfraction(label, ylabelstrm);
 					ylabellength *= 2;
 				}
 			}
 
-			for (unsigned int j = 0; j < width; j += 2)
+			for (size_t j = 0; j < width; j += 2)
 			{
-				const bool axaxis = (j <= xaxis and (j + 2) > xaxis);
-				const bool xaxislabel = (j <= (xaxis - 2) and (j + 2) > (xaxis - 2));
+				const bool axaxis = xaxis >= 2 ? j < xaxis and (j + 2) >= xaxis : j <= xaxis and (j + 2) > xaxis;
+				const bool xaxislabel = xaxis >= 2 ? j < (xaxis - 2) and (j + 2) >= (xaxis - 2) : j <= (xaxis + 2) and (j + 2) > (xaxis + 2);
 
 				bool output = false;
 
@@ -331,66 +363,72 @@ namespace graphs
 					}
 					else if (axaxis)
 					{
-						if (axislabel and axisunitslabel)
+						if (i == 0)
 						{
-							int adivisor = divisor;
-							if (i < yaxis)
-								adivisor = -adivisor;
+							cout << styles[style][4];
+							output = true;
+						}
+						else if (i >= (height - 4))
+						{
+							cout << styles[style][10];
+							output = true;
+						}
+						else if (axislabel and axisunitslabel)
+						{
+							int adivisor = i < yaxis ? -ydivisor : ydivisor;
 
-							for (long double k = yaxis + adivisor; ((i < yaxis and k >= i) or (i > yaxis and k < (i + 4))) and i >= 4 and !output; k += adivisor)
+							for (long double k = yaxis + adivisor; (i < yaxis ? k >= i : k < (i + 4)) and i >= 4 and !output; k += adivisor)
 							{
 								if (i <= k and (i + 4) > k)
 								{
-									cout << styles[style][7];
+									cout << styles[style][xaxis >= 2 ? 7 : 5];
 									output = true;
 								}
 							}
 						}
 						if (!output)
 						{
-							if (i == 0)
-								cout << styles[style][4];
-							else if (i >= (height - 4))
-								cout << styles[style][10];
-							else
-								cout << styles[style][1];
+							cout << styles[style][1];
 							output = true;
 						}
 					}
 					else if (ayaxis)
 					{
-						if (axislabel and axisunitslabel)
+						if (j == 0)
 						{
-							int adivisor = divisor;
-							if (j < xaxis)
-								adivisor = -adivisor;
+							cout << styles[style][2];
+							output = true;
+						}
+						else if (j >= (width - 2))
+						{
+							cout << styles[style][4];
+							output = true;
+						}
+						else if (axislabel and axisunitslabel)
+						{
+							int adivisor = j < xaxis ? -xdivisor : xdivisor;
 
-							for (long double k = xaxis + adivisor; ((j < xaxis and k >= j) or (j > xaxis and k < (j + 2))) and j < (width - 4) and !output; k += adivisor)
+							for (long double k = xaxis + adivisor; (j < xaxis ? k >= j : k < (j + 2)) and j < (width - (2 * 2)) and !output; k += adivisor)
 							{
 								if (j <= k and (j + 2) > k)
 								{
-									cout << styles[style][3];
+									cout << styles[style][yaxis <= (height - 4) ? 3 : 9];
 									output = true;
 								}
 							}
 						}
 						if (!output)
 						{
-							if (j == 0)
-								cout << styles[style][2];
-							else if (j >= (width - 2))
-								cout << styles[style][4];
-							else
-								cout << styles[style][0];
+							cout << styles[style][0];
 							output = true;
 						}
 					}
-					else if (yaxislabel and xaxislabel and axislabel and axisunitslabel)
+					else if (yaxislabel and xaxislabel and axislabel and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0)
 					{
 						cout << "0";
 						output = true;
 					}
-					else if (j >= (width - 2) and yaxislabel and axislabel)
+					else if ((xaxis <= (width - 2) ? j >= (width - 2) : j == 0) and yaxislabel and axislabel)
 					{
 						cout << "x";
 						output = true;
@@ -398,18 +436,15 @@ namespace graphs
 					else if (yaxislabel and axislabel and axisunitslabel)
 					{
 						long double label = 0;
-						int adivisor = divisor;
+						int adivisor = j < xaxis ? -xdivisor : xdivisor;
 						if (j < xaxis)
-						{
-							adivisor = -adivisor;
 							j += 2;
-						}
 
-						for (long double k = xaxis + adivisor; ((j < xaxis and k >= j) or (j > xaxis and k < (j + 2))) and j < (width - 2) and !output; k += adivisor)
+						for (long double k = xaxis + adivisor; (j < xaxis ? k >= j : k < (j + 2)) and j < (width - 2) and !output; k += adivisor)
 						{
 							if (j <= k and (j + 2) > k)
 							{
-								label = (k / xscl) + xmin;
+								label = ((k > width ? width : k) * xstep) + xmin;
 
 								output = true;
 							}
@@ -423,9 +458,9 @@ namespace graphs
 							output = false;
 
 							ostringstream strm;
-							size_t length = outputlabel(label, strm);
+							size_t length = outputfraction(label, strm);
 							length *= 2;
-							if ((j >= xaxis or (j + length) < (xaxis - 4)) and (j + length) < (width - 2))
+							if ((j >= xaxis or (j + length) < (ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0 ? xaxis - 4 : xaxis)) and (j + length) < (width - 2) and (xaxis <= (width - 2) or j > 2))
 							{
 								cout << strm.str();
 
@@ -439,12 +474,12 @@ namespace graphs
 							}
 						}
 					}
-					else if (i == 0 and xaxislabel and axislabel)
+					else if ((yaxis >= 4 ? i == 0 : i >= (height - 4)) and xaxislabel and axislabel)
 					{
 						cout << "y";
 						output = true;
 					}
-					else if ((j <= (xaxis - ylabellength) and (j + 2) > (xaxis - ylabellength)) and axislabel and axisunitslabel)
+					else if (ylabellength and (xaxis < 2 ? xaxislabel : j < (xaxis - ylabellength) and (j + 2) >= (xaxis - ylabellength)) and (yaxis >= 4 or i < (height - 4)) and axislabel and axisunitslabel)
 					{
 						cout << ylabelstrm.str();
 						output = true;
@@ -455,21 +490,23 @@ namespace graphs
 
 				if (!output)
 				{
-					unsigned int dot = 0;
+					size_t dot = 0;
 					unsigned short color = 0;
 
-					for (unsigned int k = 0; k < 2 and k < (width - j); ++k)
+					for (size_t k = 0; k < 2 and k < (width - j); ++k)
 					{
-						for (unsigned int l = 0; l < 4 and l < (height - i); ++l)
+						for (size_t l = 0; l < 4 and l < (height - i); ++l)
 						{
-							dot += (array[j + k][i + l] ? 1 : 0) * values[k][l];
+							const unsigned short value = array[j + k][i + l];
+							if (value)
+								dot += values[k][l];
 							if (color)
 							{
-								if (array[j + k][i + l] and color != array[j + k][i + l])
+								if (value and color != value)
 									color = 1;
 							}
 							else
-								color = array[j + k][i + l];
+								color = value;
 						}
 					}
 
@@ -479,14 +516,15 @@ namespace graphs
 					if (color)
 						cout << colors[color];
 
-					cout << "\e[1m" << dots[dot] << "\e[22m";
+					cout << dots[dot];
 
 					if (color)
 						cout << colors[0];
 				}
 			}
 
-			cout << "\n";
+			if (i < (height - 4))
+				cout << "\n";
 		}
 
 		cout << endl;
@@ -505,14 +543,11 @@ namespace graphs
 					{ return all_of(begin(array), end(array), [](const auto &x)
 									{ return graphs::size(x) == 2; }); }))
 		{
-			cerr << "Error: The arrays must have two columns.";
+			cerr << "Error: The arrays must have two columns.\n";
 			return 1;
 		}
 
-		const unsigned int color = aoptions.color;
-
-		if (color >= graphs::size(colors))
-			return 1;
+		const color_type color = aoptions.color;
 
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
@@ -523,19 +558,22 @@ namespace graphs
 		if (width == 0)
 			width = w.ws_col * 2;
 
-		const int aheight = height / 4;
-		const int awidth = width / 2;
-
-		if (aheight > w.ws_row)
+		if (aoptions.check)
 		{
-			cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
-			return 1;
-		}
+			const size_t aheight = height / 4;
+			const size_t awidth = width / 2;
 
-		if (awidth > w.ws_col)
-		{
-			cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
-			return 1;
+			if (aheight > w.ws_row)
+			{
+				cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
+				return 1;
+			}
+
+			if (awidth > w.ws_col)
+			{
+				cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
+				return 1;
+			}
 		}
 
 		if (xmin == 0 and xmax == 0)
@@ -570,32 +608,34 @@ namespace graphs
 			return 1;
 		}
 
-		const long double xscl = width / (xmax - xmin);
-		const long double yscl = height / (ymax - ymin);
-		const long double xaxis = width - (xmax * xscl);
-		const long double yaxis = ymax * yscl;
+		const long double xstep = (xmax - xmin) / width;
+		const long double ystep = (ymax - ymin) / height;
+		const long double xaxis = width - (xmax / xstep);
+		const long double yaxis = ymax / ystep;
 
 		vector<vector<unsigned short>> aarray(width, vector<unsigned short>(height, 0));
 
-		for (unsigned int j = 0; j < graphs::size(arrays); ++j)
+		for (size_t j = 0; j < graphs::size(arrays); ++j)
 		{
-			auto array = arrays[j];
-			const unsigned int color = (j % (graphs::size(colors) - 2)) + 3;
+			const auto &array = arrays[j];
+			const unsigned int acolor = graphs::size(arrays) == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
 
-			for (unsigned int i = 0; i < graphs::size(array); ++i)
+			for (size_t i = 0; i < graphs::size(array); ++i)
 			{
-				if (array[i][0] >= xmin and array[i][0] < xmax and array[i][1] >= ymin and array[i][1] < ymax)
+				const auto &x = array[i][0], &y = array[i][1];
+				
+				if (x >= xmin and x < xmax and y >= ymin and y < ymax)
 				{
-					const long long x = (array[i][0] * xscl) + xaxis;
-					const long long y = (yaxis - (array[i][1] * yscl)) - 1;
+					const size_t ax = (x / xstep) + xaxis;
+					const size_t ay = (yaxis - (y / ystep)) - 1;
 
-					if (aarray[x][y])
+					if (aarray[ax][ay])
 					{
-						if (aarray[x][y] != color)
-							aarray[x][y] = 1;
+						if (aarray[ax][ay] != acolor)
+							aarray[ax][ay] = 1;
 					}
 					else
-						aarray[x][y] = color;
+						aarray[ax][ay] = acolor;
 				}
 			}
 		}
@@ -621,7 +661,7 @@ namespace graphs
 
 		const size_t columns = 2;
 		vector<std::array<T, columns>> aaarray(rows);
-		for (unsigned int i = 0; i < rows; ++i)
+		for (size_t i = 0; i < rows; ++i)
 			copy(aarray[i], aarray[i] + columns, aaarray[i].begin());
 
 		return array(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
@@ -631,10 +671,7 @@ namespace graphs
 	template <typename T>
 	int functions(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const size_t numfunctions, function<T(T)> functions[], const options &aoptions = defaultoptions)
 	{
-		const unsigned int color = aoptions.color;
-
-		if (color >= graphs::size(colors))
-			return 1;
+		const color_type color = aoptions.color;
 
 		if (numfunctions == 0)
 			return 1;
@@ -648,19 +685,22 @@ namespace graphs
 		if (width == 0)
 			width = w.ws_col * 2;
 
-		const int aheight = height / 4;
-		const int awidth = width / 2;
-
-		if (aheight > w.ws_row)
+		if (aoptions.check)
 		{
-			cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
-			return 1;
-		}
+			const size_t aheight = height / 4;
+			const size_t awidth = width / 2;
 
-		if (awidth > w.ws_col)
-		{
-			cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
-			return 1;
+			if (aheight > w.ws_row)
+			{
+				cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
+				return 1;
+			}
+
+			if (awidth > w.ws_col)
+			{
+				cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
+				return 1;
+			}
 		}
 
 		if (xmin >= xmax)
@@ -677,26 +717,27 @@ namespace graphs
 
 		const size_t rows = width;
 
-		const long double xscl = width / (xmax - xmin);
-		const long double yscl = height / (ymax - ymin);
-		const long double xaxis = width - (xmax * xscl);
-		const long double yaxis = ymax * yscl;
+		const long double xstep = (xmax - xmin) / width;
+		const long double ystep = (ymax - ymin) / height;
+		const long double xaxis = width - (xmax / xstep);
+		const long double yaxis = ymax / ystep;
+		const size_t xres = 2;
 
 		vector<vector<unsigned short>> array(width, vector<unsigned short>(height, 0));
 
-		for (unsigned int j = 0; j < numfunctions; ++j)
+		for (size_t j = 0; j < numfunctions; ++j)
 		{
 			unsigned short acolor = numfunctions == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
 
-			for (long double i = 0; i < rows; i += 0.5)
+			for (size_t i = 0; i < rows * xres; ++i)
 			{
-				T x = (i / xscl) + xmin;
+				T x = ((i / (long double)xres) * xstep) + xmin;
 				T y = (functions[j])(x);
 
 				if (x >= xmin and x < xmax and y >= ymin and y < ymax)
 				{
-					const long long ax = (x * xscl) + xaxis;
-					const long long ay = (yaxis - (y * yscl)) - 1;
+					const size_t ax = (x / xstep) + xaxis;
+					const size_t ay = (yaxis - (y / ystep)) - 1;
 
 					if (array[ax][ay])
 					{

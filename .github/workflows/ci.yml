@@ -33,6 +33,8 @@ jobs:
         ./graphs
     - name: Cppcheck
       run: cppcheck --enable=all .
+    - name: Clang-Tidy
+      run: clang-tidy -checks='bugprone-*,-bugprone-easily-swappable-parameters,cert-*,clang-analyzer-*,misc-const-correctness,misc-redundant-expression,misc-unused-*,modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-const-return-type,readability-container-*,readability-duplicate-include,readability-else-after-return,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-string-compare,readability-use-anyofallof' -header-filter='.*' *.cpp -- -Wall -O3 -std=c++17
 
   Python:
     name: Linux Python

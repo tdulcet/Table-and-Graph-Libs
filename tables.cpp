@@ -77,7 +77,7 @@ int main()
 
 	const long double xmin = -10;
 	const long double xmax = 10;
-	const long double xscl = 2; // 80 / (xmax - xmin);
+	const long double xstep = 0.5; // (xmax - xmin) / 80;
 
 	string *headerrow = nullptr;
 	string *headercolumn = nullptr;
@@ -96,14 +96,14 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 		}
 
-		if (array != nullptr)
+		if (array)
 		{
 			for (unsigned int i = 0; i < rows; ++i)
 				delete[] array[i];
@@ -120,9 +120,9 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(aarray, headerrow, headercolumn, aoptions);
 		}
@@ -136,9 +136,9 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(array, headerrow, headercolumn, aoptions);
 		}
@@ -155,14 +155,14 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 		}
 
-		if (array != nullptr)
+		if (array)
 		{
 			for (unsigned int i = 0; i < rows; ++i)
 				delete[] array[i];
@@ -179,9 +179,9 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(aarray, headerrow, headercolumn, aoptions);
 		}
@@ -195,9 +195,9 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(array, headerrow, headercolumn, aoptions);
 		}
@@ -217,9 +217,9 @@ int main()
 		aoptions.headercolumn = true;
 		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(array, headerrow, headercolumn, aoptions);
 		}
@@ -236,9 +236,9 @@ int main()
 		aoptions.headercolumn = true;
 		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(aarray, headerrow, headercolumn, aoptions);
 		}
@@ -263,9 +263,9 @@ int main()
 		aoptions.headercolumn = true;
 		// tables::options aoptions{.headerrow = true, .headercolumn = true};
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(array, headerrow, headercolumn, aoptions);
 		}
@@ -286,15 +286,15 @@ int main()
 		vector<string> aheadercolumn(headerrow, headerrow + 1);
 		aheadercolumn.insert(aheadercolumn.end(), headercolumn, headercolumn + columns - 1);
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
 			{
 				tables::options aoptions;
 				aoptions.headerrow = true;
 				aoptions.headercolumn = true;
 				aoptions.cellborder = true;
-				aoptions.style = k;
-				// tables::options aoptions{.headerrow = true, .headercolumn = true, .cellborder = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.headerrow = true, .headercolumn = true, .cellborder = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -302,8 +302,8 @@ int main()
 				tables::options aoptions;
 				aoptions.headerrow = true;
 				aoptions.headercolumn = true;
-				aoptions.style = k;
-				// tables::options aoptions{.headerrow = true, .headercolumn = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.headerrow = true, .headercolumn = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -313,8 +313,8 @@ int main()
 
 				tables::options aoptions;
 				aoptions.headerrow = true;
-				aoptions.style = k;
-				// tables::options aoptions{.headerrow = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.headerrow = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -324,8 +324,8 @@ int main()
 
 				tables::options aoptions;
 				aoptions.headercolumn = true;
-				aoptions.style = k;
-				// tables::options aoptions{.headercolumn = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.headercolumn = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -335,8 +335,8 @@ int main()
 
 				tables::options aoptions;
 				aoptions.cellborder = true;
-				aoptions.style = k;
-				// tables::options aoptions{.cellborder = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.cellborder = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -346,8 +346,8 @@ int main()
 
 				tables::options aoptions;
 				aoptions.tableborder = false;
-				aoptions.style = k;
-				// tables::options aoptions{.tableborder = false, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.tableborder = false, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -356,8 +356,8 @@ int main()
 				aoptions.tableborder = false;
 				aoptions.headerrow = true;
 				aoptions.headercolumn = true;
-				aoptions.style = k;
-				// tables::options aoptions{.tableborder = false, .headerrow = true, .headercolumn = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.tableborder = false, .headerrow = true, .headercolumn = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -368,8 +368,8 @@ int main()
 				tables::options aoptions;
 				aoptions.tableborder = false;
 				aoptions.headerrow = true;
-				aoptions.style = k;
-				// tables::options aoptions{.tableborder = false, .headerrow = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.tableborder = false, .headerrow = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -380,8 +380,8 @@ int main()
 				tables::options aoptions;
 				aoptions.tableborder = false;
 				aoptions.headercolumn = true;
-				aoptions.style = k;
-				// tables::options aoptions{.tableborder = false, .headercolumn = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.tableborder = false, .headercolumn = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -392,8 +392,8 @@ int main()
 				tables::options aoptions;
 				aoptions.tableborder = false;
 				aoptions.cellborder = true;
-				aoptions.style = k;
-				// tables::options aoptions{.tableborder = false, .cellborder = true, .style = k};
+				aoptions.style = style;
+				// tables::options aoptions{.tableborder = false, .cellborder = true, .style = style};
 
 				tables::array(aarray, headerrow, headercolumn, aoptions);
 			}
@@ -413,14 +413,14 @@ int main()
 		aoptions.boolalpha = true;
 		// tables::options aoptions{.boolalpha = true};
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 		}
 
-		if (array != nullptr)
+		if (array)
 		{
 			for (unsigned int i = 0; i < rows; ++i)
 				delete[] array[i];
@@ -448,14 +448,14 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 		}
 
-		if (array != nullptr)
+		if (array)
 		{
 			for (unsigned int i = 0; i < rows; ++i)
 				delete[] array[i];
@@ -477,9 +477,9 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(aarray, headerrow, headercolumn, aoptions);
 		}
@@ -498,9 +498,9 @@ int main()
 
 		tables::options aoptions;
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
 			tables::array(array, headerrow, headercolumn, aoptions);
 		}
@@ -512,11 +512,11 @@ int main()
 		aoptions.headerrow = true;
 		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
-			tables::function(xmin, xmax, xscl, afunction, aoptions);
+			tables::function(xmin, xmax, xstep, afunction, aoptions);
 		}
 	}
 	{
@@ -527,11 +527,11 @@ int main()
 		aoptions.headerrow = true;
 		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
-			tables::function(xmin, xmax, xscl, afunction, aoptions);
+			tables::function(xmin, xmax, xstep, afunction, aoptions);
 		}
 	}
 	// Output multiple functions as table
@@ -543,11 +543,11 @@ int main()
 		aoptions.headerrow = true;
 		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
-			tables::functions(xmin, xmax, xscl, 2, functions, aoptions);
+			tables::functions(xmin, xmax, xstep, tables::size(functions), functions, aoptions);
 		}
 	}
 	{
@@ -560,11 +560,11 @@ int main()
 		aoptions.headerrow = true;
 		// tables::options aoptions{.headerrow = true};
 
-		for (unsigned int k = 0; k < tables::size(tables::styles); ++k)
+		for (const tables::style_type style : tables::style_types)
 		{
-			aoptions.style = k;
+			aoptions.style = style;
 
-			tables::functions(xmin, xmax, xscl, 2, functions, aoptions);
+			tables::functions(xmin, xmax, xstep, tables::size(functions), functions, aoptions);
 		}
 	}
 
