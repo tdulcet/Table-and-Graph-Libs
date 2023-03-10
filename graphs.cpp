@@ -1,6 +1,6 @@
 // Teal Dulcet, CS546
 
-// Compile: g++ -Wall -g -O3 -std=c++17 graphs.cpp -o graphs
+// Compile: g++ -Wall -g -O3 -std=c++14 graphs.cpp -o graphs
 
 // Run: ./graphs
 
@@ -68,7 +68,7 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(graphs::styles); ++k)
+		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -92,7 +92,7 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(graphs::styles); ++k)
+		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -108,7 +108,7 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(graphs::styles); ++k)
+		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -120,7 +120,7 @@ int main()
 	{
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(graphs::styles); ++k)
+		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -133,7 +133,7 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(graphs::styles); ++k)
+		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -147,7 +147,7 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(graphs::styles); ++k)
+		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -162,7 +162,7 @@ int main()
 
 		graphs::options aoptions;
 
-		for (unsigned int k = 0; k < size(graphs::styles); ++k)
+		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 
@@ -181,7 +181,7 @@ int main()
 		aoptions.axisunitslabel = false;
 		// graphs::options aoptions{.axisunitslabel = false};
 
-		for (unsigned int k = 0; k < size(graphs::styles); ++k)
+		for (unsigned int k = 0; k < graphs::size(graphs::styles); ++k)
 		{
 			aoptions.style = k;
 

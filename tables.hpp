@@ -45,6 +45,12 @@ namespace tables
 
 	const options defaultoptions;
 
+	template <typename T>
+	auto size(const T &array)
+	{
+		return distance(begin(array), end(array));
+	}
+
 	// Number of columns needed to represent the string
 	// Adapted from: https://stackoverflow.com/a/31124065
 	int strcol(const char *str)
@@ -148,7 +154,7 @@ namespace tables
 	template <typename T>
 	int table(const vector<vector<basic_string<T>>> &array, const options &aoptions)
 	{
-		if (!size(array))
+		if (!tables::size(array))
 			return 1;
 
 		const bool headerrow = aoptions.headerrow;
@@ -159,7 +165,7 @@ namespace tables
 		const char *const title = aoptions.title;
 		const unsigned int style = aoptions.style;
 
-		if (style >= size(styles))
+		if (style >= tables::size(styles))
 			return 1;
 
 		const size_t rows = array.size();
@@ -322,17 +328,17 @@ namespace tables
 	template <typename T1, typename T2>
 	int array(const T1 &aarray, T2 headerrow[] = nullptr, T2 headercolumn[] = nullptr, const options &aoptions = defaultoptions)
 	{
-		if (!size(aarray))
+		if (!tables::size(aarray))
 			return 1;
 
 		unsigned int i = 0;
 		unsigned int j = 0;
 
-		size_t rows = size(aarray);
-		size_t columns = size(aarray[0]);
+		size_t rows = tables::size(aarray);
+		size_t columns = tables::size(aarray[0]);
 
 		if (!all_of(begin(aarray), end(aarray), [columns](auto &x)
-					{ return size(x) == columns; }))
+					{ return tables::size(x) == columns; }))
 		{
 			cerr << "Error: The rows of the array must have the same number of columns.";
 			return 1;
@@ -451,7 +457,7 @@ namespace tables
 		const char *const aheaderrow[] = {"x", "y"};
 		// const char* const aheaderrow[] = {"", "x", "y"};
 
-		const size_t length = size(aheaderrow);
+		const size_t length = tables::size(aheaderrow);
 
 		string *headerrow = new string[columns];
 
