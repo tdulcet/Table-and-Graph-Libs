@@ -32,10 +32,10 @@ styles = [
 	["─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light
 	["━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"],  # Heavy
 	["═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"],  # Double
-	["╌", "╎", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light Dashed
-	["╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"]  # Heavy Dashed
+	["╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light Dashed
+	["╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"]  # Heavy Dashed
+	# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
 ]
-# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
 
 ansi = re.compile(r'\x1B\[(?:[0-9]+(?:;[0-9]+)*)?m')
 
@@ -53,7 +53,8 @@ def strcol(astr: str) -> int:
 	# return len(astr)
 
 
-def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light, check: bool = True) -> int:
+def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False,
+		  padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light, check: bool = True) -> int:
 	"""Output char array as table"""
 	if not array:
 		return 1
@@ -68,9 +69,9 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 	w = shutil.get_terminal_size()
 
 	if tableborder or cellborder or headerrow or headercolumn:
-		width += (((2 * padding) + 1) * columns) + (1 if tableborder else -1)
+		width += (2 * padding + 1) * columns + (1 if tableborder else -1)
 	else:
-		width += (2 * padding) * columns
+		width += 2 * padding * columns
 
 	if check:
 		if width > w.columns:
@@ -87,9 +88,9 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 		strm += styles[style][2]
 
 		for j in range(columns):
-			strm += styles[style][0] * ((2 * padding) + columnwidth[j])
+			strm += styles[style][0] * (2 * padding + columnwidth[j])
 
-			if j < (columns - 1):
+			if j < columns - 1:
 				if cellborder or headerrow or (j == 0 and headercolumn):
 					strm += styles[style][3]
 				else:
@@ -130,46 +131,47 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 		if tableborder:
 			strm += styles[style][1]
 
-		strm += "\n"
+		if i < rows - 1 or tableborder:
+			strm += "\n"
 
 		if tableborder:
-			if i == (rows - 1):
+			if i == rows - 1:
 				strm += styles[style][8]
 			elif cellborder or (i == 0 and headerrow) or headercolumn:
 				strm += styles[style][5]
 
-		if (i == (rows - 1) and tableborder) or (i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and headercolumn):
+		if (i == rows - 1 and tableborder) or (i < rows - 1 and cellborder) or (i == 0 and headerrow) or (i < rows - 1 and headercolumn):
 			for j in range(columns):
-				if (i == (rows - 1) and tableborder) or (i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and j == 0 and headercolumn):
-					strm += styles[style][0] * ((2 * padding) + columnwidth[j])
-				elif i < (rows - 1) and headercolumn:
-					strm += " " * ((2 * padding) + columnwidth[j])
+				if (i == rows - 1 and tableborder) or (i < rows - 1 and cellborder) or (i == 0 and headerrow) or (i < rows - 1 and j == 0 and headercolumn):
+					strm += styles[style][0] * (2 * padding + columnwidth[j])
+				elif i < rows - 1 and headercolumn:
+					strm += " " * (2 * padding + columnwidth[j])
 
-				if j < (columns - 1):
-					if i == (rows - 1) and tableborder:
+				if j < columns - 1:
+					if i == rows - 1 and tableborder:
 						if cellborder or (j == 0 and headercolumn):
 							strm += styles[style][9]
 						else:
 							strm += styles[style][0]
-					elif (i < (rows - 1) and cellborder) or ((i == 0 and headerrow) and (j == 0 and headercolumn)):
+					elif (i < rows - 1 and cellborder) or ((i == 0 and headerrow) and (j == 0 and headercolumn)):
 						strm += styles[style][6]
 					elif i == 0 and headerrow:
 						strm += styles[style][9]
-					elif i < (rows - 1) and headercolumn:
+					elif i < rows - 1 and headercolumn:
 						if j == 0:
 							strm += styles[style][7]
 						else:
 							strm += " "
 
 			if tableborder:
-				if i == (rows - 1):
+				if i == rows - 1:
 					strm += styles[style][10]
 				elif cellborder or (i == 0 and headerrow):
 					strm += styles[style][7]
 				elif headercolumn:
 					strm += styles[style][1]
 
-			if i < (rows - 1):
+			if i < rows - 1:
 				strm += "\n"
 
 	print(strm)
@@ -177,7 +179,8 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 	return 0
 
 
-def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] = None, aheadercolumn: Optional[Sequence[Any]] = None, headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] = None, aheadercolumn: Optional[Sequence[Any]] = None, headerrow: bool = False, headercolumn: bool = False,
+		  tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
 	"""Convert array to char array and output as table"""
 	if not aarray:
 		return 1
@@ -227,7 +230,8 @@ def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] =
 				 cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)
 
 
-def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True,
+			  cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
 	"""Convert one or more functions to array and output as table"""
 	if not afunctions:
 		return 1
@@ -240,7 +244,7 @@ def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Calla
 		print("xstep must be greater than zero.", file=sys.stderr)
 		return 1
 
-	rows = int(((xmax - xmin) / xstep)) + 1
+	rows = int((xmax - xmin) / xstep) + 1
 	columns = len(afunctions) + 1
 
 	aaheaderrow = ["x", "y"]
@@ -257,7 +261,7 @@ def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Calla
 	aarray = [[0 for j in range(columns)] for i in range(rows)]
 
 	for i in range(rows):
-		aarray[i][0] = (i * xstep) + xmin
+		aarray[i][0] = i * xstep + xmin
 
 		aarray[i][1:] = [function(aarray[i][0]) for function in afunctions]
 
@@ -265,7 +269,8 @@ def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Calla
 				 cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)
 
 
-def function(xmin: float, xmax: float, xstep: float, afunction: Callable[[float], float], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def function(xmin: float, xmax: float, xstep: float, afunction: Callable[[float], float], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True,
+			 cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
 	"""Convert single function to array and output as table"""
 	return functions(xmin, xmax, xstep, [afunction], headerrow=headerrow, headercolumn=headercolumn,
 					 tableborder=tableborder, cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)

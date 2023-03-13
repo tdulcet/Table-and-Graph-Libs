@@ -33,10 +33,10 @@ styles = [
 	["─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light
 	["━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"],  # Heavy
 	["═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"],  # Double
-	["╌", "╎", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light Dashed
-	["╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"]  # Heavy Dashed
+	["╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light Dashed
+	["╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"]  # Heavy Dashed
+	# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
 ]
-# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
 
 
 class color_types(IntEnum):
@@ -46,6 +46,7 @@ class color_types(IntEnum):
 	green = auto()
 	yellow = auto()
 	blue = auto()
+	magenta = auto()
 	cyan = auto()
 	light_gray = auto()
 	dark_gray = auto()
@@ -53,6 +54,7 @@ class color_types(IntEnum):
 	light_green = auto()
 	light_yellow = auto()
 	light_blue = auto()
+	light_magenta = auto()
 	light_cyan = auto()
 	white = auto()
 
@@ -174,7 +176,8 @@ def outputfraction(number: float) -> Tuple[int, str]:
 	return length, strm
 
 
-def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: style_types = style_types.light, title: Optional[str] = None, check: bool = True) -> int:
+def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
+		  axisunitslabel: bool = True, style: style_types = style_types.light, title: Optional[str] = None, check: bool = True) -> int:
 	"""Output graph"""
 	if not array:
 		return 1
@@ -187,10 +190,10 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 	w = shutil.get_terminal_size()
 
-	if check:
-		aheight = height // 4
-		awidth = width // 2
+	aheight = height // 4
+	awidth = width // 2
 
+	if check:
 		if aheight > w.lines:
 			print("The height of the graph ({0}) is greater then the height of the terminal ({1}).".format(
 				aheight, w.lines), file=sys.stderr)
@@ -211,53 +214,62 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 	xstep = (xmax - xmin) / width
 	ystep = (ymax - ymin) / height
-	xaxis = 0 if xmin > 0 else width if xmax < 0 else width - (xmax / xstep)
+	xaxis = 0 if xmin > 0 else width if xmax < 0 else width - xmax / xstep
 	yaxis = height if ymin > 0 else 0 if ymax < 0 else ymax / ystep
-	xdivisor = 2 * 4 * ((width // 160) + 2)
-	ydivisor = 2 * 4 * ((height // 160) + 2)
+	xdivisor = 2 * 4 * (width // 160 + 2)
+	ydivisor = 2 * 4 * (height // 160 + 2)
 
 	if title:
-		print(textwrap.fill(title, width=width // 2))
+		print(textwrap.fill(title, width=awidth))
 
 	strm = ""
 
+	if border:
+		strm += styles[style][2]
+
+		strm += styles[style][0] * awidth
+
+		strm += styles[style][4] + "\n"
+
 	i = 0
 	while i < height:
-		ayaxis = i <= yaxis and (
-			i + 4) > yaxis if yaxis <= (height - 4) else i < yaxis and (i + 4) >= yaxis
-		yaxislabel = i <= (yaxis + 4) and (i + 4) > (yaxis + 4) if yaxis <= (
-			height - 4) else i < (yaxis - 4) and (i + 4) >= (yaxis - 4)
+		ayaxis = i <= yaxis and i + 4 > yaxis if yaxis <= height - \
+			4 else i < yaxis and i + 4 >= yaxis
+		yaxislabel = i <= yaxis + 4 and i + 4 > yaxis + \
+			4 if yaxis <= height - 4 else i < yaxis - 4 and i + 4 >= yaxis
 
 		ylabelstrm = ""
 		ylabellength = 0
 
-		if border and axislabel and axisunitslabel and yaxis >= 0 and yaxis <= height:
+		if axis and axislabel and axistick and axisunitslabel and yaxis >= 0 and yaxis <= height:
 			output = False
 			label = 0.0
 			adivisor = -ydivisor if i < yaxis else ydivisor
 
 			k = yaxis + adivisor
-			while (k >= i if i < yaxis else k < (i + 4)) and i >= 4 and not output:
-				if (i <= k and (i + 4) > k):
-					label = ymax - ((height if k > height else k) * ystep)
+			while (k >= i if i < yaxis else k < i + 4) and i >= 4 and not output:
+				if i <= k and i + 4 > k:
+					label = ymax - (height if k > height else k) * ystep
 
 					output = True
 				k += adivisor
 
-			if (output):
+			if output:
 				ylabellength, ylabelstrm = outputfraction(label)
 				ylabellength *= 2
 
+		if border:
+			strm += styles[style][1]
+
 		j = 0
 		while j < width:
-			axaxis = j < xaxis and (
-				j + 2) >= xaxis if xaxis >= 2 else j <= xaxis and (j + 2) > xaxis
-			xaxislabel = j < (xaxis - 2) and (j + 2) >= (
-				xaxis - 2) if xaxis >= 2 else j <= (xaxis + 2) and (j + 2) > (xaxis + 2)
+			axaxis = j < xaxis and j + 2 >= xaxis if xaxis >= 2 else j <= xaxis and j + 2 > xaxis
+			xaxislabel = j < xaxis - 2 and j + 2 >= xaxis - \
+				2 if xaxis >= 2 else j <= xaxis + 2 and j + 2 > xaxis + 2
 
 			output = False
 
-			if border:
+			if axis:
 				if axaxis and ayaxis:
 					strm += styles[style][6]
 					output = True
@@ -265,15 +277,15 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					if i == 0:
 						strm += styles[style][4]
 						output = True
-					elif i >= (height - 4):
+					elif i >= height - 4:
 						strm += styles[style][10]
 						output = True
-					elif axislabel and axisunitslabel:
+					elif axislabel and axistick:
 						adivisor = -ydivisor if i < yaxis else ydivisor
 
 						k = yaxis + adivisor
-						while (k >= i if i < yaxis else k < (i + 4)) and i >= 4 and not output:
-							if i <= k and (i + 4) > k:
+						while (k >= i if i < yaxis else k < i + 4) and i >= 4 and not output:
+							if i <= k and i + 4 > k:
 								strm += styles[style][7 if xaxis >= 2 else 5]
 								output = True
 							k += adivisor
@@ -284,39 +296,38 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					if j == 0:
 						strm += styles[style][2]
 						output = True
-					elif j >= (width - 2):
+					elif j >= width - 2:
 						strm += styles[style][4]
 						output = True
-					elif axislabel and axisunitslabel:
+					elif axislabel and axistick:
 						adivisor = -xdivisor if j < xaxis else xdivisor
 
 						k = xaxis + adivisor
-						while (k >= j if j < xaxis else k < (j + 2)) and j < (width - 4) and not output:
-							if j <= k and (j + 2) > k:
+						while (k >= j if j < xaxis else k < j + 2) and j < width - 4 and not output:
+							if j <= k and j + 2 > k:
 								strm += styles[style][3 if yaxis <=
-													  (height - 4) else 9]
+													  height - 4 else 9]
 								output = True
 							k += adivisor
 					if not output:
 						strm += styles[style][0]
 						output = True
-				elif yaxislabel and xaxislabel and axislabel and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0:
+				elif yaxislabel and xaxislabel and axislabel and axistick and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0:
 					strm += "0"
 					output = True
-				elif (j >= (width - 2) if xaxis <= (width - 2) else j == 0) and yaxislabel and axislabel:
+				elif (j >= width - 2 if xaxis <= width - 2 else j == 0) and yaxislabel and axislabel:
 					strm += "x"
 					output = True
-				elif yaxislabel and axislabel and axisunitslabel:
+				elif yaxislabel and axislabel and axistick and axisunitslabel:
 					label = 0.0
 					adivisor = -xdivisor if j < xaxis else xdivisor
 					if j < xaxis:
 						j += 2
 
 					k = xaxis + adivisor
-					while (k >= j if j < xaxis else k < (j + 2)) and j < (width - 2) and not output:
-						if j <= k and (j + 2) > k:
-							label = ((width if k > width else k)
-									 * xstep) + xmin
+					while (k >= j if j < xaxis else k < j + 2) and j < width - 2 and not output:
+						if j <= k and j + 2 > k:
+							label = (width if k > width else k) * xstep + xmin
 
 							output = True
 						k += adivisor
@@ -329,7 +340,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 						length, astrm = outputfraction(label)
 						length *= 2
-						if (j >= xaxis or (j + length) < (xaxis - 4)) and (j + length) < (width - 2):
+						if (j >= xaxis or j + length < xaxis - 4) and j + length < width - 2:
 							strm += astrm
 
 							if length > 2:
@@ -339,10 +350,10 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 								output = True
 							else:
 								j += 2
-				elif (i == 0 if yaxis >= 4 else i >= (height - 4)) and xaxislabel and axislabel:
+				elif (i == 0 if yaxis >= 4 else i >= height - 4) and xaxislabel and axislabel:
 					strm += "y"
 					output = True
-				elif ylabellength and (xaxislabel if xaxis < 2 else j < (xaxis - ylabellength) and (j + 2) >= (xaxis - ylabellength)) and (yaxis >= 4 or i < (height - 4)) and axislabel and axisunitslabel:
+				elif ylabellength and (xaxislabel if xaxis < 2 else j < xaxis - ylabellength and j + 2 >= xaxis - ylabellength) and (yaxis >= 4 or i < height - 4) and axislabel and axistick and axisunitslabel:
 					strm += ylabelstrm
 					output = True
 					if ylabellength > 2:
@@ -374,16 +385,27 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 			j += 2
 
-		if i < (height - 4):
+		if border:
+			strm += styles[style][1]
+
+		if i < height - 4 or border:
 			strm += "\n"
 		i += 4
+
+	if border:
+		strm += styles[style][8]
+
+		strm += styles[style][0] * awidth
+
+		strm += styles[style][10]
 
 	print(strm)
 
 	return 0
 
 
-def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True,
+		   style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
 	"""Convert one or more arrays to graph and output"""
 	if not aarrays:
 		return 1
@@ -432,19 +454,18 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 
 	xstep = (xmax - xmin) / width
 	ystep = (ymax - ymin) / height
-	xaxis = width - (xmax / xstep)
+	xaxis = width - xmax / xstep
 	yaxis = ymax / ystep
 
 	aaarray = [[0 for j in range(height)] for i in range(width)]
 
 	for j, aarray in enumerate(aarrays):
-		acolor = color + 1 if len(aarrays) == 1 else (j %
-													  (len(colors) - 2)) + 3
+		acolor = color + 1 if len(aarrays) == 1 else j % (len(colors) - 2) + 3
 
 		for i in aarray:
 			if i[0] >= xmin and i[0] < xmax and i[1] >= ymin and i[1] < ymax:
-				x = int((i[0] / xstep) + xaxis)
-				y = int((yaxis - (i[1] / ystep)) - 1)
+				x = int(i[0] / xstep + xaxis)
+				y = int(yaxis - i[1] / ystep - 1)
 
 				if aaarray[x][y]:
 					if aaarray[x][y] != acolor:
@@ -452,17 +473,19 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 				else:
 					aaarray[x][y] = acolor
 
-	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border=border,
-				 axislabel=axislabel, axisunitslabel=axisunitslabel, style=style, title=title)
+	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border=border, axis=axis, axislabel=axislabel,
+				 axistick=axistick, axisunitslabel=axisunitslabel, style=style, title=title)
 
 
-def array(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
+def array(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
+		  axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
 	"""Convert single array to graph and output"""
-	return arrays(height, width, xmin, xmax, ymin, ymax, [
-		aarray], border=border, axislabel=axislabel, axisunitslabel=axisunitslabel, style=style, color=color, title=title)
+	return arrays(height, width, xmin, xmax, ymin, ymax, [aarray], border=border, axis=axis, axislabel=axislabel,
+				  axistick=axistick, axisunitslabel=axisunitslabel, style=style, color=color, title=title)
 
 
-def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
+			  axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
 	"""Convert one or more functions to graph and output"""
 	if not afunctions:
 		return 1
@@ -501,23 +524,23 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 
 	xstep = (xmax - xmin) / width
 	ystep = (ymax - ymin) / height
-	xaxis = width - (xmax / xstep)
+	xaxis = width - xmax / xstep
 	yaxis = ymax / ystep
 	xres = 2
 
 	array = [[0 for j in range(height)] for i in range(width)]
 
 	for j, function in enumerate(afunctions):
-		acolor = color + 1 if len(afunctions) == 1 else (j %
-														 (len(colors) - 2)) + 3
+		acolor = color + \
+			1 if len(afunctions) == 1 else j % (len(colors) - 2) + 3
 
 		for i in (x / xres for x in range(rows * xres)):
-			x = (i * xstep) + xmin
+			x = i * xstep + xmin
 			y = function(x)
 
 			if x >= xmin and x < xmax and y >= ymin and y < ymax:
-				ax = int((x / xstep) + xaxis)
-				ay = int((yaxis - (y / ystep)) - 1)
+				ax = int(x / xstep + xaxis)
+				ay = int(yaxis - y / ystep - 1)
 
 				if array[ax][ay]:
 					if array[ax][ay] != acolor:
@@ -525,11 +548,12 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 				else:
 					array[ax][ay] = acolor
 
-	return graph(height, width, xmin, xmax, ymin, ymax, array, border=border,
-				 axislabel=axislabel, axisunitslabel=axisunitslabel, style=style, title=title)
+	return graph(height, width, xmin, xmax, ymin, ymax, array, border=border, axis=axis, axislabel=axislabel,
+				 axistick=axistick, axisunitslabel=axisunitslabel, style=style, title=title)
 
 
-def function(height, width, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = True, axislabel: bool = True, axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
+def function(height, width, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
+			 axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
 	"""Convert single function to function array and output"""
-	return functions(height, width, xmin, xmax, ymin, ymax, [
-		afunction], border=border, axislabel=axislabel, axisunitslabel=axisunitslabel, style=style, color=color, title=title)
+	return functions(height, width, xmin, xmax, ymin, ymax, [afunction], border=border, axis=axis, axislabel=axislabel,
+					 axistick=axistick, axisunitslabel=axisunitslabel, style=style, color=color, title=title)

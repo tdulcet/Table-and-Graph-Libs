@@ -13,6 +13,15 @@ See the [python](python) directory for Python ports of the libraries.
 
 ❤️ Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support these libraries and my other software development.
 
+## Table of Contents
+* [Tables](#tables)
+	* [Usage](#usage)
+	* [Options](#options)
+* [Graphs/Plots](#graphsplots)
+	* [Usage](#usage-1)
+	* [Options](#options-1)
+* [Contributing](#contributing)
+
 ## Tables
 
 ### Usage
@@ -474,7 +483,7 @@ Default value: `false`
 Option: `title`\
 Default value: `nullptr`
 
-The title is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
+The title is output at the top of the table. It is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
 #### Border style
 
@@ -733,9 +742,14 @@ int main()
 
 ### Options
 
-#### Border/Axis
+#### Border
 
 Option: `border`\
+Default value: `false`
+
+#### Axis
+
+Option: `axis`\
 Default value: `true`
 
 #### Axis labels
@@ -743,21 +757,28 @@ Default value: `true`
 Option: `axislabel`\
 Default value: `true`
 
-Requires `border` to be `true`.
+Requires `axis` to be `true`.
+
+#### Axis ticks
+
+Option: `axistick`\
+Default value: `true`
+
+Requires `axis` and `axislabel` to be `true`.
 
 #### Axis units labels
 
 Option: `axisunitslabel`\
 Default value: `true`
 
-Requires `border` and `axislabel` to be `true`.
+Requires `axis`, `axislabel` and `axistick` to be `true`.
 
 #### Title
 
 Option: `title`\
 Default value: `nullptr`
 
-The title is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
+The title is output at the top of the graph. It is word wrapped based on the current width of the terminal, using [this](https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0) solution. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
 #### Axis/Border style
 
@@ -797,19 +818,21 @@ Values:
 3. `color_green`: Green
 4. `color_yellow`: Yellow
 5. `color_blue`: Blue
-6. `color_cyan`: Cyan
-7. `color_light_gray`: Light gray
-8. `color_dark_gray`: Dark gray
-9. `color_light_red`: Light red
-10. `color_light_green`: Light green
-11. `color_light_yellow`: Light yellow
-12. `color_light_blue`: Light blue
-13. `color_light_cyan`: Light cyan
-14. `color_white`: White
+6. `color_magenta`: Magenta
+7. `color_cyan`: Cyan
+8. `color_light_gray`: Light Gray
+9. `color_dark_gray`: Dark Gray
+10. `color_light_red`: Light Red
+11. `color_light_green`: Light Green
+12. `color_light_yellow`: Light Yellow
+13. `color_light_blue`: Light Blue
+14. `color_light_magenta`: Light Magenta
+15. `color_light_cyan`: Light Cyan
+16. `color_white`: White
 
 See [here](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text) for examples of the colors.
 
-Only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 14 are used inorder. The system default color is used where the plots cross.
+Only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 16 are used inorder. The system default color is used where the plots cross.
 
 ##### Plot
 
@@ -836,16 +859,16 @@ Pull requests welcome! Ideas for contributions:
 
 Both:
 * Add more options
-	* Add an option to print a border around graphs/plots
 	* Add options to word wrap and truncate long text in table cells
 	* Add option to center text in table cells
 * Add more examples
+* Update screenshots of existing examples
 * Improve the performance
 * Handle newlines and tabs in the tables
 * Handle formatted text in the table and graph/plot titles
 * Support more graph/plot colors
-	* Support 24-bit color
-	* Support combining colors when functions cross
+	* Support 256 and 24-bit color
+	* Support combining/blending colors when functions cross
 * Update the `-t, --table` options of column command from [util-linux](https://en.wikipedia.org/wiki/Util-linux) to use the Table library
 * Create a new CLI tool that uses the Graph library
 * Port to other languages (C, Java, Rust, etc.)

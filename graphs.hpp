@@ -41,10 +41,10 @@ namespace graphs
 		{"─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light
 		{"━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}, // Heavy
 		{"═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"}, // Double
-		{"╌", "╎", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light Dashed
-		{"╍", "╏", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}	 // Heavy Dashed
+		{"╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light Dashed
+		{"╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}	 // Heavy Dashed
+		// {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}	 // No border
 	};
-	// {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}};//No border
 
 	enum color_type
 	{
@@ -54,6 +54,7 @@ namespace graphs
 		color_green,
 		color_yellow,
 		color_blue,
+		color_magenta,
 		color_cyan,
 		color_light_gray,
 		color_dark_gray,
@@ -61,11 +62,12 @@ namespace graphs
 		color_light_green,
 		color_light_yellow,
 		color_light_blue,
+		color_light_magenta,
 		color_light_cyan,
 		color_white
 	};
 
-	enum color_type const color_types[] = {color_default, color_black, color_red, color_green, color_yellow, color_blue, color_cyan, color_light_gray, color_dark_gray, color_light_red, color_light_green, color_light_yellow, color_light_blue, color_light_cyan, color_white};
+	enum color_type const color_types[] = {color_default, color_black, color_red, color_green, color_yellow, color_blue, color_magenta, color_cyan, color_light_gray, color_dark_gray, color_light_red, color_light_green, color_light_yellow, color_light_blue, color_light_magenta, color_light_cyan, color_white};
 
 	const char *const colors[] = {"\e[39m", "\e[30m", "\e[31m", "\e[32m", "\e[33m", "\e[34m", "\e[35m", "\e[36m", "\e[37m", "\e[90m", "\e[91m", "\e[92m", "\e[93m", "\e[94m", "\e[95m", "\e[96m", "\e[97m"};
 
@@ -84,8 +86,10 @@ namespace graphs
 
 	struct options
 	{
-		bool border = true;
+		bool border = false;
+		bool axis = true;
 		bool axislabel = true;
+		bool axistick = true;
 		bool axisunitslabel = true;
 		const char *title = nullptr;
 		style_type style = style_light;
@@ -258,7 +262,9 @@ namespace graphs
 			return 1;
 
 		const bool border = aoptions.border;
+		const bool axis = aoptions.axis;
 		const bool axislabel = aoptions.axislabel;
+		const bool axistick = aoptions.axistick;
 		const bool axisunitslabel = aoptions.axisunitslabel;
 		const char *const title = aoptions.title;
 		const style_type style = aoptions.style;
@@ -272,11 +278,11 @@ namespace graphs
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
+		const size_t aheight = height / 4;
+		const size_t awidth = width / 2;
+
 		if (aoptions.check)
 		{
-			const size_t aheight = height / 4;
-			const size_t awidth = width / 2;
-
 			if (aheight > w.ws_row)
 			{
 				cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
@@ -314,7 +320,17 @@ namespace graphs
 		setlocale(LC_ALL, "");
 
 		if (title and title[0] != '\0')
-			cout << wrap(title, width / 2) << "\n";
+			cout << wrap(title, awidth) << "\n";
+
+		if (border)
+		{
+			cout << styles[style][2];
+
+			for (size_t k = 0; k < awidth; ++k)
+				cout << styles[style][0];
+
+			cout << styles[style][4] << "\n";
+		}
 
 		for (size_t i = 0; i < height; i += 4)
 		{
@@ -324,7 +340,7 @@ namespace graphs
 			ostringstream ylabelstrm;
 			size_t ylabellength = 0;
 
-			if (border and axislabel and axisunitslabel and yaxis >= 0 and yaxis <= height)
+			if (axis and axislabel and axistick and axisunitslabel and yaxis >= 0 and yaxis <= height)
 			{
 				bool output = false;
 				long double label = 0;
@@ -347,6 +363,9 @@ namespace graphs
 				}
 			}
 
+			if (border)
+				cout << styles[style][1];
+
 			for (size_t j = 0; j < width; j += 2)
 			{
 				const bool axaxis = xaxis >= 2 ? j < xaxis and (j + 2) >= xaxis : j <= xaxis and (j + 2) > xaxis;
@@ -354,7 +373,7 @@ namespace graphs
 
 				bool output = false;
 
-				if (border)
+				if (axis)
 				{
 					if (axaxis and ayaxis)
 					{
@@ -373,7 +392,7 @@ namespace graphs
 							cout << styles[style][10];
 							output = true;
 						}
-						else if (axislabel and axisunitslabel)
+						else if (axislabel and axistick)
 						{
 							int adivisor = i < yaxis ? -ydivisor : ydivisor;
 
@@ -404,7 +423,7 @@ namespace graphs
 							cout << styles[style][4];
 							output = true;
 						}
-						else if (axislabel and axisunitslabel)
+						else if (axislabel and axistick)
 						{
 							int adivisor = j < xaxis ? -xdivisor : xdivisor;
 
@@ -423,7 +442,7 @@ namespace graphs
 							output = true;
 						}
 					}
-					else if (yaxislabel and xaxislabel and axislabel and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0)
+					else if (yaxislabel and xaxislabel and axislabel and axistick and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0)
 					{
 						cout << "0";
 						output = true;
@@ -433,7 +452,7 @@ namespace graphs
 						cout << "x";
 						output = true;
 					}
-					else if (yaxislabel and axislabel and axisunitslabel)
+					else if (yaxislabel and axislabel and axistick and axisunitslabel)
 					{
 						long double label = 0;
 						int adivisor = j < xaxis ? -xdivisor : xdivisor;
@@ -479,7 +498,7 @@ namespace graphs
 						cout << "y";
 						output = true;
 					}
-					else if (ylabellength and (xaxis < 2 ? xaxislabel : j < (xaxis - ylabellength) and (j + 2) >= (xaxis - ylabellength)) and (yaxis >= 4 or i < (height - 4)) and axislabel and axisunitslabel)
+					else if (ylabellength and (xaxis < 2 ? xaxislabel : j < (xaxis - ylabellength) and (j + 2) >= (xaxis - ylabellength)) and (yaxis >= 4 or i < (height - 4)) and axislabel and axistick and axisunitslabel)
 					{
 						cout << ylabelstrm.str();
 						output = true;
@@ -523,8 +542,21 @@ namespace graphs
 				}
 			}
 
-			if (i < (height - 4))
+			if (border)
+				cout << styles[style][1];
+
+			if (i < (height - 4) or border)
 				cout << "\n";
+		}
+
+		if (border)
+		{
+			cout << styles[style][8];
+
+			for (size_t k = 0; k < awidth; ++k)
+				cout << styles[style][0];
+
+			cout << styles[style][10];
 		}
 
 		cout << endl;
@@ -623,7 +655,7 @@ namespace graphs
 			for (size_t i = 0; i < graphs::size(array); ++i)
 			{
 				const auto &x = array[i][0], &y = array[i][1];
-				
+
 				if (x >= xmin and x < xmax and y >= ymin and y < ymax)
 				{
 					const size_t ax = (x / xstep) + xaxis;

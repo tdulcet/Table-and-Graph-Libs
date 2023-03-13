@@ -1,3 +1,11 @@
+## Table of Contents
+* [Tables](#tables)
+	* [Usage](#usage)
+	* [Options](#options)
+* [Graphs/Plots](#graphsplots)
+	* [Usage](#usage-1)
+	* [Options](#options-1)
+
 ## Tables
 
 ### Usage
@@ -157,7 +165,7 @@ Header columns are bolded, centered and have a border.
 #### Table border
 
 Option: `tableborder`\
-Default value: `False`
+Default value: `True`
 
 #### Cell border
 
@@ -183,7 +191,7 @@ Values:
 Option: `title`\
 Default value: `None`
 
-The title is word wrapped based on the current width of the terminal. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
+The title is output at the top of the table. It is word wrapped based on the current width of the terminal. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
 #### Border style
 
@@ -346,31 +354,43 @@ Output same as example above.
 
 ### Options
 
-#### Border/Axis
+#### Border
 
 Option: `border`\
 Default value: `False`
 
+#### Axis
+
+Option: `axis`\
+Default value: `True`
+
 #### Axis labels
 
 Option: `axislabel`\
-Default value: `False`
+Default value: `True`
 
-Requires `border` to be `False`.
+Requires `axis` to be `True`.
+
+#### Axis ticks
+
+Option: `axistick`\
+Default value: `True`
+
+Requires `axis` and `axislabel` to be `True`.
 
 #### Axis units labels
 
 Option: `axisunitslabel`\
-Default value: `False`
+Default value: `True`
 
-Requires `border` and `axislabel` to be `False`.
+Requires `axis`, `axislabel` and `axistick` to be `True`.
 
 #### Title
 
 Option: `title`\
 Default value: `None`
 
-The title is word wrapped based on the current width of the terminal. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
+The title is output at the top of the graph. It is word wrapped based on the current width of the terminal. Handles newlines, tabs and [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
 
 #### Axis/Border style
 
@@ -410,19 +430,21 @@ Values:
 3. `color_types.green`: Green
 4. `color_types.yellow`: Yellow
 5. `color_types.blue`: Blue
-6. `color_types.cyan`: Cyan
-7. `color_types.dark_gray`: Light gray
-8. `color_types.dark_gray`: Dark gray
-9. `color_types.light_red`: Light red
-10. `color_types.light_green`: Light green
-11. `color_types.light_yellow`: Light yellow
-12. `color_types.light_blue`: Light blue
-13. `color_types.light_cyan`: Light cyan
-14. `color_types.white`: White
+6. `color_types.magenta`: Magenta
+7. `color_types.cyan`: Cyan
+8. `color_types.dark_gray`: Light Gray
+9. `color_types.dark_gray`: Dark Gray
+10. `color_types.light_red`: Light Red
+11. `color_types.light_green`: Light Green
+12. `color_types.light_yellow`: Light Yellow
+13. `color_types.light_blue`: Light Blue
+14. `color_types.light_magenta`: Light Magenta
+15. `color_types.light_cyan`: Light Cyan
+16. `color_types.white`: White
 
 See [here](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text) for examples of the colors.
 
-Only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 14 are used inorder. The system default color is used where the plots cross.
+Only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 16 are used inorder. The system default color is used where the plots cross.
 
 ##### Plot
 
