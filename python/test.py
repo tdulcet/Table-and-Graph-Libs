@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 # Teal Dulcet, CS546
 
-from __future__ import division, print_function, unicode_literals
+import math
 import random
 import sys
-import math
+
 import graphs
 import tables
 
 
-def afunction(x):
+def afunction(x: float):
 	return x + 1
 
 
-def function1(x):
+def function1(x: float):
 	return 2 * x
 
 
-def function2(x):
+def function2(x: float):
 	return x ** 2
 
 
@@ -51,7 +50,7 @@ for style in tables.style_types:
 				 headercolumn=True, style=style)
 
 print("\nOutput array as table with separate header row and column\n")
-array = [["Data {0:n}".format(i + j) for j in range(4)]
+array = [[f"Data {i + j:n}" for j in range(4)]
 		 for i in range(1, 4 * 4 + 1, 4)]
 headerrow = ["Header row/column 1", "Header row 2",
 			 "Header row 3", "Header row 4", "Header row 5"]

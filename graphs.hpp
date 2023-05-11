@@ -15,6 +15,7 @@
 #include <iterator>
 #include <numeric>
 #include <functional>
+#include <chrono>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -81,6 +82,24 @@ namespace graphs
 	const char *const constants[] = {"π", "e"};
 	const long double constantvalues[] = {M_PI, M_E};
 
+	enum units_type
+	{
+		units_number,
+		units_scale_none,
+		units_scale_SI,
+		units_scale_IEC,
+		units_scale_IEC_I,
+		units_fracts,
+		units_percent,
+		units_date,
+		units_time,
+		units_monetary
+	};
+
+	enum units_type const units_types[] = {units_number, units_scale_SI, units_scale_IEC, units_scale_IEC_I, units_fracts, units_percent, units_date, units_time, units_monetary};
+
+	const char *const suffix_power_char[] = {"", "K", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q"};
+
 	const long double max_bit = scalbn(1.0L, LDBL_MANT_DIG - 1);
 	const long double MAX = max_bit + (max_bit - 1);
 
@@ -91,6 +110,8 @@ namespace graphs
 		bool axislabel = true;
 		bool axistick = true;
 		bool axisunitslabel = true;
+		units_type xunits = units_fracts;
+		units_type yunits = units_fracts;
 		const char *title = nullptr;
 		style_type style = style_light;
 		color_type color = color_red;
@@ -114,7 +135,7 @@ namespace graphs
 			if (iscntrl(str[i]))
 			{
 				cerr << "\nError! Control character in string.\n";
-				cout << "Control character: " << (int)str[i] << "\n";
+				cout << "Control character: " << (int)str[i] << '\n';
 			}
 
 		length = mbstowcs(nullptr, str, 0);
@@ -200,8 +221,90 @@ namespace graphs
 		return wrapped;
 	}
 
+	// Auto-scale number to unit
+	// Adapted from: https://github.com/coreutils/coreutils/blob/master/src/numfmt.c
+	void outputunit(long double number, const units_type scale, ostringstream &strm)
+	{
+		unsigned int x = 0;
+		long double val = number;
+		if (val >= -LDBL_MAX and val <= LDBL_MAX)
+		{
+			while (abs(val) >= 10)
+			{
+				++x;
+				val /= 10;
+			}
+		}
+
+		if (scale == units_scale_none)
+		{
+			if (x > LDBL_DIG)
+				return;
+
+			strm << setprecision(LDBL_DIG) << number;
+			return;
+		}
+
+		if (x > 33 - 1)
+			return;
+
+		double scale_base;
+
+		switch (scale)
+		{
+		case units_scale_IEC:
+		case units_scale_IEC_I:
+			scale_base = 1024;
+			break;
+		case units_scale_none:
+		case units_scale_SI:
+		default:
+			scale_base = 1000;
+			break;
+		}
+
+		unsigned int power = 0;
+		if (number >= -LDBL_MAX and number <= LDBL_MAX)
+		{
+			while (abs(number) >= scale_base)
+			{
+				++power;
+				number /= scale_base;
+			}
+		}
+
+		long double anumber = abs(number);
+		anumber += anumber < 10 ? 0.0005 : anumber < 100 ? 0.005
+									   : anumber < 1000	 ? 0.05
+														 : 0.5;
+
+		if (number != 0 and anumber < 1000 and power > 0)
+		{
+			strm << setprecision(LDBL_DIG) << number;
+			string str = strm.str();
+
+			const unsigned int length = 5 + (number < 0 ? 1 : 0);
+			if (str.length() > length)
+			{
+				const int prec = anumber < 10 ? 3 : anumber < 100 ? 2
+																  : 1;
+				strm.str("");
+				strm << setprecision(prec) << fixed << number;
+			}
+		}
+		else
+		{
+			strm << setprecision(0) << fixed << number;
+		}
+
+		strm << (power < graphs::size(suffix_power_char) ? suffix_power_char[power] : "(error)");
+
+		if (scale == units_scale_IEC_I and power > 0)
+			strm << "i";
+	}
+
 	// Convert fractions and constants to Unicode characters
-	size_t outputfraction(const long double number, ostringstream &strm)
+	void outputfraction(const long double number, ostringstream &strm)
 	{
 		bool output = false;
 
@@ -249,6 +352,49 @@ namespace graphs
 
 		if (!output)
 			strm << number;
+	}
+
+	size_t outputlabel(const long double label, const units_type units, ostringstream &strm)
+	{
+		strm.imbue(locale(""));
+
+		switch (units)
+		{
+		case units_number:
+			strm << label;
+			break;
+		case units_scale_none:
+		case units_scale_SI:
+		case units_scale_IEC:
+		case units_scale_IEC_I:
+			outputunit(label, units, strm);
+			break;
+		case units_fracts:
+			outputfraction(label, strm);
+			break;
+		case units_percent:
+			strm << label * 100 << '%';
+			break;
+		case units_date:
+		{
+			// const time_t t = chrono::system_clock::to_time_t(chrono::sys_seconds(chrono::duration_cast<chrono::seconds>(chrono::duration<double>(label))));
+			const time_t t = chrono::system_clock::to_time_t(chrono::system_clock::time_point(chrono::duration_cast<chrono::seconds>(chrono::duration<long double>(label))));
+			const tm atm = *localtime(&t);
+			strm << put_time(&atm, "%x");
+			break;
+		}
+		case units_time:
+		{
+			// const time_t t = chrono::system_clock::to_time_t(chrono::sys_seconds(chrono::duration_cast<chrono::seconds>(chrono::duration<double>(label))));
+			const time_t t = chrono::system_clock::to_time_t(chrono::system_clock::time_point(chrono::duration_cast<chrono::seconds>(chrono::duration<long double>(label))));
+			const tm atm = *localtime(&t);
+			strm << put_time(&atm, "%X");
+			break;
+		}
+		case units_monetary:
+			strm << showbase << put_money(label);
+			break;
+		}
 
 		size_t length = strcol(strm.str().c_str());
 
@@ -320,7 +466,7 @@ namespace graphs
 		setlocale(LC_ALL, "");
 
 		if (title and title[0] != '\0')
-			cout << wrap(title, awidth) << "\n";
+			cout << wrap(title, awidth) << '\n';
 
 		if (border)
 		{
@@ -329,7 +475,7 @@ namespace graphs
 			for (size_t k = 0; k < awidth; ++k)
 				cout << styles[style][0];
 
-			cout << styles[style][4] << "\n";
+			cout << styles[style][4] << '\n';
 		}
 
 		for (size_t i = 0; i < height; i += 4)
@@ -340,7 +486,7 @@ namespace graphs
 			ostringstream ylabelstrm;
 			size_t ylabellength = 0;
 
-			if (axis and axislabel and axistick and axisunitslabel and yaxis >= 0 and yaxis <= height)
+			if (axis and axistick and axisunitslabel and yaxis >= 0 and yaxis <= height)
 			{
 				bool output = false;
 				long double label = 0;
@@ -358,7 +504,7 @@ namespace graphs
 
 				if (output)
 				{
-					ylabellength = outputfraction(label, ylabelstrm);
+					ylabellength = outputlabel(label, aoptions.yunits, ylabelstrm);
 					ylabellength *= 2;
 				}
 			}
@@ -392,7 +538,7 @@ namespace graphs
 							cout << styles[style][10];
 							output = true;
 						}
-						else if (axislabel and axistick)
+						else if (axistick)
 						{
 							int adivisor = i < yaxis ? -ydivisor : ydivisor;
 
@@ -423,7 +569,7 @@ namespace graphs
 							cout << styles[style][4];
 							output = true;
 						}
-						else if (axislabel and axistick)
+						else if (axistick)
 						{
 							int adivisor = j < xaxis ? -xdivisor : xdivisor;
 
@@ -442,7 +588,7 @@ namespace graphs
 							output = true;
 						}
 					}
-					else if (yaxislabel and xaxislabel and axislabel and axistick and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0)
+					else if (yaxislabel and xaxislabel and axistick and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0)
 					{
 						cout << "0";
 						output = true;
@@ -452,7 +598,7 @@ namespace graphs
 						cout << "x";
 						output = true;
 					}
-					else if (yaxislabel and axislabel and axistick and axisunitslabel)
+					else if (yaxislabel and axistick and axisunitslabel)
 					{
 						long double label = 0;
 						int adivisor = j < xaxis ? -xdivisor : xdivisor;
@@ -477,7 +623,7 @@ namespace graphs
 							output = false;
 
 							ostringstream strm;
-							size_t length = outputfraction(label, strm);
+							size_t length = outputlabel(label, aoptions.xunits, strm);
 							length *= 2;
 							if ((j >= xaxis or (j + length) < (ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0 ? xaxis - 4 : xaxis)) and (j + length) < (width - 2) and (xaxis <= (width - 2) or j > 2))
 							{
@@ -498,7 +644,7 @@ namespace graphs
 						cout << "y";
 						output = true;
 					}
-					else if (ylabellength and (xaxis < 2 ? xaxislabel : j < (xaxis - ylabellength) and (j + 2) >= (xaxis - ylabellength)) and (yaxis >= 4 or i < (height - 4)) and axislabel and axistick and axisunitslabel)
+					else if (ylabellength and (xaxis < 2 ? xaxislabel : j < (xaxis - ylabellength) and (j + 2) >= (xaxis - ylabellength)) and (yaxis >= 4 or i < (height - 4)) and axistick and axisunitslabel)
 					{
 						cout << ylabelstrm.str();
 						output = true;
@@ -546,7 +692,7 @@ namespace graphs
 				cout << styles[style][1];
 
 			if (i < (height - 4) or border)
-				cout << "\n";
+				cout << '\n';
 		}
 
 		if (border)

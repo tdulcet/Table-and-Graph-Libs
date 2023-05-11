@@ -36,6 +36,34 @@ jobs:
     - name: Clang-Tidy
       run: clang-tidy -checks='bugprone-*,-bugprone-easily-swappable-parameters,cert-*,clang-analyzer-*,misc-const-correctness,misc-redundant-expression,misc-unused-*,modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-const-return-type,readability-container-*,readability-duplicate-include,readability-else-after-return,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-string-compare,readability-use-anyofallof' -header-filter='.*' *.cpp -- -Wall -O3 -std=c++17
 
+  Pylint:
+    name: Pylint
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install pylint
+    - name: Script
+      run: pylint -f colorized --py-version 3.7 -d design,C0103,W0311,C0301,C0302,C0209 --load-plugins pylint.extensions.code_style,pylint.extensions.emptystring,pylint.extensions.comparetozero,pylint.extensions.comparison_placement,pylint.extensions.for_any_all,pylint.extensions.consider_refactoring_into_while_condition,pylint.extensions.consider_ternary_expression,pylint.extensions.dict_init_mutate,pylint.extensions.docstyle,pylint.extensions.check_elif,pylint.extensions.set_membership,pylint.extensions.typing -e R6104 -r y python/*.py
+      continue-on-error: true
+
+  Ruff:
+    name: Ruff
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install ruff
+    - name: Script
+      run: ruff --format=github --target-version py37 --select F,E,W,I,D,UP,YTT,S,BLE,B,A,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SIM,TID,TCH,ARG,PGH,PL,RUF --ignore E101,E501,W191,D211,D213,D401,PLR09,PLR2004,RUF003 .
+      continue-on-error: true
+
   Python:
     name: Linux Python
 

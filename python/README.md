@@ -10,7 +10,13 @@
 
 ### Usage
 
-Requires Python 3.6 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`. See the [tables.py](tables.py) file for full usage information.
+Requires Python 3.6 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with:
+```bash
+pip3 install wcwidth
+# or
+python3 -m pip install wcwidth
+```
+See the [tables.py](tables.py) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
 
@@ -231,7 +237,13 @@ Check that the width of the table is not greater then the width of the terminal.
 
 ### Usage
 
-Requires Python 3.6 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with: `pip3 install wcwidth`. See the [graphs.py](graphs.py) file for full usage information.
+Requires Python 3.6 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with:
+```bash
+pip3 install wcwidth
+# or
+python3 -m pip install wcwidth
+```
+See the [graphs.py](graphs.py) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
 
@@ -371,19 +383,42 @@ Default value: `True`
 
 Requires `axis` to be `True`.
 
-#### Axis ticks
+#### Axis tick marks
 
 Option: `axistick`\
 Default value: `True`
 
-Requires `axis` and `axislabel` to be `True`.
+Requires `axis` to be `True`.
 
 #### Axis units labels
 
 Option: `axisunitslabel`\
 Default value: `True`
 
-Requires `axis`, `axislabel` and `axistick` to be `True`.
+Requires `axis` and `axistick` to be `True`.
+
+#### X-axis units format
+
+Option: `xunits`\
+Values:
+
+1. `units_types.number`: Locale number format
+2. `units_types.scale_none`: Locale number format with full precision
+3. `units_types.scale_SI`: Auto-scale to the SI standard
+4. `units_types.scale_IEC`: Auto-scale to the IEC standard
+5. `units_types.scale_IEC_I`: Auto-scale to the IEC standard
+6. `units_types.fracts`: Locale number format, but convert fractions and mathematical constants to Unicode characters (default)
+7. `units_types.percent`: Percentage format
+8. `units_types.date`: Locale date format
+9. `units_types.time`: Locale time format
+10. `units_types.monetary`: Locale monetary/currency format
+
+Formats 2-5 are similar to the respective `--to` options with the [numfmt](https://www.gnu.org/software/coreutils/manual/html_node/numfmt-invocation.html) command from GNU Coreutils, but with [more precision](https://github.com/tdulcet/Numbers-Tool#comparison-of---to-option).
+
+#### Y-axis units format
+
+Option: `yunits`\
+Values: Same as above.
 
 #### Title
 

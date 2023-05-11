@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/tdulcet/Tables-and-Graphs.svg?branch=master)](https://travis-ci.com/tdulcet/Tables-and-Graphs)
 [![Actions Status](https://github.com/tdulcet/Table-and-Graph-Libs/workflows/CI/badge.svg?branch=master)](https://github.com/tdulcet/Table-and-Graph-Libs/actions)
 
-# Tables and Graphs
+# Table and Graph Libraries
 
 Console Table and Graph/Plot Libraries
 
@@ -759,19 +759,42 @@ Default value: `true`
 
 Requires `axis` to be `true`.
 
-#### Axis ticks
+#### Axis tick marks
 
 Option: `axistick`\
 Default value: `true`
 
-Requires `axis` and `axislabel` to be `true`.
+Requires `axis` to be `true`.
 
 #### Axis units labels
 
 Option: `axisunitslabel`\
 Default value: `true`
 
-Requires `axis`, `axislabel` and `axistick` to be `true`.
+Requires `axis` and `axistick` to be `true`.
+
+#### X-axis units format
+
+Option: `xunits`\
+Values:
+
+1. `units_number`: Locale number format
+2. `units_scale_none`: Locale number format with full precision
+3. `units_scale_SI`: Auto-scale to the SI standard
+4. `units_scale_IEC`: Auto-scale to the IEC standard
+5. `units_scale_IEC_I`: Auto-scale to the IEC standard
+6. `units_fracts`: Locale number format, but convert fractions and mathematical constants to Unicode characters (default)
+6. `units_percent`: Percentage format
+7. `units_date`: Locale date format
+8. `units_time`: Locale time format
+9. `units_monetary`: Locale monetary/currency format
+
+Formats 2-5 are similar to the respective `--to` options with the [numfmt](https://www.gnu.org/software/coreutils/manual/html_node/numfmt-invocation.html) command from GNU Coreutils, but with [more precision](https://github.com/tdulcet/Numbers-Tool#comparison-of---to-option).
+
+#### Y-axis units format
+
+Option: `yunits`\
+Values: Same as above.
 
 #### Title
 

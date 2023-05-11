@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 # Teal Dulcet, CS546
 
-from __future__ import division, print_function, unicode_literals
-import sys
-import shutil
+import locale
 import re
+import shutil
+import sys
 import textwrap
 from enum import IntEnum, auto
-from wcwidth import wcswidth
-from typing import List, Optional, Any, Sequence, Callable
-import locale
+from typing import Any, Callable, List, Optional, Sequence
 
-locale.setlocale(locale.LC_ALL, '')
+from wcwidth import wcswidth
+
+locale.setlocale(locale.LC_ALL, "")
 
 
 class style_types(IntEnum):
@@ -37,12 +36,12 @@ styles = [
 	# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
 ]
 
-ansi = re.compile(r'\x1B\[(?:[0-9]+(?:;[0-9]+)*)?m')
+ansi = re.compile(r"\x1B\[(?:[0-9]+(?:;[0-9]+)*)?m")
 
 
 def strcol(astr: str) -> int:
 	"""Returns the number of columns that the given string would take up if printed."""
-	astr = ansi.sub('', astr)
+	astr = ansi.sub("", astr)
 	width = wcswidth(astr)
 	if width == -1:
 		print(
@@ -55,7 +54,7 @@ def strcol(astr: str) -> int:
 
 def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False,
 		  padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light, check: bool = True) -> int:
-	"""Output char array as table"""
+	"""Output char array as table."""
 	if not array:
 		return 1
 
@@ -75,8 +74,8 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 
 	if check:
 		if width > w.columns:
-			print("The width of the table ({0}) is greater then the width of the terminal ({1}).".format(
-				width, w.columns), file=sys.stderr)
+			print(
+				f"The width of the table ({width}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
 
 	if title:
@@ -120,7 +119,7 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 				strm += " " * padding
 
 				if alignment is None:
-					strm += "{0:{width}}".format(array[i][j], width=awidth)
+					strm += f"{array[i][j]:{awidth}}"
 				elif alignment:
 					strm += array[i][j].rjust(awidth)
 				else:
@@ -134,45 +133,48 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 		if i < rows - 1 or tableborder:
 			strm += "\n"
 
-		if tableborder:
-			if i == rows - 1:
-				strm += styles[style][8]
-			elif cellborder or (i == 0 and headerrow) or headercolumn:
+		if (i < rows - 1 and cellborder) or (i == 0 and headerrow) or (i < rows - 1 and headercolumn):
+			if tableborder and (cellborder or (i == 0 and headerrow) or headercolumn):
 				strm += styles[style][5]
 
-		if (i == rows - 1 and tableborder) or (i < rows - 1 and cellborder) or (i == 0 and headerrow) or (i < rows - 1 and headercolumn):
 			for j in range(columns):
-				if (i == rows - 1 and tableborder) or (i < rows - 1 and cellborder) or (i == 0 and headerrow) or (i < rows - 1 and j == 0 and headercolumn):
+				if cellborder or (i == 0 and headerrow) or (j == 0 and headercolumn):
 					strm += styles[style][0] * (2 * padding + columnwidth[j])
-				elif i < rows - 1 and headercolumn:
+				elif headercolumn:
 					strm += " " * (2 * padding + columnwidth[j])
 
 				if j < columns - 1:
-					if i == rows - 1 and tableborder:
-						if cellborder or (j == 0 and headercolumn):
-							strm += styles[style][9]
-						else:
-							strm += styles[style][0]
-					elif (i < rows - 1 and cellborder) or ((i == 0 and headerrow) and (j == 0 and headercolumn)):
+					if cellborder or ((i == 0 and headerrow) and (j == 0 and headercolumn)):
 						strm += styles[style][6]
 					elif i == 0 and headerrow:
 						strm += styles[style][9]
-					elif i < rows - 1 and headercolumn:
+					elif headercolumn:
 						if j == 0:
 							strm += styles[style][7]
 						else:
 							strm += " "
 
 			if tableborder:
-				if i == rows - 1:
-					strm += styles[style][10]
-				elif cellborder or (i == 0 and headerrow):
+				if cellborder or (i == 0 and headerrow):
 					strm += styles[style][7]
 				elif headercolumn:
 					strm += styles[style][1]
 
-			if i < rows - 1:
-				strm += "\n"
+			strm += "\n"
+
+	if tableborder:
+		strm += styles[style][8]
+
+		for j in range(columns):
+			strm += styles[style][0] * (2 * padding + columnwidth[j])
+
+			if j < columns - 1:
+				if cellborder or (j == 0 and headercolumn):
+					strm += styles[style][9]
+				else:
+					strm += styles[style][0]
+
+		strm += styles[style][10]
 
 	print(strm)
 
@@ -181,7 +183,7 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 
 def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] = None, aheadercolumn: Optional[Sequence[Any]] = None, headerrow: bool = False, headercolumn: bool = False,
 		  tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
-	"""Convert array to char array and output as table"""
+	"""Convert array to char array and output as table."""
 	if not aarray:
 		return 1
 
@@ -232,7 +234,7 @@ def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] =
 
 def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True,
 			  cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
-	"""Convert one or more functions to array and output as table"""
+	"""Convert one or more functions to array and output as table."""
 	if not afunctions:
 		return 1
 
@@ -271,6 +273,6 @@ def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Calla
 
 def function(xmin: float, xmax: float, xstep: float, afunction: Callable[[float], float], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True,
 			 cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
-	"""Convert single function to array and output as table"""
+	"""Convert single function to array and output as table."""
 	return functions(xmin, xmax, xstep, [afunction], headerrow=headerrow, headercolumn=headercolumn,
 					 tableborder=tableborder, cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)

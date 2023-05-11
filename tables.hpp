@@ -78,7 +78,7 @@ namespace tables
 			if (iscntrl(str[i]))
 			{
 				cerr << "\nError! Control character in string.\n";
-				cout << "Control character: " << (int)str[i] << "\n";
+				cout << "Control character: " << (int)str[i] << '\n';
 			}
 
 		length = mbstowcs(nullptr, str, 0);
@@ -218,7 +218,7 @@ namespace tables
 		}
 
 		if (title and title[0] != '\0')
-			cout << wrap(title, width) << "\n";
+			cout << wrap(title, width) << '\n';
 
 		if (aoptions.alignment)
 			cout << aoptions.alignment;
@@ -241,7 +241,7 @@ namespace tables
 				}
 			}
 
-			cout << styles[style][4] << "\n";
+			cout << styles[style][4] << '\n';
 		}
 
 		for (size_t i = 0; i < rows; ++i)
@@ -254,7 +254,7 @@ namespace tables
 				if ((j and cellborder) or (i == 0 and j and headerrow) or (j == 1 and headercolumn))
 					cout << styles[style][1];
 				else if (j and (tableborder or (i and headerrow) or headercolumn))
-					cout << " ";
+					cout << ' ';
 
 				const int difference = columnwidth[j] - strcol(array[i][j].c_str());
 
@@ -282,62 +282,71 @@ namespace tables
 				cout << styles[style][1];
 
 			if (i < (rows - 1) or tableborder)
-				cout << "\n";
+				cout << '\n';
 
-			if (tableborder)
+			if ((i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and headercolumn))
 			{
-				if (i == (rows - 1))
-					cout << styles[style][8];
-				else if (cellborder or (i == 0 and headerrow) or headercolumn)
-					cout << styles[style][5];
-			}
+				if (tableborder)
+				{
+					if (cellborder or (i == 0 and headerrow) or headercolumn)
+						cout << styles[style][5];
+				}
 
-			if ((i == (rows - 1) and tableborder) or (i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and headercolumn))
-			{
 				for (size_t j = 0; j < columns; ++j)
 				{
-					if ((i == (rows - 1) and tableborder) or (i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and j == 0 and headercolumn))
+					if (cellborder or (i == 0 and headerrow) or (j == 0 and headercolumn))
 						for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
 							cout << styles[style][0];
-					else if (i < (rows - 1) and headercolumn)
+					else if (headercolumn)
 						cout << string((2 * padding) + columnwidth[j], ' ');
 
 					if (j < (columns - 1))
 					{
-						if (i == (rows - 1) and tableborder)
-						{
-							if (cellborder or (j == 0 and headercolumn))
-								cout << styles[style][9];
-							else
-								cout << styles[style][0];
-						}
-						else if ((i < (rows - 1) and cellborder) or ((i == 0 and headerrow) and (j == 0 and headercolumn)))
+						if (cellborder or ((i == 0 and headerrow) and (j == 0 and headercolumn)))
 							cout << styles[style][6];
 						else if (i == 0 and headerrow)
 							cout << styles[style][9];
-						else if (i < (rows - 1) and headercolumn)
+						else if (headercolumn)
 						{
 							if (j == 0)
 								cout << styles[style][7];
 							else
-								cout << " ";
+								cout << ' ';
 						}
 					}
 				}
 
 				if (tableborder)
 				{
-					if (i == (rows - 1))
-						cout << styles[style][10];
-					else if (cellborder or (i == 0 and headerrow))
+					if (cellborder or (i == 0 and headerrow))
 						cout << styles[style][7];
 					else if (headercolumn)
 						cout << styles[style][1];
 				}
 
-				if (i < (rows - 1))
-					cout << "\n";
+				cout << '\n';
 			}
+		}
+
+		if (tableborder)
+		{
+			cout << styles[style][8];
+
+			for (size_t j = 0; j < columns; ++j)
+			{
+				for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
+					cout << styles[style][0];
+
+				if (j < (columns - 1))
+				{
+					if (cellborder or (j == 0 and headercolumn))
+						cout << styles[style][9];
+					else
+						cout << styles[style][0];
+				}
+			}
+
+			cout << styles[style][10];
 		}
 
 		cout << endl;

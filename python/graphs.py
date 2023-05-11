@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 # Teal Dulcet, CS546
 
-from __future__ import division, print_function, unicode_literals
-import sys
+import locale
 import math
 import shutil
-from fractions import Fraction
+import sys
 import textwrap
+from datetime import datetime, timezone
 from enum import Enum, IntEnum, auto
-from wcwidth import wcswidth
-from typing import List, Tuple, Optional, Sequence, Callable
-import locale
+from fractions import Fraction
+from typing import Callable, List, Optional, Sequence, Tuple
 
-locale.setlocale(locale.LC_ALL, '')
+from wcwidth import wcswidth
+
+locale.setlocale(locale.LC_ALL, "")
 
 
 class style_types(IntEnum):
@@ -112,6 +112,22 @@ constants = {
 	"e": math.e
 }
 
+
+class units_types(Enum):
+	number = auto()
+	scale_none = auto()
+	scale_SI = auto()
+	scale_IEC = auto()
+	scale_IEC_I = auto()
+	fracts = auto()
+	percent = auto()
+	date = auto()
+	time = auto()
+	monetary = auto()
+
+
+suffix_power_char = ["", "K", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q"]
+
 MAX = sys.float_info.radix ** sys.float_info.mant_dig - 1
 
 
@@ -127,8 +143,60 @@ def strcol(astr: str) -> int:
 	# return len(astr)
 
 
-def outputfraction(number: float) -> Tuple[int, str]:
-	"""Convert fractions and constants to Unicode characters"""
+def outputunit(number: float, scale: units_types) -> str:
+	x = 0
+	val = number
+	if -sys.float_info.max <= val <= sys.float_info.max:
+		while abs(val) >= 10:
+			x += 1
+			val /= 10
+
+	if scale == units_types.scale_none:
+		if x > sys.float_info.dig:
+			return ""
+
+		return f"{number:.{sys.float_info.dig}n}"
+
+	if x > 33 - 1:
+		return ""
+
+	if scale in {units_types.scale_IEC, units_types.scale_IEC_I}:
+		scale_base = 1024
+	elif scale == units_types.scale_SI:
+		scale_base = 1000
+
+	power = 0
+	if -sys.float_info.max <= number <= sys.float_info.max:
+		while abs(number) >= scale_base:
+			power += 1
+			number /= scale_base
+
+	anumber = abs(number)
+	anumber += 0.0005 if anumber < 10 else 0.005 if anumber < 100 else 0.05 if anumber < 1000 else 0.5
+
+	strm = ""
+
+	if number != 0 and anumber < 1000 and power > 0:
+		strm = f"{number:.{sys.float_info.dig}n}"
+
+		length = 5 + (number < 0)
+		if len(strm) > length:
+			prec = 3 if anumber < 10 else 2 if anumber < 100 else 1
+			strm = locale.format_string(f"%.{prec}f", number, grouping=True)
+	else:
+		strm = locale.format_string("%.0f", number, grouping=True)
+
+	strm += suffix_power_char[power] if power < len(
+		suffix_power_char) else "(error)"
+
+	if scale == units_types.scale_IEC_I and power > 0:
+		strm += "i"
+
+	return strm
+
+
+def outputfraction(number: float) -> str:
+	"""Convert fractions and constants to Unicode characters."""
 	output = False
 
 	strm = ""
@@ -145,7 +213,7 @@ def outputfraction(number: float) -> Tuple[int, str]:
 				if intpart == 0 and number < 0:
 					strm += "-"
 				elif intpart != 0:
-					strm += "{0:n}".format(intpart)
+					strm += f"{intpart:n}"
 
 				strm += fraction
 
@@ -160,8 +228,7 @@ def outputfraction(number: float) -> Tuple[int, str]:
 					if intpart == -1:
 						strm += "-"
 					elif intpart != 1:
-						strm += "{0:.{prec}n}".format(intpart,
-													  prec=sys.float_info.dig)
+						strm += f"{intpart:.{sys.float_info.dig}n}"
 
 					strm += constant
 
@@ -169,7 +236,27 @@ def outputfraction(number: float) -> Tuple[int, str]:
 					break
 
 	if not output:
-		strm += "{0:n}".format(number)
+		strm += f"{number:n}"
+
+	return strm
+
+
+def outputlabel(label: float, units: units_types) -> Tuple[int, str]:
+	"""Outputs a label in a nice, human readable format."""
+	if units == units_types.number:
+		strm = f"{label:n}"
+	elif units in {units_types.scale_none, units_types.scale_SI, units_types.scale_IEC, units_types.scale_IEC_I}:
+		strm = outputunit(label, units)
+	elif units == units_types.fracts:
+		strm = outputfraction(label)
+	elif units == units_types.percent:
+		strm = f"{label:%}"
+	elif units == units_types.date:
+		strm = datetime.fromtimestamp(label, timezone.utc).strftime("%x")
+	elif units == units_types.time:
+		strm = datetime.fromtimestamp(label, timezone.utc).strftime("%X")
+	elif units == units_types.monetary:
+		strm = locale.currency(label, grouping=True)
 
 	length = strcol(strm)
 
@@ -177,8 +264,8 @@ def outputfraction(number: float) -> Tuple[int, str]:
 
 
 def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
-		  axisunitslabel: bool = True, style: style_types = style_types.light, title: Optional[str] = None, check: bool = True) -> int:
-	"""Output graph"""
+		  axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, title: Optional[str] = None, check: bool = True) -> int:
+	"""Output graph."""
 	if not array:
 		return 1
 
@@ -195,13 +282,13 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 	if check:
 		if aheight > w.lines:
-			print("The height of the graph ({0}) is greater then the height of the terminal ({1}).".format(
-				aheight, w.lines), file=sys.stderr)
+			print(
+				f"The height of the graph ({aheight}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
 			return 1
 
 		if awidth > w.columns:
-			print("The width of the graph ({0}) is greater then the width of the terminal ({1}).".format(
-				awidth, w.columns), file=sys.stderr)
+			print(
+				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
 
 	if xmin >= xmax:
@@ -233,29 +320,27 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 	i = 0
 	while i < height:
-		ayaxis = i <= yaxis and i + 4 > yaxis if yaxis <= height - \
-			4 else i < yaxis and i + 4 >= yaxis
-		yaxislabel = i <= yaxis + 4 and i + 4 > yaxis + \
-			4 if yaxis <= height - 4 else i < yaxis - 4 and i + 4 >= yaxis
+		ayaxis = i <= yaxis < i + 4 if yaxis <= height - 4 else i < yaxis <= i + 4
+		yaxislabel = i <= yaxis + 4 < i + 4 if yaxis <= height - 4 else i < yaxis - 4 <= i + 4
 
 		ylabelstrm = ""
 		ylabellength = 0
 
-		if axis and axislabel and axistick and axisunitslabel and yaxis >= 0 and yaxis <= height:
+		if axis and axistick and axisunitslabel and 0 <= yaxis <= height:
 			output = False
 			label = 0.0
 			adivisor = -ydivisor if i < yaxis else ydivisor
 
 			k = yaxis + adivisor
 			while (k >= i if i < yaxis else k < i + 4) and i >= 4 and not output:
-				if i <= k and i + 4 > k:
+				if i <= k < i + 4:
 					label = ymax - (height if k > height else k) * ystep
 
 					output = True
 				k += adivisor
 
 			if output:
-				ylabellength, ylabelstrm = outputfraction(label)
+				ylabellength, ylabelstrm = outputlabel(label, yunits)
 				ylabellength *= 2
 
 		if border:
@@ -263,9 +348,8 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 		j = 0
 		while j < width:
-			axaxis = j < xaxis and j + 2 >= xaxis if xaxis >= 2 else j <= xaxis and j + 2 > xaxis
-			xaxislabel = j < xaxis - 2 and j + 2 >= xaxis - \
-				2 if xaxis >= 2 else j <= xaxis + 2 and j + 2 > xaxis + 2
+			axaxis = j < xaxis <= j + 2 if xaxis >= 2 else j <= xaxis < j + 2
+			xaxislabel = j < xaxis - 2 <= j + 2 if xaxis >= 2 else j <= xaxis + 2 < j + 2
 
 			output = False
 
@@ -280,12 +364,12 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					elif i >= height - 4:
 						strm += styles[style][10]
 						output = True
-					elif axislabel and axistick:
+					elif axistick:
 						adivisor = -ydivisor if i < yaxis else ydivisor
 
 						k = yaxis + adivisor
 						while (k >= i if i < yaxis else k < i + 4) and i >= 4 and not output:
-							if i <= k and i + 4 > k:
+							if i <= k < i + 4:
 								strm += styles[style][7 if xaxis >= 2 else 5]
 								output = True
 							k += adivisor
@@ -299,12 +383,12 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					elif j >= width - 2:
 						strm += styles[style][4]
 						output = True
-					elif axislabel and axistick:
+					elif axistick:
 						adivisor = -xdivisor if j < xaxis else xdivisor
 
 						k = xaxis + adivisor
 						while (k >= j if j < xaxis else k < j + 2) and j < width - 4 and not output:
-							if j <= k and j + 2 > k:
+							if j <= k < j + 2:
 								strm += styles[style][3 if yaxis <=
 													  height - 4 else 9]
 								output = True
@@ -312,13 +396,13 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					if not output:
 						strm += styles[style][0]
 						output = True
-				elif yaxislabel and xaxislabel and axislabel and axistick and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0:
+				elif yaxislabel and xaxislabel and axistick and axisunitslabel and ymin <= 0 <= ymax and xmin <= 0 <= xmax:
 					strm += "0"
 					output = True
 				elif (j >= width - 2 if xaxis <= width - 2 else j == 0) and yaxislabel and axislabel:
 					strm += "x"
 					output = True
-				elif yaxislabel and axislabel and axistick and axisunitslabel:
+				elif yaxislabel and axistick and axisunitslabel:
 					label = 0.0
 					adivisor = -xdivisor if j < xaxis else xdivisor
 					if j < xaxis:
@@ -326,7 +410,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 					k = xaxis + adivisor
 					while (k >= j if j < xaxis else k < j + 2) and j < width - 2 and not output:
-						if j <= k and j + 2 > k:
+						if j <= k < j + 2:
 							label = (width if k > width else k) * xstep + xmin
 
 							output = True
@@ -338,7 +422,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					if output:
 						output = False
 
-						length, astrm = outputfraction(label)
+						length, astrm = outputlabel(label, xunits)
 						length *= 2
 						if (j >= xaxis or j + length < xaxis - 4) and j + length < width - 2:
 							strm += astrm
@@ -353,7 +437,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 				elif (i == 0 if yaxis >= 4 else i >= height - 4) and xaxislabel and axislabel:
 					strm += "y"
 					output = True
-				elif ylabellength and (xaxislabel if xaxis < 2 else j < xaxis - ylabellength and j + 2 >= xaxis - ylabellength) and (yaxis >= 4 or i < height - 4) and axislabel and axistick and axisunitslabel:
+				elif ylabellength and (xaxislabel if xaxis < 2 else j < xaxis - ylabellength and j + 2 >= xaxis - ylabellength) and (yaxis >= 4 or i < height - 4) and axistick and axisunitslabel:
 					strm += ylabelstrm
 					output = True
 					if ylabellength > 2:
@@ -405,8 +489,8 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 
 def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True,
-		   style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
-	"""Convert one or more arrays to graph and output"""
+		   xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+	"""Convert one or more arrays to graph and output."""
 	if not aarrays:
 		return 1
 
@@ -427,13 +511,13 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 		awidth = width // 2
 
 		if aheight > w.lines:
-			print("The height of the graph ({0}) is greater then the height of the terminal ({1}).".format(
-				aheight, w.lines), file=sys.stderr)
+			print(
+				f"The height of the graph ({aheight}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
 			return 1
 
 		if awidth > w.columns:
-			print("The width of the graph ({0}) is greater then the width of the terminal ({1}).".format(
-				awidth, w.columns), file=sys.stderr)
+			print(
+				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
 
 	if xmin == 0 and xmax == 0:
@@ -474,19 +558,19 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 					aaarray[x][y] = acolor
 
 	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border=border, axis=axis, axislabel=axislabel,
-				 axistick=axistick, axisunitslabel=axisunitslabel, style=style, title=title)
+				 axistick=axistick, axisunitslabel=axisunitslabel, xunits=xunits, yunits=yunits, style=style, title=title)
 
 
 def array(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
-		  axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
-	"""Convert single array to graph and output"""
+		  axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
+	"""Convert single array to graph and output."""
 	return arrays(height, width, xmin, xmax, ymin, ymax, [aarray], border=border, axis=axis, axislabel=axislabel,
-				  axistick=axistick, axisunitslabel=axisunitslabel, style=style, color=color, title=title)
+				  axistick=axistick, axisunitslabel=axisunitslabel, xunits=xunits, yunits=yunits, style=style, color=color, title=title)
 
 
 def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
-			  axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
-	"""Convert one or more functions to graph and output"""
+			  axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+	"""Convert one or more functions to graph and output."""
 	if not afunctions:
 		return 1
 
@@ -503,13 +587,13 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 		awidth = width // 2
 
 		if aheight > w.lines:
-			print("The height of the graph ({0}) is greater then the height of the terminal ({1}).".format(
-				aheight, w.lines), file=sys.stderr)
+			print(
+				f"The height of the graph ({aheight}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
 			return 1
 
 		if awidth > w.columns:
-			print("The width of the graph ({0}) is greater then the width of the terminal ({1}).".format(
-				awidth, w.columns), file=sys.stderr)
+			print(
+				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
 
 	if xmin >= xmax:
@@ -538,7 +622,7 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 			x = i * xstep + xmin
 			y = function(x)
 
-			if x >= xmin and x < xmax and y >= ymin and y < ymax:
+			if xmin <= x < xmax and ymin <= y < ymax:
 				ax = int(x / xstep + xaxis)
 				ay = int(yaxis - y / ystep - 1)
 
@@ -549,11 +633,11 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 					array[ax][ay] = acolor
 
 	return graph(height, width, xmin, xmax, ymin, ymax, array, border=border, axis=axis, axislabel=axislabel,
-				 axistick=axistick, axisunitslabel=axisunitslabel, style=style, title=title)
+				 axistick=axistick, axisunitslabel=axisunitslabel, xunits=xunits, yunits=yunits, style=style, title=title)
 
 
-def function(height, width, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
-			 axisunitslabel: bool = True, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
-	"""Convert single function to function array and output"""
+def function(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
+			 axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
+	"""Convert single function to function array and output."""
 	return functions(height, width, xmin, xmax, ymin, ymax, [afunction], border=border, axis=axis, axislabel=axislabel,
-					 axistick=axistick, axisunitslabel=axisunitslabel, style=style, color=color, title=title)
+					 axistick=axistick, axisunitslabel=axisunitslabel, xunits=xunits, yunits=yunits, style=style, color=color, title=title)
