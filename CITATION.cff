@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: Console Table and Graph/Plot Libraries
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Teal
+    family-names: Dulcet
+    affiliation: Portland State University
+    orcid: 'https://orcid.org/0009-0008-6616-2631'
+repository-code: 'https://github.com/tdulcet/Table-and-Graph-Libs'
+abstract: >-
+  C++ and Python header only libraries that use box-drawing,
+  braille, fraction and other Unicode characters and
+  terminal colors and formatting to output tables and
+  graphs/plots to the console.
+license: GPL-3.0

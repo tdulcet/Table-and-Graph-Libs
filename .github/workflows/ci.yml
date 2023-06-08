@@ -61,7 +61,7 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install ruff
     - name: Script
-      run: ruff --format=github --target-version py37 --select F,E,W,I,D,UP,YTT,S,BLE,B,A,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SIM,TID,TCH,ARG,PGH,PL,RUF --ignore E101,E501,W191,D211,D213,D401,PLR09,PLR2004,RUF003 .
+      run: ruff --format=github --target-version py37 --select F,E,W,I,D,UP,YTT,S,BLE,B,A,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SIM,TID,TCH,ARG,PGH,PL,TRY,FLY,RUF --ignore E101,E501,W191,D211,D213,D401,PLR09,PLR2004,RUF003 .
       continue-on-error: true
 
   Python:

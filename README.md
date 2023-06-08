@@ -491,25 +491,18 @@ Option: `style`\
 Values:
 
 0. `style_ASCII`: ASCII
-
 	![](images/ASCII%20table.png)
 1. `style_basic`: Basic
-
 	![](images/basic%20table.png)
 2. `style_light`: Light (default)
-
 	![](images/light%20table.png)
 3. `style_heavy`: Heavy
-
 	![](images/heavy%20table.png)
 4. `style_double`: Double
-
 	![](images/double%20table.png)
 5. `style_light_dashed`: Light Dashed
-
 	![](images/light%20dashed%20table.png)
 6. `style_heavy_dashed`: Heavy Dashed
-
 	![](images/heavy%20dashed%20table.png)
 
 #### Check size
@@ -809,25 +802,18 @@ Option: `style`\
 Values:
 
 0. `style_ASCII`: ASCII
-
 	![](images/ASCII%20graph.png)
 1. `style_basic`: Basic
-
 	![](images/basic%20graph.png)
 2. `style_light`: Light (default)
-
 	![](images/light%20graph.png)
 3. `style_heavy`: Heavy
-
 	![](images/heavy%20graph.png)
 4. `style_double`: Double
-
 	![](images/double%20graph.png)
 5. `style_light_dashed`: Light Dashed
-
 	![](images/light%20dashed%20graph.png)
 6. `style_heavy_dashed`: Heavy Dashed
-
 	![](images/heavy%20dashed%20graph.png)
 
 #### Graph/Plot Color
