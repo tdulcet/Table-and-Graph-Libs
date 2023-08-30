@@ -20,7 +20,7 @@ See the [tables.py](tables.py) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
 
-Run with: `python3 test.py`.
+Run with: `python3 -OO test.py`.
 
 #### Output str array as table
 
@@ -214,9 +214,10 @@ Values:
 	![](../images/heavy%20table.png)
 4. `style_types.double`: Double
 	![](../images/double%20table.png)
-5. `style_types.light_dashed`: Light Dashed
+5. `style_types.arc`: Light Arc
+6. `style_types.light_dashed`: Light Dashed
 	![](../images/light%20dashed%20table.png)
-6. `style_types.heavy_dashed`: Heavy Dashed
+7. `style_types.heavy_dashed`: Heavy Dashed
 	![](../images/heavy%20dashed%20table.png)
 
 #### Check size
@@ -240,9 +241,29 @@ See the [graphs.py](graphs.py) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
 
-Run with: `python3 test.py`.
+Run with: `python3 -OO test.py`.
 
 If `height` is `0`, it will be set to the current height of the terminal (number of rows times four). If `width` is `0`, it will be set to the current width of the terminal (number of columns times two).
+
+#### Output array as histogram
+
+```py
+import graphs
+
+height = 160
+width = 160
+
+xmin = -20
+xmax = 20
+ymin = -20
+ymax = 20
+
+# Set array, can be any sequence data type
+
+graphs.histogram(height, width, xmin, xmax, ymin, ymax, array)
+```
+
+If `xmin` and `xmax` are both `0`, they will be set to the respective minimum and maximum values of x in the array. If `ymin` and `ymax` are both `0`, they will be set to the respective minimum and maximum values of y in the resulting histogram.
 
 #### Output single array as plot
 
@@ -259,14 +280,14 @@ ymax = 20
 
 # Set array, can be any sequence data type, but must have exactly two columns
 
-graphs.array(height, width, xmin, xmax, ymin, ymax, array)
+graphs.plot(height, width, xmin, xmax, ymin, ymax, array)
 ```
 
 If `xmin` and `xmax` are both `0`, they will be set to the respective minimum and maximum values of x in the array. If `ymin` and `ymax` are both `0`, they will be set to the respective minimum and maximum values of y in the array.
 
 ![](../images/array%20to%20plot.png)
 
-Use `graphs.arrays()` to plot multiple arrays, which can be of different sizes.
+Use `graphs.plots()` to plot multiple arrays, which can be of different sizes.
 
 #### Output single function as graph
 
@@ -413,6 +434,27 @@ Formats 2-5 are similar to the respective `--to` options with the [numfmt](https
 Option: `yunits`\
 Values: Same as above.
 
+#### Type
+
+Option: `type`\
+Values:
+
+1. `type_types.braille`: Braille (default)
+2. `type_types.block`: Block
+
+The Braille type has the highest resolution of 2×4 pixels per character, while the block type uses 2×2. This option is only used for plots and graphs. Histograms use 1×8 pixels per character.
+
+#### Mark type
+
+Option: `mark`\
+Values:
+
+1. `mark_types.dot`: Dot (default)
+2. `mark_types.plus`: Plus
+3. `mark_types.square`: Square
+
+The dot mark type uses a single pixel per mark, the plus uses five pixels and the square uses eight pixels. This option is only used for plots and graphs.
+
 #### Title
 
 Option: `title`\
@@ -435,9 +477,10 @@ Values:
 	![](../images/heavy%20graph.png)
 4. `style_types.double`: Double
 	![](../images/double%20graph.png)
-5. `style_types.light_dashed`: Light Dashed
+5. `style_types.arc`: Light Arc
+6. `style_types.light_dashed`: Light Dashed
 	![](../images/light%20dashed%20graph.png)
-6. `style_types.heavy_dashed`: Heavy Dashed
+7. `style_types.heavy_dashed`: Heavy Dashed
 	![](../images/heavy%20dashed%20graph.png)
 
 #### Graph/Plot Color

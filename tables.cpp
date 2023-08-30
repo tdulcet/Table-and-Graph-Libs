@@ -1,6 +1,6 @@
 // Teal Dulcet, CS546
 
-// Compile: g++ -Wall -g -O3 -std=c++14 tables.cpp -o tables
+// Compile: g++ -std=c++14 -Wall -g -O3 tables.cpp -o tables
 
 // Run: ./tables
 
@@ -87,11 +87,11 @@ int main()
 	{
 		long long **array;
 		array = new long long *[rows];
-		for (unsigned int i = 0; i < rows; ++i)
+		for (unsigned i = 0; i < rows; ++i)
 			array[i] = new long long[columns];
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = rand();
 
 		tables::options aoptions;
@@ -105,7 +105,7 @@ int main()
 
 		if (array)
 		{
-			for (unsigned int i = 0; i < rows; ++i)
+			for (unsigned i = 0; i < rows; ++i)
 				delete[] array[i];
 
 			delete[] array;
@@ -114,8 +114,8 @@ int main()
 	{
 		array<array<long long, columns>, rows> aarray;
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				aarray[i][j] = rand();
 
 		tables::options aoptions;
@@ -130,8 +130,8 @@ int main()
 	{
 		vector<vector<long long>> array(rows, vector<long long>(columns));
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = rand();
 
 		tables::options aoptions;
@@ -146,11 +146,11 @@ int main()
 	{
 		long double **array;
 		array = new long double *[rows];
-		for (unsigned int i = 0; i < rows; ++i)
+		for (unsigned i = 0; i < rows; ++i)
 			array[i] = new long double[columns];
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = static_cast<long double>(rand()) / static_cast<long double>(RAND_MAX);
 
 		tables::options aoptions;
@@ -164,7 +164,7 @@ int main()
 
 		if (array)
 		{
-			for (unsigned int i = 0; i < rows; ++i)
+			for (unsigned i = 0; i < rows; ++i)
 				delete[] array[i];
 
 			delete[] array;
@@ -173,8 +173,8 @@ int main()
 	{
 		array<array<long double, columns>, rows> aarray;
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				aarray[i][j] = static_cast<long double>(rand()) / static_cast<long double>(RAND_MAX);
 
 		tables::options aoptions;
@@ -189,8 +189,8 @@ int main()
 	{
 		vector<vector<long double>> array(rows, vector<long double>(columns));
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = static_cast<long double>(rand()) / static_cast<long double>(RAND_MAX);
 
 		tables::options aoptions;
@@ -402,11 +402,11 @@ int main()
 	{
 		bool **array;
 		array = new bool *[rows];
-		for (unsigned int i = 0; i < rows; ++i)
+		for (unsigned i = 0; i < rows; ++i)
 			array[i] = new bool[columns];
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = rand() % 2;
 
 		tables::options aoptions;
@@ -422,7 +422,7 @@ int main()
 
 		if (array)
 		{
-			for (unsigned int i = 0; i < rows; ++i)
+			for (unsigned i = 0; i < rows; ++i)
 				delete[] array[i];
 
 			delete[] array;
@@ -433,11 +433,11 @@ int main()
 	{
 		int **array;
 		array = new int *[rows];
-		for (unsigned int i = 0; i < rows; ++i)
+		for (unsigned i = 0; i < rows; ++i)
 			array[i] = new int[columns];
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = rand();
 
 		dimensions = columns;
@@ -457,7 +457,7 @@ int main()
 
 		if (array)
 		{
-			for (unsigned int i = 0; i < rows; ++i)
+			for (unsigned i = 0; i < rows; ++i)
 				delete[] array[i];
 
 			delete[] array;
@@ -466,8 +466,8 @@ int main()
 	{
 		array<array<int, columns>, rows> aarray;
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				aarray[i][j] = rand();
 
 		dimensions = columns;
@@ -487,8 +487,8 @@ int main()
 	{
 		vector<vector<int>> array(rows, vector<int>(columns));
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = rand();
 
 		dimensions = columns;

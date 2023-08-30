@@ -500,9 +500,10 @@ Values:
 	![](images/heavy%20table.png)
 4. `style_double`: Double
 	![](images/double%20table.png)
-5. `style_light_dashed`: Light Dashed
+5. `style_arc`: Light Arc
+6. `style_light_dashed`: Light Dashed
 	![](images/light%20dashed%20table.png)
-6. `style_heavy_dashed`: Heavy Dashed
+7. `style_heavy_dashed`: Heavy Dashed
 	![](images/heavy%20dashed%20table.png)
 
 #### Check size
@@ -534,6 +535,70 @@ Run with: `./graphs`
 
 If `height` is `0`, it will be set to the current height of the terminal (number of rows times four). If `width` is `0`, it will be set to the current width of the terminal (number of columns times two).
 
+#### Output array as histogram
+
+##### C style pointer
+
+```cpp
+#include "graphs.hpp"
+
+using namespace std;
+
+int main()
+{
+	size_t height = 160;
+	size_t width = 160;
+
+	long double xmin = -20;
+	long double xmax = 20;
+	long double ymin = -20;
+	long double ymax = 20;
+
+	size_t rows = 100;
+
+	double *array; // array can be any data type
+
+	// Allocate and set array
+
+	graphs::histogram(height, width, xmin, xmax, ymin, ymax, rows, array);
+
+	// Deallocate array
+
+	return 0;
+}
+```
+
+##### C++ array/vector
+
+```cpp
+#include "graphs.hpp"
+
+using namespace std;
+
+int main()
+{
+	size_t height = 160;
+	size_t width = 160;
+
+	long double xmin = -20;
+	long double xmax = 20;
+	long double ymin = -20;
+	long double ymax = 20;
+
+	size_t rows = 100;
+
+	vector<double> array(rows); // array can be any data type
+
+	// Set array
+
+	graphs::histogram(height, width, xmin, xmax, ymin, ymax, array);
+
+	return 0;
+}
+```
+
+If `xmin` and `xmax` are both `0`, they will be set to the respective minimum and maximum values of x in the array. If `ymin` and `ymax` are both `0`, they will be set to the respective minimum and maximum values of y in the resulting histogram.
+
 #### Output single array as plot
 
 ##### C style pointer
@@ -559,7 +624,7 @@ int main()
 
 	// Allocate and set array
 
-	graphs::array(height, width, xmin, xmax, ymin, ymax, rows, array);
+	graphs::plot(height, width, xmin, xmax, ymin, ymax, rows, array);
 
 	// Deallocate array
 
@@ -590,7 +655,7 @@ int main()
 
 	// Set array
 
-	graphs::array(height, width, xmin, xmax, ymin, ymax, array);
+	graphs::plot(height, width, xmin, xmax, ymin, ymax, array);
 
 	return 0;
 }
@@ -600,7 +665,7 @@ If `xmin` and `xmax` are both `0`, they will be set to the respective minimum an
 
 ![](images/array%20to%20plot.png)
 
-Use `graphs::arrays()` to plot multiple arrays, which can be of different sizes.
+Use `graphs::plots()` to plot multiple arrays, which can be of different sizes.
 
 #### Output single function as graph
 
@@ -789,6 +854,27 @@ Formats 2-5 are similar to the respective `--to` options with the [numfmt](https
 Option: `yunits`\
 Values: Same as above.
 
+#### Type
+
+Option: `type`\
+Values:
+
+1. `type_braille`: Braille (default)
+2. `type_block`: Block
+
+The Braille type has the highest resolution of 2×4 pixels per character, while the block type uses 2×2. This option is only used for plots and graphs. Histograms use 1×8 pixels per character.
+
+#### Mark type
+
+Option: `mark`\
+Values:
+
+1. `mark_dot`: Dot (default)
+2. `mark_plus`: Plus
+3. `mark_square`: Square
+
+The dot mark type uses a single pixel per mark, the plus uses five pixels and the square uses eight pixels. This option is only used for plots and graphs.
+
 #### Title
 
 Option: `title`\
@@ -811,9 +897,10 @@ Values:
 	![](images/heavy%20graph.png)
 4. `style_double`: Double
 	![](images/double%20graph.png)
-5. `style_light_dashed`: Light Dashed
+5. `style_arc`: Light Arc
+6. `style_light_dashed`: Light Dashed
 	![](images/light%20dashed%20graph.png)
-6. `style_heavy_dashed`: Heavy Dashed
+7. `style_heavy_dashed`: Heavy Dashed
 	![](images/heavy%20dashed%20graph.png)
 
 #### Graph/Plot Color

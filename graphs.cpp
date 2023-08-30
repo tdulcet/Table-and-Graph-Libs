@@ -1,12 +1,13 @@
 // Teal Dulcet, CS546
 
-// Compile: g++ -Wall -g -O3 -std=c++14 graphs.cpp -o graphs
+// Compile: g++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs
 
 // Run: ./graphs
 
 #include <cctype>
 #include <array>
 #include <vector>
+#include <random>
 #include "graphs.hpp"
 
 using namespace std;
@@ -54,30 +55,99 @@ int main()
 	const size_t rows = 10;
 	const size_t columns = 2;
 
+	// Output array as histogram
+	cout << "\nOutput array as histogram\n\n";
+	{
+		const size_t rows = 100;
+
+		default_random_engine generator;
+		normal_distribution<long double> distribution(0, 1);
+
+		{
+			long double *array;
+			array = new long double[rows];
+
+			for (unsigned i = 0; i < rows; ++i)
+				array[i] = distribution(generator);
+
+			graphs::options aoptions;
+
+			for (const graphs::style_type style : graphs::style_types)
+			{
+				aoptions.style = style;
+
+				graphs::histogram(height, width, xmin, xmax, ymin, ymax, rows, array, aoptions);
+			}
+
+			if (array)
+				delete[] array;
+		}
+		{
+			array<long double, rows> aarray;
+
+			for (unsigned i = 0; i < rows; ++i)
+				aarray[i] = distribution(generator);
+
+			graphs::options aoptions;
+
+			for (const graphs::style_type style : graphs::style_types)
+			{
+				aoptions.style = style;
+
+				graphs::histogram(height, width, xmin, xmax, ymin, ymax, aarray, aoptions);
+			}
+		}
+		{
+			vector<long double> array(rows);
+
+			for (unsigned i = 0; i < rows; ++i)
+				array[i] = distribution(generator);
+
+			graphs::options aoptions;
+
+			for (const graphs::style_type style : graphs::style_types)
+			{
+				aoptions.style = style;
+
+				graphs::histogram(height, width, xmin, xmax, ymin, ymax, array, aoptions);
+			}
+		}
+	}
+
 	// Output single array as plot
 	cout << "\nOutput array as plot\n\n";
 	{
 		long double **array;
 		array = new long double *[rows];
-		for (unsigned int i = 0; i < rows; ++i)
+		for (unsigned i = 0; i < rows; ++i)
 			array[i] = new long double[columns];
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = i + j; // rand();
 
 		graphs::options aoptions;
 
-		for (const graphs::style_type style : graphs::style_types)
+		for (const graphs::type_type type : graphs::type_types)
 		{
-			aoptions.style = style;
+			aoptions.type = type;
 
-			graphs::array(height, width, xmin, xmax, ymin, ymax, rows, array, aoptions);
+			for (const graphs::mark_type mark : graphs::mark_types)
+			{
+				aoptions.mark = mark;
+
+				for (const graphs::style_type style : graphs::style_types)
+				{
+					aoptions.style = style;
+
+					graphs::plot(height, width, xmin, xmax, ymin, ymax, rows, array, aoptions);
+				}
+			}
 		}
 
 		if (array)
 		{
-			for (unsigned int i = 0; i < rows; ++i)
+			for (unsigned i = 0; i < rows; ++i)
 				delete[] array[i];
 
 			delete[] array;
@@ -86,33 +156,53 @@ int main()
 	{
 		array<array<long double, columns>, rows> aarray;
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				aarray[i][j] = i + j; // rand();
 
 		graphs::options aoptions;
 
-		for (const graphs::style_type style : graphs::style_types)
+		for (const graphs::type_type type : graphs::type_types)
 		{
-			aoptions.style = style;
+			aoptions.type = type;
 
-			graphs::array(height, width, xmin, xmax, ymin, ymax, aarray, aoptions);
+			for (const graphs::mark_type mark : graphs::mark_types)
+			{
+				aoptions.mark = mark;
+
+				for (const graphs::style_type style : graphs::style_types)
+				{
+					aoptions.style = style;
+
+					graphs::plot(height, width, xmin, xmax, ymin, ymax, aarray, aoptions);
+				}
+			}
 		}
 	}
 	{
 		vector<vector<long double>> array(rows, vector<long double>(columns));
 
-		for (unsigned int i = 0; i < rows; ++i)
-			for (unsigned int j = 0; j < columns; ++j)
+		for (unsigned i = 0; i < rows; ++i)
+			for (unsigned j = 0; j < columns; ++j)
 				array[i][j] = i + j; // rand();
 
 		graphs::options aoptions;
 
-		for (const graphs::style_type style : graphs::style_types)
+		for (const graphs::type_type type : graphs::type_types)
 		{
-			aoptions.style = style;
+			aoptions.type = type;
 
-			graphs::array(height, width, xmin, xmax, ymin, ymax, array, aoptions);
+			for (const graphs::mark_type mark : graphs::mark_types)
+			{
+				aoptions.mark = mark;
+
+				for (const graphs::style_type style : graphs::style_types)
+				{
+					aoptions.style = style;
+
+					graphs::plot(height, width, xmin, xmax, ymin, ymax, array, aoptions);
+				}
+			}
 		}
 	}
 	// Output single function as graph
@@ -190,7 +280,7 @@ int main()
 
 		/* aoptions.style = 2;
 
-		for (unsigned int k = 10; k < 300; ++k)
+		for (unsigned k = 10; k < 300; ++k)
 		{
 			cout << "\e[1;1H"
 				 << "\e[2J";

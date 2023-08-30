@@ -30,11 +30,12 @@ namespace graphs
 		style_light,
 		style_heavy,
 		style_double,
+		style_arc,
 		style_light_dashed,
 		style_heavy_dashed
 	};
 
-	enum style_type const style_types[] = {style_ASCII, style_basic, style_light, style_heavy, style_double, style_light_dashed, style_heavy_dashed};
+	enum style_type const style_types[] = {style_ASCII, style_basic, style_light, style_heavy, style_double, style_arc, style_light_dashed, style_heavy_dashed};
 
 	const char *const styles[][11] = {
 		{"-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, // ASCII
@@ -42,6 +43,7 @@ namespace graphs
 		{"─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light
 		{"━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}, // Heavy
 		{"═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"}, // Double
+		{"─", "│", "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯"}, // Light Arc
 		{"╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light Dashed
 		{"╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}	 // Heavy Dashed
 		// {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}	 // No border
@@ -73,8 +75,49 @@ namespace graphs
 	const char *const colors[] = {"\e[39m", "\e[30m", "\e[31m", "\e[32m", "\e[33m", "\e[34m", "\e[35m", "\e[36m", "\e[37m", "\e[90m", "\e[91m", "\e[92m", "\e[93m", "\e[94m", "\e[95m", "\e[96m", "\e[97m"};
 
 	const char *const dots[] = {"⠀", "⠁", "⠂", "⠃", "⠄", "⠅", "⠆", "⠇", "⠈", "⠉", "⠊", "⠋", "⠌", "⠍", "⠎", "⠏", "⠐", "⠑", "⠒", "⠓", "⠔", "⠕", "⠖", "⠗", "⠘", "⠙", "⠚", "⠛", "⠜", "⠝", "⠞", "⠟", "⠠", "⠡", "⠢", "⠣", "⠤", "⠥", "⠦", "⠧", "⠨", "⠩", "⠪", "⠫", "⠬", "⠭", "⠮", "⠯", "⠰", "⠱", "⠲", "⠳", "⠴", "⠵", "⠶", "⠷", "⠸", "⠹", "⠺", "⠻", "⠼", "⠽", "⠾", "⠿", "⡀", "⡁", "⡂", "⡃", "⡄", "⡅", "⡆", "⡇", "⡈", "⡉", "⡊", "⡋", "⡌", "⡍", "⡎", "⡏", "⡐", "⡑", "⡒", "⡓", "⡔", "⡕", "⡖", "⡗", "⡘", "⡙", "⡚", "⡛", "⡜", "⡝", "⡞", "⡟", "⡠", "⡡", "⡢", "⡣", "⡤", "⡥", "⡦", "⡧", "⡨", "⡩", "⡪", "⡫", "⡬", "⡭", "⡮", "⡯", "⡰", "⡱", "⡲", "⡳", "⡴", "⡵", "⡶", "⡷", "⡸", "⡹", "⡺", "⡻", "⡼", "⡽", "⡾", "⡿", "⢀", "⢁", "⢂", "⢃", "⢄", "⢅", "⢆", "⢇", "⢈", "⢉", "⢊", "⢋", "⢌", "⢍", "⢎", "⢏", "⢐", "⢑", "⢒", "⢓", "⢔", "⢕", "⢖", "⢗", "⢘", "⢙", "⢚", "⢛", "⢜", "⢝", "⢞", "⢟", "⢠", "⢡", "⢢", "⢣", "⢤", "⢥", "⢦", "⢧", "⢨", "⢩", "⢪", "⢫", "⢬", "⢭", "⢮", "⢯", "⢰", "⢱", "⢲", "⢳", "⢴", "⢵", "⢶", "⢷", "⢸", "⢹", "⢺", "⢻", "⢼", "⢽", "⢾", "⢿", "⣀", "⣁", "⣂", "⣃", "⣄", "⣅", "⣆", "⣇", "⣈", "⣉", "⣊", "⣋", "⣌", "⣍", "⣎", "⣏", "⣐", "⣑", "⣒", "⣓", "⣔", "⣕", "⣖", "⣗", "⣘", "⣙", "⣚", "⣛", "⣜", "⣝", "⣞", "⣟", "⣠", "⣡", "⣢", "⣣", "⣤", "⣥", "⣦", "⣧", "⣨", "⣩", "⣪", "⣫", "⣬", "⣭", "⣮", "⣯", "⣰", "⣱", "⣲", "⣳", "⣴", "⣵", "⣶", "⣷", "⣸", "⣹", "⣺", "⣻", "⣼", "⣽", "⣾", "⣿"};
+	const int dotvalues[][4] = {{0x1, 0x2, 0x4, 0x40}, {0x8, 0x10, 0x20, 0x80}};
 
-	const int values[][4] = {{0x1, 0x2, 0x4, 0x40}, {0x8, 0x10, 0x20, 0x80}};
+	const char *const blocks[] = {" ", "▖", "▗", "▄", "▘", "▌", "▚", "▙", "▝", "▞", "▐", "▟", "▀", "▛", "▜", "█"};
+	const int blockvalues[][2] = {{4, 1}, {8, 2}};
+
+	const char *const bars[] = {" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"};
+
+	enum type_type
+	{
+		type_braille,
+		type_block,
+		type_histogram // Set automatically by the histogram() function
+	};
+
+	enum type_type const type_types[] = {type_braille, type_block /* , type_histogram */};
+
+	enum plot_type
+	{
+		plot_scatter,
+		plot_line
+	};
+
+	enum plot_type const plot_types[] = {plot_scatter, plot_line};
+
+	const short marks[][8][2] = {{{0, 0}}, {{0, 1}, {-1, 0}, {0, 0}, {1, 0}, {0, -1}}, {{-1, 1}, {0, 1}, {1, 1}, {-1, 0}, {1, 0}, {-1, -1}, {0, -1}, {1, -1}}};
+
+	enum mark_type
+	{
+		mark_dot,
+		mark_plus,
+		mark_square
+	};
+
+	enum mark_type const mark_types[] = {mark_dot, mark_plus, mark_square};
+
+	enum graph_type
+	{
+		graph_dot,
+		graph_shade_above,
+		graph_shade_below
+	};
+
+	enum graph_type const graph_types[] = {graph_dot, graph_shade_above, graph_shade_below};
 
 	const char *const fractions[] = {"¼", "½", "¾", "⅐", "⅑", "⅒", "⅓", "⅔", "⅕", "⅖", "⅗", "⅘", "⅙", "⅚", "⅛", "⅜", "⅝", "⅞"};
 	const long double fractionvalues[] = {1.0L / 4.0L, 1.0L / 2.0L, 3.0L / 4.0L, 1.0L / 7.0L, 1.0L / 9.0L, 1.0L / 10.0L, 1.0L / 3.0L, 2.0L / 3.0L, 1.0L / 5.0L, 2.0L / 5.0L, 3.0L / 5.0L, 4.0L / 5.0L, 1.0L / 6.0L, 5.0L / 6.0L, 1.0L / 8.0L, 3.0L / 8.0L, 5.0L / 8.0L, 7.0L / 8.0L};
@@ -112,6 +155,8 @@ namespace graphs
 		bool axisunitslabel = true;
 		units_type xunits = units_fracts;
 		units_type yunits = units_fracts;
+		type_type type = type_braille;
+		mark_type mark = mark_dot;
 		const char *title = nullptr;
 		style_type style = style_light;
 		color_type color = color_red;
@@ -119,6 +164,7 @@ namespace graphs
 	};
 
 	const options defaultoptions;
+	options histogram_defaultoptions;
 
 	template <typename T>
 	constexpr size_t size(const T &array)
@@ -412,6 +458,7 @@ namespace graphs
 		const bool axislabel = aoptions.axislabel;
 		const bool axistick = aoptions.axistick;
 		const bool axisunitslabel = aoptions.axisunitslabel;
+		const type_type type = aoptions.type;
 		const char *const title = aoptions.title;
 		const style_type style = aoptions.style;
 
@@ -424,8 +471,12 @@ namespace graphs
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-		const size_t aheight = height / 4;
-		const size_t awidth = width / 2;
+		const size_t ai = type == type_histogram ? 8 : type == type_block ? 2
+																		  : 4;
+		const size_t aj = type == type_histogram ? 1 : 2;
+
+		const size_t aheight = height / ai;
+		const size_t awidth = width / aj;
 
 		if (aoptions.check)
 		{
@@ -460,8 +511,8 @@ namespace graphs
 														  : width - (xmax / xstep);
 		const long double yaxis = ymin > 0 ? height : ymax < 0 ? 0
 															   : ymax / ystep;
-		const int xdivisor = 2 * 4 * ((width / 160) + 2);
-		const int ydivisor = 2 * 4 * ((height / 160) + 2);
+		const int xdivisor = 4 * aj * ((((2 * width) / aj) / 160) + 2);
+		const int ydivisor = 2 * ai * ((((4 * height) / ai) / 160) + 2);
 
 		setlocale(LC_ALL, "");
 
@@ -478,10 +529,10 @@ namespace graphs
 			cout << styles[style][4] << '\n';
 		}
 
-		for (size_t i = 0; i < height; i += 4)
+		for (size_t i = 0; i < height; i += ai)
 		{
-			const bool ayaxis = yaxis <= (height - 4) ? i <= yaxis and (i + 4) > yaxis : i < yaxis and (i + 4) >= yaxis;
-			const bool yaxislabel = yaxis <= (height - 4) ? i <= (yaxis + 4) and (i + 4) > (yaxis + 4) : i < (yaxis - 4) and (i + 4) >= (yaxis - 4);
+			const bool ayaxis = yaxis <= (height - ai) ? i <= yaxis and (i + ai) > yaxis : i < yaxis and (i + ai) >= yaxis;
+			const bool yaxislabel = yaxis <= (height - ai) ? i <= (yaxis + ai) and (i + ai) > (yaxis + ai) : i < (yaxis - ai) and (i + ai) >= (yaxis - ai);
 
 			ostringstream ylabelstrm;
 			size_t ylabellength = 0;
@@ -492,9 +543,9 @@ namespace graphs
 				long double label = 0;
 				int adivisor = i < yaxis ? -ydivisor : ydivisor;
 
-				for (long double k = yaxis + adivisor; (i < yaxis ? k >= i : k < (i + 4)) and i >= 4 and !output; k += adivisor)
+				for (long double k = yaxis + adivisor; (i < yaxis ? k >= i : k < (i + ai)) and i >= ai and !output; k += adivisor)
 				{
-					if (i <= k and (i + 4) > k)
+					if (i <= k and (i + ai) > k)
 					{
 						label = ymax - ((k > height ? height : k) * ystep);
 
@@ -505,17 +556,17 @@ namespace graphs
 				if (output)
 				{
 					ylabellength = outputlabel(label, aoptions.yunits, ylabelstrm);
-					ylabellength *= 2;
+					ylabellength *= aj;
 				}
 			}
 
 			if (border)
 				cout << styles[style][1];
 
-			for (size_t j = 0; j < width; j += 2)
+			for (size_t j = 0; j < width; j += aj)
 			{
-				const bool axaxis = xaxis >= 2 ? j < xaxis and (j + 2) >= xaxis : j <= xaxis and (j + 2) > xaxis;
-				const bool xaxislabel = xaxis >= 2 ? j < (xaxis - 2) and (j + 2) >= (xaxis - 2) : j <= (xaxis + 2) and (j + 2) > (xaxis + 2);
+				const bool axaxis = xaxis >= aj ? j < xaxis and (j + aj) >= xaxis : j <= xaxis and (j + aj) > xaxis;
+				const bool xaxislabel = xaxis >= aj ? j < (xaxis - aj) and (j + aj) >= (xaxis - aj) : j <= (xaxis + aj) and (j + aj) > (xaxis + aj);
 
 				bool output = false;
 
@@ -533,7 +584,7 @@ namespace graphs
 							cout << styles[style][4];
 							output = true;
 						}
-						else if (i >= (height - 4))
+						else if (i >= (height - ai))
 						{
 							cout << styles[style][10];
 							output = true;
@@ -542,11 +593,11 @@ namespace graphs
 						{
 							int adivisor = i < yaxis ? -ydivisor : ydivisor;
 
-							for (long double k = yaxis + adivisor; (i < yaxis ? k >= i : k < (i + 4)) and i >= 4 and !output; k += adivisor)
+							for (long double k = yaxis + adivisor; (i < yaxis ? k >= i : k < (i + ai)) and i >= ai and !output; k += adivisor)
 							{
-								if (i <= k and (i + 4) > k)
+								if (i <= k and (i + ai) > k)
 								{
-									cout << styles[style][xaxis >= 2 ? 7 : 5];
+									cout << styles[style][xaxis >= aj ? 7 : 5];
 									output = true;
 								}
 							}
@@ -564,7 +615,7 @@ namespace graphs
 							cout << styles[style][2];
 							output = true;
 						}
-						else if (j >= (width - 2))
+						else if (j >= (width - aj))
 						{
 							cout << styles[style][4];
 							output = true;
@@ -573,11 +624,11 @@ namespace graphs
 						{
 							int adivisor = j < xaxis ? -xdivisor : xdivisor;
 
-							for (long double k = xaxis + adivisor; (j < xaxis ? k >= j : k < (j + 2)) and j < (width - (2 * 2)) and !output; k += adivisor)
+							for (long double k = xaxis + adivisor; (j < xaxis ? k >= j : k < (j + aj)) and j < (width - (aj * 2)) and !output; k += adivisor)
 							{
-								if (j <= k and (j + 2) > k)
+								if (j <= k and (j + aj) > k)
 								{
-									cout << styles[style][yaxis <= (height - 4) ? 3 : 9];
+									cout << styles[style][yaxis <= (height - ai) ? 3 : 9];
 									output = true;
 								}
 							}
@@ -593,7 +644,7 @@ namespace graphs
 						cout << "0";
 						output = true;
 					}
-					else if ((xaxis <= (width - 2) ? j >= (width - 2) : j == 0) and yaxislabel and axislabel)
+					else if ((xaxis <= (width - aj) ? j >= (width - aj) : j == 0) and yaxislabel and axislabel)
 					{
 						cout << "x";
 						output = true;
@@ -603,11 +654,11 @@ namespace graphs
 						long double label = 0;
 						int adivisor = j < xaxis ? -xdivisor : xdivisor;
 						if (j < xaxis)
-							j += 2;
+							j += aj;
 
-						for (long double k = xaxis + adivisor; (j < xaxis ? k >= j : k < (j + 2)) and j < (width - 2) and !output; k += adivisor)
+						for (long double k = xaxis + adivisor; (j < xaxis ? k >= j : k < (j + aj)) and j < (width - aj) and !output; k += adivisor)
 						{
-							if (j <= k and (j + 2) > k)
+							if (j <= k and (j + aj) > k)
 							{
 								label = ((k > width ? width : k) * xstep) + xmin;
 
@@ -616,7 +667,7 @@ namespace graphs
 						}
 
 						if (adivisor < 0)
-							j -= 2;
+							j -= aj;
 
 						if (output)
 						{
@@ -624,32 +675,32 @@ namespace graphs
 
 							ostringstream strm;
 							size_t length = outputlabel(label, aoptions.xunits, strm);
-							length *= 2;
-							if ((j >= xaxis or (j + length) < (ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0 ? xaxis - 4 : xaxis)) and (j + length) < (width - 2) and (xaxis <= (width - 2) or j > 2))
+							length *= aj;
+							if ((j >= xaxis or (j + length) < (ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0 ? xaxis - ai : xaxis)) and (j + length) < (width - aj) and (xaxis <= (width - aj) or j > aj))
 							{
 								cout << strm.str();
 
-								if (length > 2)
-									j += length - 2;
+								if (length > aj)
+									j += length - aj;
 
 								if (adivisor < 0)
 									output = true;
 								else
-									j += 2;
+									j += aj;
 							}
 						}
 					}
-					else if ((yaxis >= 4 ? i == 0 : i >= (height - 4)) and xaxislabel and axislabel)
+					else if ((yaxis >= ai ? i == 0 : i >= (height - ai)) and xaxislabel and axislabel)
 					{
 						cout << "y";
 						output = true;
 					}
-					else if (ylabellength and (xaxis < 2 ? xaxislabel : j < (xaxis - ylabellength) and (j + 2) >= (xaxis - ylabellength)) and (yaxis >= 4 or i < (height - 4)) and axistick and axisunitslabel)
+					else if (ylabellength and (xaxis < aj ? xaxislabel : j < (xaxis - ylabellength) and (j + aj) >= (xaxis - ylabellength)) and (yaxis >= ai or i < (height - ai)) and axistick and axisunitslabel)
 					{
 						cout << ylabelstrm.str();
 						output = true;
-						if (ylabellength > 2)
-							j += ylabellength - 2;
+						if (ylabellength > aj)
+							j += ylabellength - aj;
 					}
 				}
 
@@ -658,13 +709,23 @@ namespace graphs
 					size_t dot = 0;
 					unsigned short color = 0;
 
-					for (size_t k = 0; k < 2 and k < (width - j); ++k)
+					for (size_t k = 0; k < aj and k < (width - j); ++k)
 					{
-						for (size_t l = 0; l < 4 and l < (height - i); ++l)
+						for (size_t l = 0; l < ai and l < (height - i); ++l)
 						{
 							const unsigned short value = array[j + k][i + l];
 							if (value)
-								dot += values[k][l];
+							{
+								if (type == type_histogram)
+								{
+									if (!dot)
+										dot = (graphs::size(bars) - l) - 1;
+								}
+								else if (type == type_block)
+									dot += blockvalues[k][l];
+								else
+									dot += dotvalues[k][l];
+							}
 							if (color)
 							{
 								if (value and color != value)
@@ -681,7 +742,8 @@ namespace graphs
 					if (color)
 						cout << colors[color];
 
-					cout << dots[dot];
+					cout << (type == type_histogram ? bars[dot] : type == type_block ? blocks[dot]
+																					 : dots[dot]);
 
 					if (color)
 						cout << colors[0];
@@ -691,7 +753,7 @@ namespace graphs
 			if (border)
 				cout << styles[style][1];
 
-			if (i < (height - 4) or border)
+			if (i < (height - ai) or border)
 				cout << '\n';
 		}
 
@@ -710,9 +772,120 @@ namespace graphs
 		return 0;
 	}
 
+	template <typename T>
+	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, /* const */ options &aoptions = histogram_defaultoptions)
+	{
+		if (!graphs::size(aarray))
+			return 1;
+
+		const color_type color = aoptions.color;
+
+		struct winsize w;
+		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+		if (height == 0)
+			height = w.ws_row * 4;
+
+		if (width == 0)
+			width = w.ws_col * 2;
+
+		if (aoptions.check)
+		{
+			const size_t aheight = height / 4;
+			const size_t awidth = width / 2;
+
+			if (aheight > w.ws_row)
+			{
+				cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
+				return 1;
+			}
+
+			if (awidth > w.ws_col)
+			{
+				cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
+				return 1;
+			}
+		}
+
+		height *= 2;
+		width /= 2;
+
+		if (xmin == 0 and xmax == 0)
+		{
+			const auto &minmax = minmax_element(begin(aarray), end(aarray));
+
+			xmin = *minmax.first;
+			xmax = *minmax.second;
+		}
+
+		if (xmin >= xmax)
+		{
+			cerr << "xmin must be less than xmax.\n";
+			return 1;
+		}
+
+		vector<size_t> histogram(width, 0);
+
+		const long double xstep = (xmax - xmin) / width;
+
+		for (const auto &x : aarray)
+		{
+			if (x >= xmin and x < xmax)
+			{
+				const size_t index = (x - xmin) / xstep;
+				++histogram[index];
+			}
+		}
+
+		if (ymin == 0 and ymax == 0)
+		{
+			const auto &minmax = minmax_element(histogram.begin(), histogram.end());
+
+			ymin = *minmax.first;
+			ymax = *minmax.second;
+		}
+
+		if (ymin >= ymax)
+		{
+			cerr << "ymin must be less than ymax.\n";
+			return 1;
+		}
+
+		const long double ystep = (ymax - ymin) / height;
+		const long double yaxis = ymax / ystep;
+
+		vector<vector<unsigned short>> aaarray(width, vector<unsigned short>(height, 0));
+
+		const unsigned int acolor = color + 1;
+
+		for (size_t x = 0; x < graphs::size(histogram); ++x)
+		{
+			const size_t ay = histogram[x];
+
+			for (size_t y = ay >= ymax ? 0 : yaxis - (ay / ystep); y < yaxis and y < height; ++y)
+				aaarray[x][y] = acolor;
+		}
+
+		aoptions.type = type_histogram;
+
+		return graph(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
+	}
+
+	template <typename T>
+	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T *aarray, /* const */ options &aoptions = histogram_defaultoptions)
+	{
+		if (rows == 0)
+			return 1;
+
+		vector<T> aaarray(rows);
+		copy(aarray, aarray + rows, aaarray.begin());
+
+		return histogram(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
+	}
+
 	// Convert one or more arrays to graph and output
 	template <typename T>
-	int arrays(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &arrays, const options &aoptions = defaultoptions)
+	int plots(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &arrays, const options &aoptions = defaultoptions)
 	{
 		if (!graphs::size(arrays))
 			return 1;
@@ -754,12 +927,15 @@ namespace graphs
 			}
 		}
 
+		if (aoptions.type == type_block)
+			height /= 2;
+
 		if (xmin == 0 and xmax == 0)
 		{
 			const auto compare = [](const auto &a, const auto &b)
 			{ return a[0] < b[0]; };
-			const auto result = accumulate(begin(arrays), end(arrays), make_pair(arrays[0][0], arrays[0][0]), [compare](const auto &current, const auto &array)
-										   { const auto minmax = minmax_element(begin(array), end(array), compare); return make_pair(min(current.first, *minmax.first, compare), max(current.second, *minmax.second, compare)); });
+			const auto &result = accumulate(begin(arrays), end(arrays), make_pair(arrays[0][0], arrays[0][0]), [compare](const auto &current, const auto &array)
+										   { const auto &minmax = minmax_element(begin(array), end(array), compare); return make_pair(min(current.first, *minmax.first, compare), max(current.second, *minmax.second, compare)); });
 			xmin = result.first[0];
 			xmax = result.second[0];
 		}
@@ -768,8 +944,8 @@ namespace graphs
 		{
 			const auto compare = [](const auto &a, const auto &b)
 			{ return a[1] < b[1]; };
-			const auto result = accumulate(begin(arrays), end(arrays), make_pair(arrays[0][0], arrays[0][0]), [compare](const auto &current, const auto &array)
-										   { const auto minmax = minmax_element(begin(array), end(array), compare); return make_pair(min(current.first, *minmax.first, compare), max(current.second, *minmax.second, compare)); });
+			const auto &result = accumulate(begin(arrays), end(arrays), make_pair(arrays[0][0], arrays[0][0]), [compare](const auto &current, const auto &array)
+										   { const auto &minmax = minmax_element(begin(array), end(array), compare); return make_pair(min(current.first, *minmax.first, compare), max(current.second, *minmax.second, compare)); });
 			ymin = result.first[1];
 			ymax = result.second[1];
 		}
@@ -807,13 +983,22 @@ namespace graphs
 					const size_t ax = (x / xstep) + xaxis;
 					const size_t ay = (yaxis - (y / ystep)) - 1;
 
-					if (aarray[ax][ay])
+					for (const auto &mark : marks[aoptions.mark])
 					{
-						if (aarray[ax][ay] != acolor)
-							aarray[ax][ay] = 1;
+						const size_t x = ax + mark[0];
+						const size_t y = ay + mark[1];
+
+						if (x < width and y < height)
+						{
+							if (aarray[x][y])
+							{
+								if (aarray[x][y] != acolor)
+									aarray[x][y] = 1;
+							}
+							else
+								aarray[x][y] = acolor;
+						}
 					}
-					else
-						aarray[ax][ay] = acolor;
 				}
 			}
 		}
@@ -823,16 +1008,16 @@ namespace graphs
 
 	// Convert single array to graph and output
 	template <typename T>
-	int array(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = defaultoptions)
+	int plot(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = defaultoptions)
 	{
 		const std::array<T, 1> aaarray = {aarray};
 
-		return arrays(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
+		return plots(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
 	}
 
 	// Convert single array to graph and output
 	template <typename T>
-	int array(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T **aarray, const options &aoptions = defaultoptions)
+	int plot(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T **aarray, const options &aoptions = defaultoptions)
 	{
 		if (rows == 0)
 			return 1;
@@ -842,7 +1027,7 @@ namespace graphs
 		for (size_t i = 0; i < rows; ++i)
 			copy(aarray[i], aarray[i] + columns, aaarray[i].begin());
 
-		return array(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
+		return plot(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
 	}
 
 	// Convert one or more functions to graph and output
@@ -880,6 +1065,9 @@ namespace graphs
 				return 1;
 			}
 		}
+
+		if (aoptions.type == type_block)
+			height /= 2;
 
 		if (xmin >= xmax)
 		{

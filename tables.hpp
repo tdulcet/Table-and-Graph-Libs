@@ -25,11 +25,12 @@ namespace tables
 		style_light,
 		style_heavy,
 		style_double,
+		style_arc,
 		style_light_dashed,
 		style_heavy_dashed
 	};
 
-	enum style_type const style_types[] = {style_ASCII, style_basic, style_light, style_heavy, style_double, style_light_dashed, style_heavy_dashed};
+	enum style_type const style_types[] = {style_ASCII, style_basic, style_light, style_heavy, style_double, style_arc, style_light_dashed, style_heavy_dashed};
 
 	const char *const styles[][11] = {
 		{"-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"}, // ASCII
@@ -37,6 +38,7 @@ namespace tables
 		{"─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light
 		{"━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}, // Heavy
 		{"═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"}, // Double
+		{"─", "│", "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯"}, // Light Arc
 		{"╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"}, // Light Dashed
 		{"╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"}	 // Heavy Dashed
 		// {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}	 // No border

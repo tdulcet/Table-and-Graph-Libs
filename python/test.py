@@ -2,6 +2,8 @@
 
 # Teal Dulcet, CS546
 
+# Run: python3 -OO test.py
+
 import math
 import random
 import sys
@@ -112,10 +114,18 @@ xmax = 20
 ymin = -20
 ymax = 20
 
+print("\nOutput array as histogram\n")
+array = [random.gauss(0, 1) for i in range(100)]
+for style in graphs.style_types:
+	graphs.histogram(height, width, xmin, xmax, ymin, ymax, array, style=style)
+
 print("\nOutput single array as plot\n")
 array = [range(i, i + 2) for i in range(10)]
-for style in graphs.style_types:
-	graphs.array(height, width, xmin, xmax, ymin, ymax, array, style=style)
+for atype in graphs.atype_types:
+	for mark in graphs.mark_types:
+		for style in graphs.style_types:
+			graphs.plot(height, width, xmin, xmax, ymin, ymax,
+						array, atype=atype, mark=mark, style=style)
 
 print("\nOutput single function as graph\n")
 for style in graphs.style_types:

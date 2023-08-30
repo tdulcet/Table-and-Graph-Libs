@@ -23,6 +23,7 @@ class style_types(IntEnum):
 	light = auto()
 	heavy = auto()
 	double = auto()
+	arc = auto()
 	light_dashed = auto()
 	heavy_dashed = auto()
 
@@ -33,6 +34,7 @@ styles = [
 	["─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light
 	["━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"],  # Heavy
 	["═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"],  # Double
+	["─", "│", "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯"],  # Light Arc
 	["╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light Dashed
 	["╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"]  # Heavy Dashed
 	# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
@@ -83,8 +85,31 @@ dots = [
 	"⣡", "⣢", "⣣", "⣤", "⣥", "⣦", "⣧", "⣨", "⣩", "⣪", "⣫", "⣬", "⣭", "⣮", "⣯",
 	"⣰", "⣱", "⣲", "⣳", "⣴", "⣵", "⣶", "⣷", "⣸", "⣹", "⣺", "⣻", "⣼", "⣽", "⣾",
 	"⣿"]
+dotvalues = [[0x1, 0x2, 0x4, 0x40], [0x8, 0x10, 0x20, 0x80]]
 
-values = [[0x1, 0x2, 0x4, 0x40], [0x8, 0x10, 0x20, 0x80]]
+blocks = [" ", "▖", "▗", "▄", "▘", "▌", "▚",
+		  "▙", "▝", "▞", "▐", "▟", "▀", "▛", "▜", "█"]
+blockvalues = [[4, 1], [8, 2]]
+
+bars = [" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+
+
+class type_types(IntEnum):
+	braille = 0
+	block = auto()
+	histogram = auto() # Set automatically by the histogram() function
+
+atype_types = (type_types.braille, type_types.block)
+
+marks = [[[0, 0]], [[0, 1], [-1, 0], [0, 0], [1, 0], [0, -1]],
+		 [[-1, 1], [0, 1], [1, 1], [-1, 0], [1, 0], [-1, -1], [0, -1], [1, -1]]]
+
+
+class mark_types(IntEnum):
+	dot = 0
+	plus = auto()
+	square = auto()
+
 
 fractions = {
 	"¼": Fraction(1, 4),
@@ -174,9 +199,7 @@ def outputunit(number: float, scale: units_types) -> str:
 	anumber = abs(number)
 	anumber += 0.0005 if anumber < 10 else 0.005 if anumber < 100 else 0.05 if anumber < 1000 else 0.5
 
-	strm = ""
-
-	if number != 0 and anumber < 1000 and power > 0:
+	if number and anumber < 1000 and power > 0:
 		strm = f"{number:.{sys.float_info.dig}n}"
 
 		length = 5 + (number < 0)
@@ -263,8 +286,7 @@ def outputlabel(label: float, units: units_types) -> Tuple[int, str]:
 	return length, strm
 
 
-def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
-		  axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, title: Optional[str] = None, check: bool = True) -> int:
+def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, title: Optional[str] = None, check: bool = True) -> int:
 	"""Output graph."""
 	if not array:
 		return 1
@@ -277,8 +299,11 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 	w = shutil.get_terminal_size()
 
-	aheight = height // 4
-	awidth = width // 2
+	ai = 8 if atype == type_types.histogram else 2 if atype == type_types.block else 4
+	aj = 1 if atype == type_types.histogram else 2
+
+	aheight = height // ai
+	awidth = width // aj
 
 	if check:
 		if aheight > w.lines:
@@ -303,8 +328,8 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	ystep = (ymax - ymin) / height
 	xaxis = 0 if xmin > 0 else width if xmax < 0 else width - xmax / xstep
 	yaxis = height if ymin > 0 else 0 if ymax < 0 else ymax / ystep
-	xdivisor = 2 * 4 * (width // 160 + 2)
-	ydivisor = 2 * 4 * (height // 160 + 2)
+	xdivisor = 4 * aj * ((((2 * width) // aj) // 160) + 2)
+	ydivisor = 2 * ai * ((((4 * height) // ai) // 160) + 2)
 
 	if title:
 		print(textwrap.fill(title, width=awidth))
@@ -320,8 +345,8 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 	i = 0
 	while i < height:
-		ayaxis = i <= yaxis < i + 4 if yaxis <= height - 4 else i < yaxis <= i + 4
-		yaxislabel = i <= yaxis + 4 < i + 4 if yaxis <= height - 4 else i < yaxis - 4 <= i + 4
+		ayaxis = i <= yaxis < i + ai if yaxis <= height - ai else i < yaxis <= i + ai
+		yaxislabel = i <= yaxis + ai < i + ai if yaxis <= height - ai else i < yaxis - ai <= i + ai
 
 		ylabelstrm = ""
 		ylabellength = 0
@@ -332,24 +357,24 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 			adivisor = -ydivisor if i < yaxis else ydivisor
 
 			k = yaxis + adivisor
-			while (k >= i if i < yaxis else k < i + 4) and i >= 4 and not output:
-				if i <= k < i + 4:
-					label = ymax - (height if k > height else k) * ystep
+			while (k >= i if i < yaxis else k < i + ai) and i >= ai and not output:
+				if i <= k < i + ai:
+					label = ymax - min(k, height) * ystep
 
 					output = True
 				k += adivisor
 
 			if output:
 				ylabellength, ylabelstrm = outputlabel(label, yunits)
-				ylabellength *= 2
+				ylabellength *= aj
 
 		if border:
 			strm += styles[style][1]
 
 		j = 0
 		while j < width:
-			axaxis = j < xaxis <= j + 2 if xaxis >= 2 else j <= xaxis < j + 2
-			xaxislabel = j < xaxis - 2 <= j + 2 if xaxis >= 2 else j <= xaxis + 2 < j + 2
+			axaxis = j < xaxis <= j + aj if xaxis >= aj else j <= xaxis < j + aj
+			xaxislabel = j < xaxis - aj <= j + aj if xaxis >= aj else j <= xaxis + aj < j + aj
 
 			output = False
 
@@ -361,16 +386,16 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					if i == 0:
 						strm += styles[style][4]
 						output = True
-					elif i >= height - 4:
+					elif i >= height - ai:
 						strm += styles[style][10]
 						output = True
 					elif axistick:
 						adivisor = -ydivisor if i < yaxis else ydivisor
 
 						k = yaxis + adivisor
-						while (k >= i if i < yaxis else k < i + 4) and i >= 4 and not output:
-							if i <= k < i + 4:
-								strm += styles[style][7 if xaxis >= 2 else 5]
+						while (k >= i if i < yaxis else k < i + ai) and i >= ai and not output:
+							if i <= k < i + ai:
+								strm += styles[style][7 if xaxis >= aj else 5]
 								output = True
 							k += adivisor
 					if not output:
@@ -380,17 +405,17 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					if j == 0:
 						strm += styles[style][2]
 						output = True
-					elif j >= width - 2:
+					elif j >= width - aj:
 						strm += styles[style][4]
 						output = True
 					elif axistick:
 						adivisor = -xdivisor if j < xaxis else xdivisor
 
 						k = xaxis + adivisor
-						while (k >= j if j < xaxis else k < j + 2) and j < width - 4 and not output:
-							if j <= k < j + 2:
+						while (k >= j if j < xaxis else k < j + aj) and j < width - ai and not output:
+							if j <= k < j + aj:
 								strm += styles[style][3 if yaxis <=
-													  height - 4 else 9]
+													  height - ai else 9]
 								output = True
 							k += adivisor
 					if not output:
@@ -399,62 +424,70 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 				elif yaxislabel and xaxislabel and axistick and axisunitslabel and ymin <= 0 <= ymax and xmin <= 0 <= xmax:
 					strm += "0"
 					output = True
-				elif (j >= width - 2 if xaxis <= width - 2 else j == 0) and yaxislabel and axislabel:
+				elif (j >= width - aj if xaxis <= width - aj else j == 0) and yaxislabel and axislabel:
 					strm += "x"
 					output = True
 				elif yaxislabel and axistick and axisunitslabel:
 					label = 0.0
 					adivisor = -xdivisor if j < xaxis else xdivisor
 					if j < xaxis:
-						j += 2
+						j += aj
 
 					k = xaxis + adivisor
-					while (k >= j if j < xaxis else k < j + 2) and j < width - 2 and not output:
-						if j <= k < j + 2:
-							label = (width if k > width else k) * xstep + xmin
+					while (k >= j if j < xaxis else k < j + aj) and j < width - aj and not output:
+						if j <= k < j + aj:
+							label = min(k, width) * xstep + xmin
 
 							output = True
 						k += adivisor
 
 					if adivisor < 0:
-						j -= 2
+						j -= aj
 
 					if output:
 						output = False
 
 						length, astrm = outputlabel(label, xunits)
-						length *= 2
-						if (j >= xaxis or j + length < xaxis - 4) and j + length < width - 2:
+						length *= aj
+						if (j >= xaxis or j + length < xaxis - ai) and j + length < width - aj:
 							strm += astrm
 
-							if length > 2:
-								j += length - 2
+							if length > aj:
+								j += length - aj
 
 							if adivisor < 0:
 								output = True
 							else:
-								j += 2
-				elif (i == 0 if yaxis >= 4 else i >= height - 4) and xaxislabel and axislabel:
+								j += aj
+				elif (i == 0 if yaxis >= ai else i >= height - ai) and xaxislabel and axislabel:
 					strm += "y"
 					output = True
-				elif ylabellength and (xaxislabel if xaxis < 2 else j < xaxis - ylabellength and j + 2 >= xaxis - ylabellength) and (yaxis >= 4 or i < height - 4) and axistick and axisunitslabel:
+				elif ylabellength and (xaxislabel if xaxis < aj else j < xaxis - ylabellength and j + aj >= xaxis - ylabellength) and (yaxis >= ai or i < height - ai) and axistick and axisunitslabel:
 					strm += ylabelstrm
 					output = True
-					if ylabellength > 2:
-						j += ylabellength - 2
+					if ylabellength > aj:
+						j += ylabellength - aj
 
 			if not output:
 				dot = 0
 				color = 0
 
-				for k in range(min(2, width - j)):
-					for l in range(min(4, height - i)):
-						dot += (1 if array[j + k][i + l] else 0) * values[k][l]
+				for k in range(min(aj, width - j)):
+					for l in range(min(ai, height - i)):
+						value = array[j + k][i + l]
+						if value:
+							if atype == type_types.histogram:
+								if not dot:
+									dot = (len(bars) - l) - 1
+							elif atype == type_types.block:
+								dot += blockvalues[k][l]
+							else:
+								dot += dotvalues[k][l]
 						if color:
-							if array[j + k][i + l] and color != array[j + k][i + l]:
+							if value and color != value:
 								color = 1
 						else:
-							color = array[j + k][i + l]
+							color = value
 
 				if color:
 					color -= 1
@@ -462,19 +495,19 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 				if color:
 					strm += colors[color]
 
-				strm += dots[dot]
+				strm += bars[dot] if atype == type_types.histogram else blocks[dot] if atype == type_types.block else dots[dot]
 
 				if color:
 					strm += colors[0]
 
-			j += 2
+			j += aj
 
 		if border:
 			strm += styles[style][1]
 
-		if i < height - 4 or border:
+		if i < height - ai or border:
 			strm += "\n"
-		i += 4
+		i += ai
 
 	if border:
 		strm += styles[style][8]
@@ -488,8 +521,78 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	return 0
 
 
-def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True,
-		   xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[Sequence[float]]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+	"""Convert one or more arrays to graph and output."""
+	if not aarray:
+		return 1
+
+	w = shutil.get_terminal_size()
+
+	if height == 0:
+		height = w.lines * 4
+
+	if width == 0:
+		width = w.columns * 2
+
+	if check:
+		aheight = height // 4
+		awidth = width // 2
+
+		if aheight > w.lines:
+			print(
+				f"The height of the graph ({aheight}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
+			return 1
+
+		if awidth > w.columns:
+			print(
+				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
+			return 1
+
+	height *= 2
+	width //= 2
+
+	if xmin == xmax == 0:
+		xmin = min(aarray)
+		xmax = max(aarray)
+
+	if xmin >= xmax:
+		print("xmin must be less than xmax.", file=sys.stderr)
+		return 1
+
+	histogram = [0 for i in range(width)]
+
+	xstep = (xmax - xmin) / width
+
+	for x in aarray:
+		if xmin <= x < xmax:
+			index = int((x - xmin) / xstep)
+			histogram[index] += 1
+
+	if ymin == ymax == 0:
+		ymin = min(histogram)
+		ymax = max(histogram)
+
+	if ymin >= ymax:
+		print("ymin must be less than ymax.", file=sys.stderr)
+		return 1
+
+	ystep = (ymax - ymin) / height
+	yaxis = ymax / ystep
+
+	aaarray = [[0 for j in range(height)] for i in range(width)]
+
+	acolor = color + 1
+
+	for x, ay in enumerate(histogram):
+		y = 0 if ay >= ymax else int(yaxis - (ay / ystep))
+		while y < yaxis and y < height:
+			aaarray[x][y] = acolor
+			y += 1
+
+	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, type_types.histogram, style, title)
+
+
+def plots(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, mark: mark_types = mark_types.dot, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
 	"""Convert one or more arrays to graph and output."""
 	if not aarrays:
 		return 1
@@ -520,13 +623,16 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
 
-	if xmin == 0 and xmax == 0:
-		xmin = min(i[0] for aarray in aarrays for i in aarray)
-		xmax = max(i[0] for aarray in aarrays for i in aarray)
+	if atype == type_types.block:
+		height //= 2
 
-	if ymin == 0 and ymax == 0:
-		ymin = min(i[1] for aarray in aarrays for i in aarray)
-		ymax = max(i[1] for aarray in aarrays for i in aarray)
+	if xmin == xmax == 0:
+		xmin = min(x for aarray in aarrays for x, y in aarray)
+		xmax = max(x for aarray in aarrays for x, y in aarray)
+
+	if ymin == ymax == 0:
+		ymin = min(y for aarray in aarrays for x, y in aarray)
+		ymax = max(y for aarray in aarrays for x, y in aarray)
 
 	if xmin >= xmax:
 		print("xmin must be less than xmax.", file=sys.stderr)
@@ -546,30 +652,31 @@ def arrays(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax:
 	for j, aarray in enumerate(aarrays):
 		acolor = color + 1 if len(aarrays) == 1 else j % (len(colors) - 2) + 3
 
-		for i in aarray:
-			if i[0] >= xmin and i[0] < xmax and i[1] >= ymin and i[1] < ymax:
-				x = int(i[0] / xstep + xaxis)
-				y = int(yaxis - i[1] / ystep - 1)
+		for x, y in aarray:
+			if xmin <= x < xmax and ymin <= y < ymax:
+				ax = int(x / xstep + xaxis)
+				ay = int(yaxis - y / ystep - 1)
 
-				if aaarray[x][y]:
-					if aaarray[x][y] != acolor:
-						aaarray[x][y] = 1
-				else:
-					aaarray[x][y] = acolor
+				for ix, iy in marks[mark]:
+					x = ax + ix
+					y = ay + iy
 
-	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border=border, axis=axis, axislabel=axislabel,
-				 axistick=axistick, axisunitslabel=axisunitslabel, xunits=xunits, yunits=yunits, style=style, title=title)
+					if x < width and y < height:
+						if aaarray[x][y]:
+							if aaarray[x][y] != acolor:
+								aaarray[x][y] = 1
+						else:
+							aaarray[x][y] = acolor
+
+	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, title)
 
 
-def array(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
-		  axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
+def plot(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, mark: mark_types = mark_types.dot, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
 	"""Convert single array to graph and output."""
-	return arrays(height, width, xmin, xmax, ymin, ymax, [aarray], border=border, axis=axis, axislabel=axislabel,
-				  axistick=axistick, axisunitslabel=axisunitslabel, xunits=xunits, yunits=yunits, style=style, color=color, title=title)
+	return plots(height, width, xmin, xmax, ymin, ymax, [aarray], border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, mark, style, color, title)
 
 
-def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
-			  axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
 	"""Convert one or more functions to graph and output."""
 	if not afunctions:
 		return 1
@@ -595,6 +702,9 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 			print(
 				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
+
+	if atype == type_types.block:
+		height //= 2
 
 	if xmin >= xmax:
 		print("xmin must be less than xmax.", file=sys.stderr)
@@ -632,12 +742,9 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 				else:
 					array[ax][ay] = acolor
 
-	return graph(height, width, xmin, xmax, ymin, ymax, array, border=border, axis=axis, axislabel=axislabel,
-				 axistick=axistick, axisunitslabel=axisunitslabel, xunits=xunits, yunits=yunits, style=style, title=title)
+	return graph(height, width, xmin, xmax, ymin, ymax, array, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, title)
 
 
-def function(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True,
-			 axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
+def function(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
 	"""Convert single function to function array and output."""
-	return functions(height, width, xmin, xmax, ymin, ymax, [afunction], border=border, axis=axis, axislabel=axislabel,
-					 axistick=axistick, axisunitslabel=axisunitslabel, xunits=xunits, yunits=yunits, style=style, color=color, title=title)
+	return functions(height, width, xmin, xmax, ymin, ymax, [afunction], border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, color, title)

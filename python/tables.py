@@ -21,6 +21,7 @@ class style_types(IntEnum):
 	light = auto()
 	heavy = auto()
 	double = auto()
+	arc = auto()
 	light_dashed = auto()
 	heavy_dashed = auto()
 
@@ -31,6 +32,7 @@ styles = [
 	["─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light
 	["━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"],  # Heavy
 	["═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"],  # Double
+	["─", "│", "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯"],  # Light Arc
 	["╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light Dashed
 	["╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"]  # Heavy Dashed
 	# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
@@ -181,8 +183,7 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 	return 0
 
 
-def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] = None, aheadercolumn: Optional[Sequence[Any]] = None, headerrow: bool = False, headercolumn: bool = False,
-		  tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] = None, aheadercolumn: Optional[Sequence[Any]] = None, headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
 	"""Convert array to char array and output as table."""
 	if not aarray:
 		return 1
@@ -228,12 +229,10 @@ def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] =
 		j = 1 if aheadercolumn else 0
 		aaarray[i][j:] = map(str, aarray[ii][:columns - j])
 
-	return table(aaarray, headerrow=headerrow, headercolumn=headercolumn, tableborder=tableborder,
-				 cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)
+	return table(aaarray, headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style)
 
 
-def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True,
-			  cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
 	"""Convert one or more functions to array and output as table."""
 	if not afunctions:
 		return 1
@@ -263,16 +262,13 @@ def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Calla
 	aarray = [[0 for j in range(columns)] for i in range(rows)]
 
 	for i in range(rows):
-		aarray[i][0] = i * xstep + xmin
+		temp = aarray[i][0] = i * xstep + xmin
 
-		aarray[i][1:] = [function(aarray[i][0]) for function in afunctions]
+		aarray[i][1:] = [function(temp) for function in afunctions]
 
-	return array(aarray, aheaderrow, None, headerrow=headerrow, headercolumn=headercolumn, tableborder=tableborder,
-				 cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)
+	return array(aarray, aheaderrow, None, headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style)
 
 
-def function(xmin: float, xmax: float, xstep: float, afunction: Callable[[float], float], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True,
-			 cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def function(xmin: float, xmax: float, xstep: float, afunction: Callable[[float], float], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
 	"""Convert single function to array and output as table."""
-	return functions(xmin, xmax, xstep, [afunction], headerrow=headerrow, headercolumn=headercolumn,
-					 tableborder=tableborder, cellborder=cellborder, padding=padding, alignment=alignment, title=title, style=style)
+	return functions(xmin, xmax, xstep, [afunction], headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style)
