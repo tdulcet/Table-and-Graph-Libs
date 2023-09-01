@@ -1,9 +1,24 @@
 ## Table of Contents
 * [Tables](#tables)
 	* [Usage](#usage)
+		* [Output str array as table](#output-str-array-as-table)
+		* [Output array as table with separate header row and column](#output-array-as-table-with-separate-header-row-and-column)
+		* [Output array as table](#output-array-as-table)
+		* [Output sorted array as table](#output-sorted-array-as-table)
+		* [Output single function as table](#output-single-function-as-table)
+		* [Output lambda function as table](#output-lambda-function-as-table)
+		* [Output multiple functions as table](#output-multiple-functions-as-table)
+		* [Output multiple lambda functions as table](#output-multiple-lambda-functions-as-table)
 	* [Options](#options)
 * [Graphs/Plots](#graphsplots)
 	* [Usage](#usage-1)
+		* [Output array as histogram](#output-array-as-histogram)
+		* [Output single array as plot](#output-single-array-as-plot)
+		* [Output multiple arrays as plot](#output-single-array-as-plot)
+		* [Output single function as graph](#output-single-function-as-graph)
+		* [Output lambda function as graph](#output-lambda-function-as-graph)
+		* [Output multiple functions as graph](#output-multiple-functions-as-graph)
+		* [Output multiple lambda functions as graph](#output-multiple-lambda-functions-as-graph)
 	* [Options](#options-1)
 
 ## Tables
@@ -32,7 +47,7 @@ import tables
 tables.array(array, headerrow=True, headercolumn=True)
 ```
 
-Table cells can contain [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters), but not newlines and tabs.
+Table cells can contain [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters) and formatted text with [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code), but not newlines and tabs.
 
 ![](../images/char%20array%20to%20table.png)
 
@@ -215,6 +230,7 @@ Values:
 4. `style_types.double`: Double
 	![](../images/double%20table.png)
 5. `style_types.arc`: Light Arc
+	![](../images/light%20arc%20table.png)
 6. `style_types.light_dashed`: Light Dashed
 	![](../images/light%20dashed%20table.png)
 7. `style_types.heavy_dashed`: Heavy Dashed
@@ -264,6 +280,8 @@ graphs.histogram(height, width, xmin, xmax, ymin, ymax, array)
 ```
 
 If `xmin` and `xmax` are both `0`, they will be set to the respective minimum and maximum values of x in the array. If `ymin` and `ymax` are both `0`, they will be set to the respective minimum and maximum values of y in the resulting histogram.
+
+![](../images/array%20to%20histogram.png)
 
 #### Output single array as plot
 
@@ -440,7 +458,9 @@ Option: `type`\
 Values:
 
 1. `type_types.braille`: Braille (default)
+	![](../images/type%20braille%20graph.png)
 2. `type_types.block`: Block
+	![](../images/type%20block%20graph.png)
 
 The Braille type has the highest resolution of 2×4 pixels per character, while the block type uses 2×2. This option is only used for plots and graphs. Histograms use 1×8 pixels per character.
 
@@ -450,8 +470,11 @@ Option: `mark`\
 Values:
 
 1. `mark_types.dot`: Dot (default)
+	![](../images/mark%20dot%20graph.png)
 2. `mark_types.plus`: Plus
+	![](../images/mark%20plus%20graph.png)
 3. `mark_types.square`: Square
+	![](../images/mark%20square%20graph.png)
 
 The dot mark type uses a single pixel per mark, the plus uses five pixels and the square uses eight pixels. This option is only used for plots and graphs.
 
@@ -478,6 +501,7 @@ Values:
 4. `style_types.double`: Double
 	![](../images/double%20graph.png)
 5. `style_types.arc`: Light Arc
+	![](../images/light%20arc%20graph.png)
 6. `style_types.light_dashed`: Light Dashed
 	![](../images/light%20dashed%20graph.png)
 7. `style_types.heavy_dashed`: Heavy Dashed
@@ -506,9 +530,9 @@ Values:
 15. `color_types.light_cyan`: Light Cyan
 16. `color_types.white`: White
 
-See [here](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text) for examples of the colors.
+See here for [examples of the colors](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text).
 
-Only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 16 are used inorder. The system default color is used where the plots cross.
+This option is only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 16 are used inorder. The system default color is used where the plots cross.
 
 ##### Plot
 

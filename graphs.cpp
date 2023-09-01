@@ -8,6 +8,7 @@
 #include <array>
 #include <vector>
 #include <random>
+
 #include "graphs.hpp"
 
 using namespace std;

@@ -11,14 +11,27 @@ These header only libraries use [box-drawing](https://en.wikipedia.org/wiki/Box-
 
 See the [python](python) directory for Python ports of the libraries.
 
+For command-line tools using these respective libraries, see the [Tables and Graphs CLI](https://github.com/tdulcet/Tables-and-Graphs-CLI).
+
 ❤️ Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support these libraries and my other software development.
 
 ## Table of Contents
 * [Tables](#tables)
 	* [Usage](#usage)
+		* [Output char array as table](#output-char-array-as-table)
+		* [Output array as table with separate header row and column](#output-array-as-table-with-separate-header-row-and-column)
+		* [Output array as table](#output-array-as-table)
+		* [Output sorted array as table](#output-sorted-array-as-table)
+		* [Output single function as table](#output-single-function-as-table)
+		* [Output multiple functions as table](#output-multiple-functions-as-table)
 	* [Options](#options)
 * [Graphs/Plots](#graphsplots)
 	* [Usage](#usage-1)
+		* [Output array as histogram](#output-array-as-histogram)
+		* [Output single array as plot](#output-single-array-as-plot)
+		* [Output multiple arrays as plot](#output-single-array-as-plot)
+		* [Output single function as graph](#output-single-function-as-graph)
+		* [Output multiple functions as graph](#output-multiple-functions-as-graph)
 	* [Options](#options-1)
 * [Contributing](#contributing)
 
@@ -33,6 +46,8 @@ Complete versions of all of the examples below and more can be found in the [tab
 Compile with:
 * GCC: `g++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`
 * Clang: `clang++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`
+
+Other compilers should work as well, but are not (yet) tested.
 
 Run with: `./tables`
 
@@ -95,7 +110,7 @@ int main()
 }
 ```
 
-Table cells can contain [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters), but not newlines and tabs.
+Table cells can contain [Unicode characters](https://en.wikipedia.org/wiki/List_of_Unicode_characters) and formatted text with [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code), but not newlines and tabs.
 
 ![](images/char%20array%20to%20table.png)
 
@@ -501,6 +516,7 @@ Values:
 4. `style_double`: Double
 	![](images/double%20table.png)
 5. `style_arc`: Light Arc
+	![](images/light%20arc%20table.png)
 6. `style_light_dashed`: Light Dashed
 	![](images/light%20dashed%20table.png)
 7. `style_heavy_dashed`: Heavy Dashed
@@ -530,6 +546,8 @@ Complete versions of all of the examples below and more can be found in the [gra
 Compile with:
 * GCC: `g++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`
 * Clang: `clang++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`
+
+Other compilers should work as well, but are not (yet) tested.
 
 Run with: `./graphs`
 
@@ -598,6 +616,8 @@ int main()
 ```
 
 If `xmin` and `xmax` are both `0`, they will be set to the respective minimum and maximum values of x in the array. If `ymin` and `ymax` are both `0`, they will be set to the respective minimum and maximum values of y in the resulting histogram.
+
+![](images/array%20to%20histogram.png)
 
 #### Output single array as plot
 
@@ -860,7 +880,9 @@ Option: `type`\
 Values:
 
 1. `type_braille`: Braille (default)
+	![](images/type%20braille%20graph.png)
 2. `type_block`: Block
+	![](images/type%20block%20graph.png)
 
 The Braille type has the highest resolution of 2×4 pixels per character, while the block type uses 2×2. This option is only used for plots and graphs. Histograms use 1×8 pixels per character.
 
@@ -870,8 +892,11 @@ Option: `mark`\
 Values:
 
 1. `mark_dot`: Dot (default)
+	![](images/mark%20dot%20graph.png)
 2. `mark_plus`: Plus
+	![](images/mark%20plus%20graph.png)
 3. `mark_square`: Square
+	![](images/mark%20square%20graph.png)
 
 The dot mark type uses a single pixel per mark, the plus uses five pixels and the square uses eight pixels. This option is only used for plots and graphs.
 
@@ -898,6 +923,7 @@ Values:
 4. `style_double`: Double
 	![](images/double%20graph.png)
 5. `style_arc`: Light Arc
+	![](images/light%20arc%20graph.png)
 6. `style_light_dashed`: Light Dashed
 	![](images/light%20dashed%20graph.png)
 7. `style_heavy_dashed`: Heavy Dashed
@@ -926,9 +952,9 @@ Values:
 15. `color_light_cyan`: Light Cyan
 16. `color_white`: White
 
-See [here](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text) for examples of the colors.
+See here for [examples of the colors](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text).
 
-Only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 16 are used inorder. The system default color is used where the plots cross.
+This option is only used when plotting a single array and when graphing a single function. When plotting multiple arrays or graphing multiple functions, colors 2 - 16 are used inorder. The system default color is used where the plots cross.
 
 ##### Plot
 
@@ -958,7 +984,6 @@ Both:
 	* Add options to word wrap and truncate long text in table cells
 	* Add option to center text in table cells
 * Add more examples
-* Update screenshots of existing examples
 * Improve the performance
 * Handle newlines and tabs in the tables
 * Handle formatted text in the table and graph/plot titles
@@ -966,8 +991,8 @@ Both:
 	* Support 256 and 24-bit color
 	* Support combining/blending colors when functions cross
 * Update the `-t, --table` options of column command from [util-linux](https://en.wikipedia.org/wiki/Util-linux) to use the Table library
-* Create a new CLI tool that uses the Graph library
 * Port to other languages (C, Java, Rust, etc.)
 
 C++:
+* Update the CI to test with more compilers
 * Support tables with the `wchar_t`, `char16_t` and `char32_t` C data types and the `wstring`, `u16string` and `u32string` C++ data types.

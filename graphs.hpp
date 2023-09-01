@@ -271,7 +271,7 @@ namespace graphs
 	// Adapted from: https://github.com/coreutils/coreutils/blob/master/src/numfmt.c
 	void outputunit(long double number, const units_type scale, ostringstream &strm)
 	{
-		unsigned int x = 0;
+		unsigned x = 0;
 		long double val = number;
 		if (val >= -LDBL_MAX and val <= LDBL_MAX)
 		{
@@ -309,7 +309,7 @@ namespace graphs
 			break;
 		}
 
-		unsigned int power = 0;
+		unsigned power = 0;
 		if (number >= -LDBL_MAX and number <= LDBL_MAX)
 		{
 			while (abs(number) >= scale_base)
@@ -329,7 +329,7 @@ namespace graphs
 			strm << setprecision(LDBL_DIG) << number;
 			string str = strm.str();
 
-			const unsigned int length = 5 + (number < 0 ? 1 : 0);
+			const unsigned length = 5 + (number < 0 ? 1 : 0);
 			if (str.length() > length)
 			{
 				const int prec = anumber < 10 ? 3 : anumber < 100 ? 2
@@ -856,7 +856,7 @@ namespace graphs
 
 		vector<vector<unsigned short>> aaarray(width, vector<unsigned short>(height, 0));
 
-		const unsigned int acolor = color + 1;
+		const unsigned acolor = color + 1;
 
 		for (size_t x = 0; x < graphs::size(histogram); ++x)
 		{

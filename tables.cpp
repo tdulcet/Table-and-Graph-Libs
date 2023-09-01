@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+
 #include "tables.hpp"
 
 using namespace std;

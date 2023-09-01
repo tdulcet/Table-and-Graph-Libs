@@ -52,7 +52,7 @@ namespace tables
 		bool headercolumn = false;
 		bool tableborder = true;
 		bool cellborder = false;
-		unsigned int padding = 1;
+		unsigned padding = 1;
 		ios_base &(*alignment)(ios_base &) = left;
 		bool boolalpha = false;
 		const char *title = nullptr;
@@ -177,7 +177,7 @@ namespace tables
 		const bool headercolumn = aoptions.headercolumn;
 		const bool tableborder = aoptions.tableborder;
 		const bool cellborder = aoptions.cellborder;
-		const unsigned int padding = aoptions.padding;
+		const unsigned padding = aoptions.padding;
 		const char *const title = aoptions.title;
 		const style_type style = aoptions.style;
 
