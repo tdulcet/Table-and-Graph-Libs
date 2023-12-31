@@ -324,7 +324,7 @@ namespace graphs
 									   : anumber < 1000	 ? 0.05
 														 : 0.5;
 
-		if (number != 0 and anumber < 1000 and power > 0)
+		if (number and anumber < 1000 and power > 0)
 		{
 			strm << setprecision(LDBL_DIG) << number;
 			string str = strm.str();
@@ -460,7 +460,6 @@ namespace graphs
 		const bool axisunitslabel = aoptions.axisunitslabel;
 		const type_type type = aoptions.type;
 		const char *const title = aoptions.title;
-		const style_type style = aoptions.style;
 
 		if (height == 0)
 			return 1;
@@ -519,14 +518,16 @@ namespace graphs
 		if (title and title[0] != '\0')
 			cout << wrap(title, awidth) << '\n';
 
+		const char *const *astyle = styles[aoptions.style];
+
 		if (border)
 		{
-			cout << styles[style][2];
+			cout << astyle[2];
 
 			for (size_t k = 0; k < awidth; ++k)
-				cout << styles[style][0];
+				cout << astyle[0];
 
-			cout << styles[style][4] << '\n';
+			cout << astyle[4] << '\n';
 		}
 
 		for (size_t i = 0; i < height; i += ai)
@@ -561,7 +562,7 @@ namespace graphs
 			}
 
 			if (border)
-				cout << styles[style][1];
+				cout << astyle[1];
 
 			for (size_t j = 0; j < width; j += aj)
 			{
@@ -574,19 +575,19 @@ namespace graphs
 				{
 					if (axaxis and ayaxis)
 					{
-						cout << styles[style][6];
+						cout << astyle[6];
 						output = true;
 					}
 					else if (axaxis)
 					{
 						if (i == 0)
 						{
-							cout << styles[style][4];
+							cout << astyle[4];
 							output = true;
 						}
 						else if (i >= (height - ai))
 						{
-							cout << styles[style][10];
+							cout << astyle[10];
 							output = true;
 						}
 						else if (axistick)
@@ -597,14 +598,14 @@ namespace graphs
 							{
 								if (i <= k and (i + ai) > k)
 								{
-									cout << styles[style][xaxis >= aj ? 7 : 5];
+									cout << astyle[xaxis >= aj ? 7 : 5];
 									output = true;
 								}
 							}
 						}
 						if (!output)
 						{
-							cout << styles[style][1];
+							cout << astyle[1];
 							output = true;
 						}
 					}
@@ -612,12 +613,12 @@ namespace graphs
 					{
 						if (j == 0)
 						{
-							cout << styles[style][2];
+							cout << astyle[2];
 							output = true;
 						}
 						else if (j >= (width - aj))
 						{
-							cout << styles[style][4];
+							cout << astyle[4];
 							output = true;
 						}
 						else if (axistick)
@@ -628,25 +629,25 @@ namespace graphs
 							{
 								if (j <= k and (j + aj) > k)
 								{
-									cout << styles[style][yaxis <= (height - ai) ? 3 : 9];
+									cout << astyle[yaxis <= (height - ai) ? 3 : 9];
 									output = true;
 								}
 							}
 						}
 						if (!output)
 						{
-							cout << styles[style][0];
+							cout << astyle[0];
 							output = true;
 						}
 					}
 					else if (yaxislabel and xaxislabel and axistick and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0)
 					{
-						cout << "0";
+						cout << '0';
 						output = true;
 					}
 					else if ((xaxis <= (width - aj) ? j >= (width - aj) : j == 0) and yaxislabel and axislabel)
 					{
-						cout << "x";
+						cout << 'x';
 						output = true;
 					}
 					else if (yaxislabel and axistick and axisunitslabel)
@@ -692,7 +693,7 @@ namespace graphs
 					}
 					else if ((yaxis >= ai ? i == 0 : i >= (height - ai)) and xaxislabel and axislabel)
 					{
-						cout << "y";
+						cout << 'y';
 						output = true;
 					}
 					else if (ylabellength and (xaxis < aj ? xaxislabel : j < (xaxis - ylabellength) and (j + aj) >= (xaxis - ylabellength)) and (yaxis >= ai or i < (height - ai)) and axistick and axisunitslabel)
@@ -751,7 +752,7 @@ namespace graphs
 			}
 
 			if (border)
-				cout << styles[style][1];
+				cout << astyle[1];
 
 			if (i < (height - ai) or border)
 				cout << '\n';
@@ -759,12 +760,12 @@ namespace graphs
 
 		if (border)
 		{
-			cout << styles[style][8];
+			cout << astyle[8];
 
 			for (size_t k = 0; k < awidth; ++k)
-				cout << styles[style][0];
+				cout << astyle[0];
 
-			cout << styles[style][10];
+			cout << astyle[10];
 		}
 
 		cout << endl;
@@ -972,7 +973,7 @@ namespace graphs
 		for (size_t j = 0; j < graphs::size(arrays); ++j)
 		{
 			const auto &array = arrays[j];
-			const unsigned int acolor = graphs::size(arrays) == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
+			const unsigned acolor = graphs::size(arrays) == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
 
 			for (size_t i = 0; i < graphs::size(array); ++i)
 			{

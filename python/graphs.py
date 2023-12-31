@@ -334,14 +334,12 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	if title:
 		print(textwrap.fill(title, width=awidth))
 
+	astyle = styles[style]
+
 	strm = ""
 
 	if border:
-		strm += styles[style][2]
-
-		strm += styles[style][0] * awidth
-
-		strm += styles[style][4] + "\n"
+		strm += astyle[2] + (astyle[0] * awidth) + astyle[4] + "\n"
 
 	i = 0
 	while i < height:
@@ -369,7 +367,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 				ylabellength *= aj
 
 		if border:
-			strm += styles[style][1]
+			strm += astyle[1]
 
 		j = 0
 		while j < width:
@@ -380,14 +378,14 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 			if axis:
 				if axaxis and ayaxis:
-					strm += styles[style][6]
+					strm += astyle[6]
 					output = True
 				elif axaxis:
 					if i == 0:
-						strm += styles[style][4]
+						strm += astyle[4]
 						output = True
 					elif i >= height - ai:
-						strm += styles[style][10]
+						strm += astyle[10]
 						output = True
 					elif axistick:
 						adivisor = -ydivisor if i < yaxis else ydivisor
@@ -395,18 +393,18 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 						k = yaxis + adivisor
 						while (k >= i if i < yaxis else k < i + ai) and i >= ai and not output:
 							if i <= k < i + ai:
-								strm += styles[style][7 if xaxis >= aj else 5]
+								strm += astyle[7 if xaxis >= aj else 5]
 								output = True
 							k += adivisor
 					if not output:
-						strm += styles[style][1]
+						strm += astyle[1]
 						output = True
 				elif ayaxis:
 					if j == 0:
-						strm += styles[style][2]
+						strm += astyle[2]
 						output = True
 					elif j >= width - aj:
-						strm += styles[style][4]
+						strm += astyle[4]
 						output = True
 					elif axistick:
 						adivisor = -xdivisor if j < xaxis else xdivisor
@@ -414,12 +412,11 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 						k = xaxis + adivisor
 						while (k >= j if j < xaxis else k < j + aj) and j < width - ai and not output:
 							if j <= k < j + aj:
-								strm += styles[style][3 if yaxis <=
-													  height - ai else 9]
+								strm += astyle[3 if yaxis <= height - ai else 9]
 								output = True
 							k += adivisor
 					if not output:
-						strm += styles[style][0]
+						strm += astyle[0]
 						output = True
 				elif yaxislabel and xaxislabel and axistick and axisunitslabel and ymin <= 0 <= ymax and xmin <= 0 <= xmax:
 					strm += "0"
@@ -503,25 +500,21 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 			j += aj
 
 		if border:
-			strm += styles[style][1]
+			strm += astyle[1]
 
 		if i < height - ai or border:
 			strm += "\n"
 		i += ai
 
 	if border:
-		strm += styles[style][8]
-
-		strm += styles[style][0] * awidth
-
-		strm += styles[style][10]
+		strm += astyle[8] + (astyle[0] * awidth) + astyle[10]
 
 	print(strm)
 
 	return 0
 
 
-def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[Sequence[float]]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
 	"""Convert one or more arrays to graph and output."""
 	if not aarray:
 		return 1

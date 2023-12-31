@@ -48,7 +48,7 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install pylint
     - name: Script
-      run: pylint -f colorized --py-version 3.7 -d design,C0103,W0311,C0301,C0302,C0209 --load-plugins pylint.extensions.code_style,pylint.extensions.emptystring,pylint.extensions.comparetozero,pylint.extensions.comparison_placement,pylint.extensions.for_any_all,pylint.extensions.consider_refactoring_into_while_condition,pylint.extensions.consider_ternary_expression,pylint.extensions.dict_init_mutate,pylint.extensions.docstyle,pylint.extensions.check_elif,pylint.extensions.set_membership,pylint.extensions.typing -e R6104 -r y python/*.py
+      run: pylint -f colorized --py-version 3.7 -d design,C0103,W0311,C0301,C0302,C0209 --load-plugins pylint.extensions.code_style,pylint.extensions.comparison_placement,pylint.extensions.for_any_all,pylint.extensions.consider_refactoring_into_while_condition,pylint.extensions.consider_ternary_expression,pylint.extensions.dict_init_mutate,pylint.extensions.docstyle,pylint.extensions.check_elif,pylint.extensions.set_membership,pylint.extensions.typing -e R6104,C1804,C1805 -r y python/*.py
       continue-on-error: true
 
   Ruff:
@@ -62,7 +62,7 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install ruff
     - name: Script
-      run: ruff --output-format=github --target-version py37 --select F,E,W,I,D,UP,YTT,S,BLE,B,A,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SLOT,SIM,TID,TCH,ARG,PGH,PL,TRY,FLY,PERF,FURB,LOG,RUF --preview --ignore E101,E501,W191,D211,D213,D401,PLR09,PLR2004,RUF001,RUF002,RUF003 .
+      run: ruff --output-format=github --target-version py37 --select F,E4,E7,E9,W,I,D,UP,YTT,ANN,S,BLE,B,A,COM819,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SLOT,SIM,TID,TCH,ARG,PGH,PL,TRY,FLY,PERF,FURB,LOG,RUF --preview --ignore W191,D211,D213,D401,PLR09,PLR2004,RUF001,RUF002,RUF003 .
       continue-on-error: true
 
   Python:
@@ -76,7 +76,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies

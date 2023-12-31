@@ -74,116 +74,104 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 	else:
 		width += 2 * padding * columns
 
-	if check:
-		if width > w.columns:
-			print(
-				f"The width of the table ({width}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
-			return 1
+	if check and width > w.columns:
+		print(
+			f"The width of the table ({width}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
+		return 1
 
 	if title:
 		print(textwrap.fill(title, width=width))
 
+	astyle = styles[style]
+
 	strm = ""
 
 	if tableborder:
-		strm += styles[style][2]
+		strm += astyle[2]
 
 		for j in range(columns):
-			strm += styles[style][0] * (2 * padding + columnwidth[j])
+			strm += astyle[0] * (2 * padding + columnwidth[j])
 
 			if j < columns - 1:
 				if cellborder or headerrow or (j == 0 and headercolumn):
-					strm += styles[style][3]
+					strm += astyle[3]
 				else:
-					strm += styles[style][0]
+					strm += astyle[0]
 
-		strm += styles[style][4] + "\n"
+		strm += astyle[4] + "\n"
 
 	for i in range(rows):
 		if tableborder:
-			strm += styles[style][1]
+			strm += astyle[1]
 
 		for j in range(columns):
 			if (j > 0 and cellborder) or (i == 0 and j > 0 and headerrow) or (j == 1 and headercolumn):
-				strm += styles[style][1]
+				strm += astyle[1]
 			elif j > 0 and (tableborder or (i > 0 and headerrow) or headercolumn):
 				strm += " "
 
 			awidth = columnwidth[j] - (strcol(array[i][j]) - len(array[i][j]))
 
 			if (i == 0 and headerrow) or (j == 0 and headercolumn):
-				strm += " " * padding
-
-				strm += "\033[1m" + array[i][j].center(awidth) + "\033[22m"
-
-				strm += " " * padding
+				strm += (" " * padding) + "\033[1m" + array[i][j].center(awidth) + "\033[22m" + (" " * padding)
 			else:
-				strm += " " * padding
-
-				if alignment is None:
-					strm += f"{array[i][j]:{awidth}}"
-				elif alignment:
-					strm += array[i][j].rjust(awidth)
-				else:
-					strm += array[i][j].ljust(awidth)
-
-				strm += " " * padding
+				strm += (" " * padding) + (f"{array[i][j]:{awidth}}" if alignment is None else array[i][j].rjust(awidth) if alignment else array[i][j].ljust(awidth)) + (" " * padding)
 
 		if tableborder:
-			strm += styles[style][1]
+			strm += astyle[1]
 
 		if i < rows - 1 or tableborder:
 			strm += "\n"
 
 		if (i < rows - 1 and cellborder) or (i == 0 and headerrow) or (i < rows - 1 and headercolumn):
 			if tableborder and (cellborder or (i == 0 and headerrow) or headercolumn):
-				strm += styles[style][5]
+				strm += astyle[5]
 
 			for j in range(columns):
 				if cellborder or (i == 0 and headerrow) or (j == 0 and headercolumn):
-					strm += styles[style][0] * (2 * padding + columnwidth[j])
+					strm += astyle[0] * (2 * padding + columnwidth[j])
 				elif headercolumn:
 					strm += " " * (2 * padding + columnwidth[j])
 
 				if j < columns - 1:
 					if cellborder or ((i == 0 and headerrow) and (j == 0 and headercolumn)):
-						strm += styles[style][6]
+						strm += astyle[6]
 					elif i == 0 and headerrow:
-						strm += styles[style][9]
+						strm += astyle[9]
 					elif headercolumn:
 						if j == 0:
-							strm += styles[style][7]
+							strm += astyle[7]
 						else:
 							strm += " "
 
 			if tableborder:
 				if cellborder or (i == 0 and headerrow):
-					strm += styles[style][7]
+					strm += astyle[7]
 				elif headercolumn:
-					strm += styles[style][1]
+					strm += astyle[1]
 
 			strm += "\n"
 
 	if tableborder:
-		strm += styles[style][8]
+		strm += astyle[8]
 
 		for j in range(columns):
-			strm += styles[style][0] * (2 * padding + columnwidth[j])
+			strm += astyle[0] * (2 * padding + columnwidth[j])
 
 			if j < columns - 1:
 				if cellborder or (j == 0 and headercolumn):
-					strm += styles[style][9]
+					strm += astyle[9]
 				else:
-					strm += styles[style][0]
+					strm += astyle[0]
 
-		strm += styles[style][10]
+		strm += astyle[10]
 
 	print(strm)
 
 	return 0
 
 
-def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[Any]] = None, aheadercolumn: Optional[Sequence[Any]] = None, headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[str]] = None, aheadercolumn: Optional[Sequence[str]] = None, headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
 	"""Convert array to char array and output as table."""
 	if not aarray:
 		return 1
@@ -253,11 +241,7 @@ def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Calla
 
 	aheaderrow = [""] * columns
 
-	if len(afunctions) == 1:
-		aheaderrow = aaheaderrow
-	else:
-		aheaderrow = aaheaderrow[:-1] + [aaheaderrow[-1] +
-										 str(j - length + 2) for j in range(1, columns)]
+	aheaderrow = aaheaderrow if len(afunctions) == 1 else aaheaderrow[:-1] + [aaheaderrow[-1] + str(j - length + 2) for j in range(1, columns)]
 
 	aarray = [[0 for j in range(columns)] for i in range(rows)]
 

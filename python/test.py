@@ -12,15 +12,15 @@ import graphs
 import tables
 
 
-def afunction(x: float):
+def afunction(x: float) -> float:
 	return x + 1
 
 
-def function1(x: float):
+def function1(x: float) -> float:
 	return 2 * x
 
 
-def function2(x: float):
+def function2(x: float) -> float:
 	return x ** 2
 
 

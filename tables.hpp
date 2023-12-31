@@ -179,7 +179,6 @@ namespace tables
 		const bool cellborder = aoptions.cellborder;
 		const unsigned padding = aoptions.padding;
 		const char *const title = aoptions.title;
-		const style_type style = aoptions.style;
 
 		const size_t rows = array.size();
 		const size_t columns = array[0].size();
@@ -225,36 +224,38 @@ namespace tables
 		if (aoptions.alignment)
 			cout << aoptions.alignment;
 
+		const char *const *astyle = styles[aoptions.style];
+
 		if (tableborder)
 		{
-			cout << styles[style][2];
+			cout << astyle[2];
 
 			for (size_t j = 0; j < columns; ++j)
 			{
 				for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
-					cout << styles[style][0];
+					cout << astyle[0];
 
 				if (j < (columns - 1))
 				{
 					if (cellborder or headerrow or (j == 0 and headercolumn))
-						cout << styles[style][3];
+						cout << astyle[3];
 					else
-						cout << styles[style][0];
+						cout << astyle[0];
 				}
 			}
 
-			cout << styles[style][4] << '\n';
+			cout << astyle[4] << '\n';
 		}
 
 		for (size_t i = 0; i < rows; ++i)
 		{
 			if (tableborder)
-				cout << styles[style][1];
+				cout << astyle[1];
 
 			for (size_t j = 0; j < columns; ++j)
 			{
 				if ((j and cellborder) or (i == 0 and j and headerrow) or (j == 1 and headercolumn))
-					cout << styles[style][1];
+					cout << astyle[1];
 				else if (j and (tableborder or (i and headerrow) or headercolumn))
 					cout << ' ';
 
@@ -264,24 +265,16 @@ namespace tables
 				{
 					const int apadding = (difference / 2);
 
-					cout << string(padding + apadding, ' ');
-
-					cout << "\e[1m" << array[i][j] << "\e[22m";
-
-					cout << string(padding + (difference - apadding), ' ');
+					cout << string(padding + apadding, ' ') << "\e[1m" << array[i][j] << "\e[22m" << string(padding + (difference - apadding), ' ');
 				}
 				else
 				{
-					cout << string(padding, ' ');
-
-					cout << setw(difference + array[i][j].length()) << array[i][j];
-
-					cout << string(padding, ' ');
+					cout << string(padding, ' ') << setw(difference + array[i][j].length()) << array[i][j] << string(padding, ' ');
 				}
 			}
 
 			if (tableborder)
-				cout << styles[style][1];
+				cout << astyle[1];
 
 			if (i < (rows - 1) or tableborder)
 				cout << '\n';
@@ -291,27 +284,27 @@ namespace tables
 				if (tableborder)
 				{
 					if (cellborder or (i == 0 and headerrow) or headercolumn)
-						cout << styles[style][5];
+						cout << astyle[5];
 				}
 
 				for (size_t j = 0; j < columns; ++j)
 				{
 					if (cellborder or (i == 0 and headerrow) or (j == 0 and headercolumn))
 						for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
-							cout << styles[style][0];
+							cout << astyle[0];
 					else if (headercolumn)
 						cout << string((2 * padding) + columnwidth[j], ' ');
 
 					if (j < (columns - 1))
 					{
 						if (cellborder or ((i == 0 and headerrow) and (j == 0 and headercolumn)))
-							cout << styles[style][6];
+							cout << astyle[6];
 						else if (i == 0 and headerrow)
-							cout << styles[style][9];
+							cout << astyle[9];
 						else if (headercolumn)
 						{
 							if (j == 0)
-								cout << styles[style][7];
+								cout << astyle[7];
 							else
 								cout << ' ';
 						}
@@ -321,9 +314,9 @@ namespace tables
 				if (tableborder)
 				{
 					if (cellborder or (i == 0 and headerrow))
-						cout << styles[style][7];
+						cout << astyle[7];
 					else if (headercolumn)
-						cout << styles[style][1];
+						cout << astyle[1];
 				}
 
 				cout << '\n';
@@ -332,23 +325,23 @@ namespace tables
 
 		if (tableborder)
 		{
-			cout << styles[style][8];
+			cout << astyle[8];
 
 			for (size_t j = 0; j < columns; ++j)
 			{
 				for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
-					cout << styles[style][0];
+					cout << astyle[0];
 
 				if (j < (columns - 1))
 				{
 					if (cellborder or (j == 0 and headercolumn))
-						cout << styles[style][9];
+						cout << astyle[9];
 					else
-						cout << styles[style][0];
+						cout << astyle[0];
 				}
 			}
 
-			cout << styles[style][10];
+			cout << astyle[10];
 		}
 
 		cout << endl;
