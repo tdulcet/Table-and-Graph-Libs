@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
         cxx: [g++, clang++]
       fail-fast: false
     env:
@@ -22,20 +22,26 @@ jobs:
     - uses: actions/checkout@v4
     - name: Before script
       run: |
-        sudo apt-get -yqq update
-        sudo apt-get -yqq install cppcheck
+        sudo apt-get update -y
+        sudo apt-get install -y cppcheck
         $CXX --version
     - name: Script
       run: |
-        $CXX -std=c++14 -Wall -g -Og -fsanitize=address,undefined tables.cpp -o tables
+        ARGS=( -std=gnu++14 -Wall -g -Og )
+        if [[ $CXX =~ ^clang ]]; then
+            ARGS+=( -fsanitize=address,undefined,integer )
+        else
+            ARGS+=( -fsanitize=address,undefined )
+        fi
+        $CXX "${ARGS[@]}" tables.cpp -o tables
         ./tables
-        $CXX -std=c++14 -Wall -g -Og -fsanitize=address,undefined graphs.cpp -o graphs
+        $CXX "${ARGS[@]}" graphs.cpp -o graphs
         ./graphs
     - name: Cppcheck
       run: cppcheck --enable=all .
     - name: Clang-Tidy
       if: ${{ matrix.cxx == 'clang++' }}
-      run: clang-tidy -checks='bugprone-*,-bugprone-easily-swappable-parameters,cert-*,clang-analyzer-*,misc-const-correctness,misc-redundant-expression,misc-unused-*,modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-const-return-type,readability-container-*,readability-duplicate-include,readability-else-after-return,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-string-compare,readability-use-anyofallof' -header-filter='.*' *.cpp -- -Wall -O3 -std=c++17
+      run: clang-tidy -checks='bugprone-*,-bugprone-easily-swappable-parameters,cert-*,clang-analyzer-*,misc-*,-misc-no-recursion,modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-const-return-type,readability-container-*,readability-duplicate-include,readability-else-after-return,readability-make-member-function-cons,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-string-compare,readability-use-*' -header-filter='.*' *.cpp -- -Wall -O3 -std=c++17
 
   Pylint:
     name: Pylint
@@ -48,7 +54,7 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install pylint
     - name: Script
-      run: pylint -f colorized --py-version 3.7 -d design,C0103,W0311,C0301,C0302,C0209 --load-plugins pylint.extensions.code_style,pylint.extensions.comparison_placement,pylint.extensions.for_any_all,pylint.extensions.consider_refactoring_into_while_condition,pylint.extensions.consider_ternary_expression,pylint.extensions.dict_init_mutate,pylint.extensions.docstyle,pylint.extensions.check_elif,pylint.extensions.set_membership,pylint.extensions.typing -e R6104,C1804,C1805 -r y python/*.py
+      run: pylint -f github --py-version 3.7 -d design,C0103,W0311,C0301,C0302,C0209 --load-plugins pylint.extensions.code_style,pylint.extensions.comparison_placement,pylint.extensions.for_any_all,pylint.extensions.consider_refactoring_into_while_condition,pylint.extensions.consider_ternary_expression,pylint.extensions.dict_init_mutate,pylint.extensions.docstyle,pylint.extensions.check_elif,pylint.extensions.set_membership,pylint.extensions.typing -e R6104,C1804,C1805 -r y python/*.py
       continue-on-error: true
 
   Ruff:
@@ -62,7 +68,7 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install ruff
     - name: Script
-      run: ruff --output-format=github --target-version py37 --select F,E4,E7,E9,W,I,D,UP,YTT,ANN,S,BLE,B,A,COM819,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SLOT,SIM,TID,TCH,ARG,PGH,PL,TRY,FLY,PERF,FURB,LOG,RUF --preview --ignore W191,D211,D213,D401,PLR09,PLR2004,RUF001,RUF002,RUF003 .
+      run: ruff check --output-format=github --target-version py37 --select F,E4,E7,E9,W,I,D,UP,YTT,ANN,S,BLE,B,A,COM819,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SLOT,SIM,TID,TCH,ARG,PGH,PL,TRY,FLY,PERF,FURB,LOG,RUF --preview --ignore W191,D211,D213,D401,PLR09,PLR1702,PLR2004,FURB101,FURB167,RUF001,RUF002,RUF003,RUF023 .
       continue-on-error: true
 
   Python:
@@ -71,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.7", "pypy3.8", "pypy3.9", "pypy3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.7", "pypy3.8", "pypy3.9", "pypy3.10"]
       fail-fast: false
     steps:
     - uses: actions/checkout@v4

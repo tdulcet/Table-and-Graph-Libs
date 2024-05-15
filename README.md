@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.com/tdulcet/Tables-and-Graphs.svg?branch=master)](https://travis-ci.com/tdulcet/Tables-and-Graphs)
-[![Actions Status](https://github.com/tdulcet/Table-and-Graph-Libs/workflows/CI/badge.svg?branch=master)](https://github.com/tdulcet/Table-and-Graph-Libs/actions)
+[![Actions Status](https://github.com/tdulcet/Table-and-Graph-Libs/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/tdulcet/Table-and-Graph-Libs/actions/workflows/ci.yml)
 
 # Table and Graph Libraries
 
