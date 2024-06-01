@@ -12,7 +12,20 @@ from enum import Enum, IntEnum, auto
 from fractions import Fraction
 from typing import Callable, List, Optional, Sequence, Tuple
 
-from wcwidth import wcswidth
+if sys.platform != "win32":
+	import ctypes
+	from ctypes.util import find_library
+
+	libc = ctypes.CDLL(find_library("c"))
+	libc.wcwidth.argtypes = (ctypes.c_wchar,)
+	libc.wcwidth.restype = ctypes.c_int
+	libc.wcswidth.argtypes = (ctypes.c_wchar_p, ctypes.c_int)
+	libc.wcswidth.restype = ctypes.c_int
+
+	def wcswidth(astr: str) -> int:
+		return libc.wcswidth(astr, len(astr))
+else:
+	from wcwidth import wcswidth
 
 locale.setlocale(locale.LC_ALL, "")
 
@@ -28,17 +41,17 @@ class style_types(IntEnum):
 	heavy_dashed = auto()
 
 
-styles = [
-	["-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"],  # ASCII
-	["—", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"],  # Basic
-	["─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light
-	["━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"],  # Heavy
-	["═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"],  # Double
-	["─", "│", "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯"],  # Light Arc
-	["╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light Dashed
-	["╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"]  # Heavy Dashed
-	# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
-]
+styles = (
+	("-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"),  # ASCII
+	("—", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"),  # Basic
+	("─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"),  # Light
+	("━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"),  # Heavy
+	("═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"),  # Double
+	("─", "│", "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯"),  # Light Arc
+	("╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"),  # Light Dashed
+	("╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛")  # Heavy Dashed
+	# (" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ")) #No border
+)
 
 
 class color_types(IntEnum):
@@ -61,12 +74,12 @@ class color_types(IntEnum):
 	white = auto()
 
 
-colors = ["\033[39m", "\033[30m", "\033[31m", "\033[32m", "\033[33m",
+colors = ("\033[39m", "\033[30m", "\033[31m", "\033[32m", "\033[33m",
 		  "\033[34m", "\033[35m", "\033[36m", "\033[37m", "\033[90m",
 		  "\033[91m", "\033[92m", "\033[93m", "\033[94m", "\033[95m",
-		  "\033[96m", "\033[97m"]
+		  "\033[96m", "\033[97m")
 
-dots = [
+dots = (
 	"⠀", "⠁", "⠂", "⠃", "⠄", "⠅", "⠆", "⠇", "⠈", "⠉", "⠊", "⠋", "⠌", "⠍", "⠎",
 	"⠏", "⠐", "⠑", "⠒", "⠓", "⠔", "⠕", "⠖", "⠗", "⠘", "⠙", "⠚", "⠛", "⠜", "⠝",
 	"⠞", "⠟", "⠠", "⠡", "⠢", "⠣", "⠤", "⠥", "⠦", "⠧", "⠨", "⠩", "⠪", "⠫", "⠬",
@@ -84,14 +97,14 @@ dots = [
 	"⣒", "⣓", "⣔", "⣕", "⣖", "⣗", "⣘", "⣙", "⣚", "⣛", "⣜", "⣝", "⣞", "⣟", "⣠",
 	"⣡", "⣢", "⣣", "⣤", "⣥", "⣦", "⣧", "⣨", "⣩", "⣪", "⣫", "⣬", "⣭", "⣮", "⣯",
 	"⣰", "⣱", "⣲", "⣳", "⣴", "⣵", "⣶", "⣷", "⣸", "⣹", "⣺", "⣻", "⣼", "⣽", "⣾",
-	"⣿"]
-dotvalues = [[0x1, 0x2, 0x4, 0x40], [0x8, 0x10, 0x20, 0x80]]
+	"⣿")
+dotvalues = ((0x1, 0x2, 0x4, 0x40), (0x8, 0x10, 0x20, 0x80))
 
-blocks = [" ", "▖", "▗", "▄", "▘", "▌", "▚",
-		  "▙", "▝", "▞", "▐", "▟", "▀", "▛", "▜", "█"]
-blockvalues = [[4, 1], [8, 2]]
+blocks = (" ", "▖", "▗", "▄", "▘", "▌", "▚",
+		  "▙", "▝", "▞", "▐", "▟", "▀", "▛", "▜", "█")
+blockvalues = ((4, 1), (8, 2))
 
-bars = [" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+bars = (" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█")
 
 
 class type_types(IntEnum):
@@ -101,8 +114,8 @@ class type_types(IntEnum):
 
 atype_types = (type_types.braille, type_types.block)
 
-marks = [[[0, 0]], [[0, 1], [-1, 0], [0, 0], [1, 0], [0, -1]],
-		 [[-1, 1], [0, 1], [1, 1], [-1, 0], [1, 0], [-1, -1], [0, -1], [1, -1]]]
+marks = (((0, 0),), ((0, 1), (-1, 0), (0, 0), (1, 0), (0, -1)),
+		 ((-1, 1), (0, 1), (1, 1), (-1, 0), (1, 0), (-1, -1), (0, -1), (1, -1)))
 
 
 class mark_types(IntEnum):
@@ -151,7 +164,7 @@ class units_types(Enum):
 	monetary = auto()
 
 
-suffix_power_char = ["", "K", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q"]
+suffix_power_char = ("", "K", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
 
 MAX = sys.float_info.radix ** sys.float_info.mant_dig - 1
 
@@ -209,6 +222,7 @@ def outputunit(number: float, scale: units_types) -> str:
 	else:
 		strm = locale.format_string("%.0f", number, grouping=True)
 
+	# "k" if power == 1 and scale == scale_SI else
 	strm += suffix_power_char[power] if power < len(
 		suffix_power_char) else "(error)"
 

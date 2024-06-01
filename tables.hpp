@@ -65,7 +65,7 @@ namespace tables
 	template <typename T>
 	constexpr size_t size(const T &array)
 	{
-		return distance(begin(array), end(array));
+		return distance(cbegin(array), cend(array));
 	}
 
 	// Number of columns needed to represent the string
@@ -102,7 +102,7 @@ namespace tables
 			exit(1);
 		}
 
-		int width = wcswidth(wcstring, length);
+		const int width = wcswidth(wcstring, length);
 		if (width == -1)
 		{
 			cerr << "\nError! wcswidth failed. Nonprintable wide character.\n";
@@ -142,11 +142,9 @@ namespace tables
 					++tempindex;
 				}
 
-				char temp[templinelen + 1];
-				strncpy(temp, words.data() + (index - linelen), templinelen);
-				temp[templinelen] = '\0';
+				const string temp = words.substr(index - linelen, templinelen);
 
-				size_t width = strcol(temp);
+				const size_t width = strcol(temp.c_str());
 
 				if (width >= line_length)
 				{
@@ -183,9 +181,7 @@ namespace tables
 		const size_t rows = array.size();
 		const size_t columns = array[0].size();
 
-		int columnwidth[columns];
-		for (size_t j = 0; j < columns; ++j)
-			columnwidth[j] = 0;
+		vector<int> columnwidth(columns);
 
 		setlocale(LC_ALL, "");
 
@@ -202,7 +198,7 @@ namespace tables
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-		size_t width = accumulate(columnwidth, columnwidth + columns, 0ul);
+		size_t width = accumulate(columnwidth.cbegin(), columnwidth.cend(), 0ul);
 
 		if (tableborder or cellborder or headerrow or headercolumn)
 			width += (((2 * padding) + 1) * columns) + (tableborder ? 1 : -1);
@@ -344,7 +340,7 @@ namespace tables
 			cout << astyle[10];
 		}
 
-		cout << endl;
+		cout << '\n';
 
 		return 0;
 	}
@@ -362,7 +358,7 @@ namespace tables
 		size_t rows = tables::size(aarray);
 		size_t columns = tables::size(aarray[0]);
 
-		if (!all_of(begin(aarray), end(aarray), [columns](const auto &x)
+		if (!all_of(cbegin(aarray), cend(aarray), [&columns](const auto &x)
 					{ return tables::size(x) == columns; }))
 		{
 			cerr << "Error: The rows of the array must have the same number of columns.\n";
@@ -520,7 +516,7 @@ namespace tables
 				aarray[i][j + 1] = (functions[j])(aarray[i][0]);
 		}
 
-		int code = array(aarray, headerrow, headercolumn, aoptions);
+		const int code = array(aarray, headerrow, headercolumn, aoptions);
 
 		if (headerrow)
 		{

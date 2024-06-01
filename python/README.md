@@ -25,7 +25,7 @@
 
 ### Usage
 
-Requires Python 3.6 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with:
+Requires Python 3.6 or greater and if not on Linux or macOS, the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with:
 ```bash
 pip3 install wcwidth
 # or
@@ -247,7 +247,7 @@ Check that the width of the table is not greater then the width of the terminal.
 
 ### Usage
 
-Requires Python 3.6 or greater and the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with:
+Requires Python 3.6 or greater and if not on Linux or macOS, the [wcwidth library](https://pypi.org/project/wcwidth/), which users can install with:
 ```bash
 pip3 install wcwidth
 # or

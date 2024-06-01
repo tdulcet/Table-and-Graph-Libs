@@ -10,7 +10,20 @@ import textwrap
 from enum import IntEnum, auto
 from typing import Any, Callable, List, Optional, Sequence
 
-from wcwidth import wcswidth
+if sys.platform != "win32":
+	import ctypes
+	from ctypes.util import find_library
+
+	libc = ctypes.CDLL(find_library("c"))
+	libc.wcwidth.argtypes = (ctypes.c_wchar,)
+	libc.wcwidth.restype = ctypes.c_int
+	libc.wcswidth.argtypes = (ctypes.c_wchar_p, ctypes.c_int)
+	libc.wcswidth.restype = ctypes.c_int
+
+	def wcswidth(astr: str) -> int:
+		return libc.wcswidth(astr, len(astr))
+else:
+	from wcwidth import wcswidth
 
 locale.setlocale(locale.LC_ALL, "")
 
@@ -26,17 +39,17 @@ class style_types(IntEnum):
 	heavy_dashed = auto()
 
 
-styles = [
-	["-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"],  # ASCII
-	["—", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"],  # Basic
-	["─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light
-	["━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"],  # Heavy
-	["═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"],  # Double
-	["─", "│", "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯"],  # Light Arc
-	["╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"],  # Light Dashed
-	["╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"]  # Heavy Dashed
-	# [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]] #No border
-]
+styles = (
+	("-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"),  # ASCII
+	("—", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+"),  # Basic
+	("─", "│", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"),  # Light
+	("━", "┃", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛"),  # Heavy
+	("═", "║", "╔", "╦", "╗", "╠", "╬", "╣", "╚", "╩", "╝"),  # Double
+	("─", "│", "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯"),  # Light Arc
+	("╌", "┊", "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘"),  # Light Dashed
+	("╍", "┋", "┏", "┳", "┓", "┣", "╋", "┫", "┗", "┻", "┛")  # Heavy Dashed
+	# (" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ")) #No border
+)
 
 ansi = re.compile(r"\x1B\[(?:[0-9]+(?:;[0-9]+)*)?m")
 

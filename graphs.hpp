@@ -169,7 +169,7 @@ namespace graphs
 	template <typename T>
 	constexpr size_t size(const T &array)
 	{
-		return distance(begin(array), end(array));
+		return distance(cbegin(array), cend(array));
 	}
 
 	// Number of columns needed to represent the string
@@ -203,7 +203,7 @@ namespace graphs
 			exit(1);
 		}
 
-		int width = wcswidth(wcstring, length);
+		const int width = wcswidth(wcstring, length);
 		if (width == -1)
 		{
 			cerr << "\nError! wcswidth failed. Nonprintable wide character.\n";
@@ -243,11 +243,9 @@ namespace graphs
 					++tempindex;
 				}
 
-				char temp[templinelen + 1];
-				strncpy(temp, words.data() + (index - linelen), templinelen);
-				temp[templinelen] = '\0';
+				const string temp = words.substr(index - linelen, templinelen);
 
-				size_t width = strcol(temp);
+				const size_t width = strcol(temp.c_str());
 
 				if (width >= line_length)
 				{
@@ -327,7 +325,7 @@ namespace graphs
 		if (number and anumber < 1000 and power > 0)
 		{
 			strm << setprecision(LDBL_DIG) << number;
-			string str = strm.str();
+			const string str = strm.str();
 
 			const unsigned length = 5 + (number < 0 ? 1 : 0);
 			if (str.length() > length)
@@ -358,7 +356,7 @@ namespace graphs
 		if (n <= MAX)
 		{
 			long double intpart = 0;
-			long double fractionpart = abs(modf(number, &intpart));
+			const long double fractionpart = abs(modf(number, &intpart));
 
 			for (size_t i = 0; i < graphs::size(fractions) and !output; ++i)
 			{
@@ -442,7 +440,7 @@ namespace graphs
 			break;
 		}
 
-		size_t length = strcol(strm.str().c_str());
+		const size_t length = strcol(strm.str().c_str());
 
 		return length;
 	}
@@ -542,7 +540,7 @@ namespace graphs
 			{
 				bool output = false;
 				long double label = 0;
-				int adivisor = i < yaxis ? -ydivisor : ydivisor;
+				const int adivisor = i < yaxis ? -ydivisor : ydivisor;
 
 				for (long double k = yaxis + adivisor; (i < yaxis ? k >= i : k < (i + ai)) and i >= ai and !output; k += adivisor)
 				{
@@ -592,7 +590,7 @@ namespace graphs
 						}
 						else if (axistick)
 						{
-							int adivisor = i < yaxis ? -ydivisor : ydivisor;
+							const int adivisor = i < yaxis ? -ydivisor : ydivisor;
 
 							for (long double k = yaxis + adivisor; (i < yaxis ? k >= i : k < (i + ai)) and i >= ai and !output; k += adivisor)
 							{
@@ -623,7 +621,7 @@ namespace graphs
 						}
 						else if (axistick)
 						{
-							int adivisor = j < xaxis ? -xdivisor : xdivisor;
+							const int adivisor = j < xaxis ? -xdivisor : xdivisor;
 
 							for (long double k = xaxis + adivisor; (j < xaxis ? k >= j : k < (j + aj)) and j < (width - (aj * 2)) and !output; k += adivisor)
 							{
@@ -653,7 +651,7 @@ namespace graphs
 					else if (yaxislabel and axistick and axisunitslabel)
 					{
 						long double label = 0;
-						int adivisor = j < xaxis ? -xdivisor : xdivisor;
+						const int adivisor = j < xaxis ? -xdivisor : xdivisor;
 						if (j < xaxis)
 							j += aj;
 
@@ -768,7 +766,7 @@ namespace graphs
 			cout << astyle[10];
 		}
 
-		cout << endl;
+		cout << '\n';
 
 		return 0;
 	}
@@ -891,8 +889,8 @@ namespace graphs
 		if (!graphs::size(arrays))
 			return 1;
 
-		if (!all_of(begin(arrays), end(arrays), [](const auto &array)
-					{ return all_of(begin(array), end(array), [](const auto &x)
+		if (!all_of(cbegin(arrays), cend(arrays), [](const auto &array)
+					{ return all_of(cbegin(array), cend(array), [](const auto &x)
 									{ return graphs::size(x) == 2; }); }))
 		{
 			cerr << "Error: The arrays must have two columns.\n";
@@ -1094,7 +1092,7 @@ namespace graphs
 
 		for (size_t j = 0; j < numfunctions; ++j)
 		{
-			unsigned short acolor = numfunctions == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
+			const unsigned short acolor = numfunctions == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
 
 			for (size_t i = 0; i < rows * xres; ++i)
 			{

@@ -219,7 +219,7 @@ int main()
 		}
 	}
 	{
-		function<long double(long double)> afunction = [](auto x)
+		const function<long double(long double)> afunction = [](auto x)
 		{ return x + 1; };
 
 		graphs::options aoptions;
