@@ -1,5 +1,5 @@
 // Teal Dulcet, CS546
-
+#pragma once
 #include <iostream>
 #include <sstream>
 #include <cstring>
