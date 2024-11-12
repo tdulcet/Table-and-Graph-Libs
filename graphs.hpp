@@ -1,5 +1,5 @@
 // Teal Dulcet, CS546
-
+#pragma once
 #include <iostream>
 #include <sstream>
 #include <cstring>
@@ -19,8 +19,13 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#ifdef TGLIB_GRAPHS_NAMESPACE
+namespace TGLIB_GRAPHS_NAMESPACE
+{
+#else
 namespace graphs
 {
+#endif
 	using namespace std;
 
 	enum style_type

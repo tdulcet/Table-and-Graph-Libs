@@ -1,5 +1,5 @@
 // Teal Dulcet, CS546
-
+#pragma once
 #include <iostream>
 #include <sstream>
 #include <cstring>
@@ -14,8 +14,13 @@
 #include <unistd.h>
 #include <regex>
 
+#ifdef TGLIB_TABLES_NAMESPACE
+namespace TGLIB_TABLES_NAMESPACE
+{
+#else
 namespace tables
 {
+#endif
 	using namespace std;
 
 	enum style_type
