@@ -941,15 +941,15 @@ Values:
 5. `color_blue`: Blue
 6. `color_magenta`: Magenta
 7. `color_cyan`: Cyan
-8. `color_light_gray`: Light Gray
-9. `color_dark_gray`: Dark Gray
-10. `color_light_red`: Light Red
-11. `color_light_green`: Light Green
-12. `color_light_yellow`: Light Yellow
-13. `color_light_blue`: Light Blue
-14. `color_light_magenta`: Light Magenta
-15. `color_light_cyan`: Light Cyan
-16. `color_white`: White
+8. `color_white`: White
+9. `color_gray`: Gray
+10. `color_bright_red`: Bright Red
+11. `color_bright_green`: Bright Green
+12. `color_bright_yellow`: Bright Yellow
+13. `color_bright_blue`: Bright Blue
+14. `color_bright_magenta`: Bright Magenta
+15. `color_bright_cyan`: Bright Cyan
+16. `color_bright_white`: Bright White
 
 See here for [examples of the colors](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text).
 

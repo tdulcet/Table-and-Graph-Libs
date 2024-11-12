@@ -59,18 +59,18 @@ namespace graphs
 		color_blue,
 		color_magenta,
 		color_cyan,
-		color_light_gray,
-		color_dark_gray,
-		color_light_red,
-		color_light_green,
-		color_light_yellow,
-		color_light_blue,
-		color_light_magenta,
-		color_light_cyan,
-		color_white
+		color_white,
+		color_gray,
+		color_bright_red,
+		color_bright_green,
+		color_bright_yellow,
+		color_bright_blue,
+		color_bright_magenta,
+		color_bright_cyan,
+		color_bright_white
 	};
 
-	enum color_type const color_types[] = {color_default, color_black, color_red, color_green, color_yellow, color_blue, color_magenta, color_cyan, color_light_gray, color_dark_gray, color_light_red, color_light_green, color_light_yellow, color_light_blue, color_light_magenta, color_light_cyan, color_white};
+	enum color_type const color_types[] = {color_default, color_black, color_red, color_green, color_yellow, color_blue, color_magenta, color_cyan, color_white, color_gray, color_bright_red, color_bright_green, color_bright_yellow, color_bright_blue, color_bright_magenta, color_bright_cyan, color_bright_white};
 
 	const char *const colors[] = {"\e[39m", "\e[30m", "\e[31m", "\e[32m", "\e[33m", "\e[34m", "\e[35m", "\e[36m", "\e[37m", "\e[90m", "\e[91m", "\e[92m", "\e[93m", "\e[94m", "\e[95m", "\e[96m", "\e[97m"};
 

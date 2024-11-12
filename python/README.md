@@ -520,15 +520,15 @@ Values:
 5. `color_types.blue`: Blue
 6. `color_types.magenta`: Magenta
 7. `color_types.cyan`: Cyan
-8. `color_types.dark_gray`: Light Gray
-9. `color_types.dark_gray`: Dark Gray
-10. `color_types.light_red`: Light Red
-11. `color_types.light_green`: Light Green
-12. `color_types.light_yellow`: Light Yellow
-13. `color_types.light_blue`: Light Blue
-14. `color_types.light_magenta`: Light Magenta
-15. `color_types.light_cyan`: Light Cyan
-16. `color_types.white`: White
+8. `color_types.white`: White
+9. `color_types.gray`: Gray
+10. `color_types.bright_red`: Bright Red
+11. `color_types.bright_green`: Bright Green
+12. `color_types.bright_yellow`: Bright Yellow
+13. `color_types.bright_blue`: Bright Blue
+14. `color_types.bright_magenta`: Bright Magenta
+15. `color_types.bright_cyan`: Bright Cyan
+16. `color_types.bright_white`: Bright White
 
 See here for [examples of the colors](https://misc.flogisoft.com/bash/tip_colors_and_formatting#foreground_text).
 

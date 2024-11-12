@@ -28,7 +28,7 @@ jobs:
     - name: Script
       run: |
         ARGS=( -std=gnu++14 -Wall -g -Og )
-        if [[ $CXX =~ ^clang ]]; then
+        if [[ $CXX == clang* ]]; then
             ARGS+=( -fsanitize=address,undefined,integer )
         else
             ARGS+=( -fsanitize=address,undefined )
@@ -54,7 +54,7 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install pylint
     - name: Script
-      run: pylint -f github --py-version 3.7 -d design,C0103,W0311,C0301,C0302,C0209 --load-plugins pylint.extensions.code_style,pylint.extensions.comparison_placement,pylint.extensions.for_any_all,pylint.extensions.consider_refactoring_into_while_condition,pylint.extensions.consider_ternary_expression,pylint.extensions.dict_init_mutate,pylint.extensions.docstyle,pylint.extensions.check_elif,pylint.extensions.set_membership,pylint.extensions.typing -e R6104,C1804,C1805 -r y python/*.py
+      run: pylint -f github --py-version 3.7 -d design,C0103,W0311,C0301,C0302,C0209,R1702 --load-plugins pylint.extensions.code_style,pylint.extensions.comparison_placement,pylint.extensions.for_any_all,pylint.extensions.consider_refactoring_into_while_condition,pylint.extensions.consider_ternary_expression,pylint.extensions.dict_init_mutate,pylint.extensions.docstyle,pylint.extensions.check_elif,pylint.extensions.set_membership,pylint.extensions.typing -e R6104,C1804,C1805 -r y python/*.py
       continue-on-error: true
 
   Ruff:
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.7", "pypy3.8", "pypy3.9", "pypy3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "pypy3.7", "pypy3.8", "pypy3.9", "pypy3.10"]
       fail-fast: false
     steps:
     - uses: actions/checkout@v4

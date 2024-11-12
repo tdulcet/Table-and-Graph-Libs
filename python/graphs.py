@@ -63,15 +63,15 @@ class color_types(IntEnum):
 	blue = auto()
 	magenta = auto()
 	cyan = auto()
-	light_gray = auto()
-	dark_gray = auto()
-	light_red = auto()
-	light_green = auto()
-	light_yellow = auto()
-	light_blue = auto()
-	light_magenta = auto()
-	light_cyan = auto()
 	white = auto()
+	gray = auto()
+	bright_red = auto()
+	bright_green = auto()
+	bright_yellow = auto()
+	bright_blue = auto()
+	bright_magenta = auto()
+	bright_cyan = auto()
+	bright_white = auto()
 
 
 colors = ("\033[39m", "\033[30m", "\033[31m", "\033[32m", "\033[33m",
