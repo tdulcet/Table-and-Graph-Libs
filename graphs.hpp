@@ -774,7 +774,7 @@ namespace graphs
 	}
 
 	template <typename T>
-	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = {.type = type_histogram})
+	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = {})
 	{
 		if (!graphs::size(aarray))
 			return 1;
@@ -879,7 +879,7 @@ namespace graphs
 	}
 
 	template <typename T>
-	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T *aarray, const options &aoptions = {.type = type_histogram})
+	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T *aarray, const options &aoptions = {})
 	{
 		if (rows == 0)
 			return 1;
