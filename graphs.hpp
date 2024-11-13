@@ -868,13 +868,10 @@ namespace graphs
 		}
 	
 		if (aoptions.type != type_histogram) {
-			options aoptions_hist = aoptions;
-			aoptions_hist.type = type_histogram;
+			options hist_options = aoptions;
+			hist_options.type = type_histogram;
+			return graph(height, width, xmin, xmax, ymin, ymax, aaarray, hist_options);
 		}
-		else {
-			return graph(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
-		}
-
 		return graph(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
 	}
 
