@@ -65,8 +65,6 @@ namespace tables
 		bool check = true;
 	};
 
-	const options defaultoptions;
-
 	template <typename T>
 	constexpr size_t size(const T &array)
 	{
@@ -75,7 +73,7 @@ namespace tables
 
 	// Number of columns needed to represent the string
 	// Adapted from: https://stackoverflow.com/a/31124065
-	int strcol(const char *str)
+	inline int strcol(const char *str)
 	{
 		const string astr = regex_replace(str, ansi, "");
 		str = astr.c_str();
@@ -123,7 +121,7 @@ namespace tables
 	// Word wrap
 	// Source: https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0
 	// Adapted from: https://stackoverflow.com/a/42016346 and https://stackoverflow.com/a/13094734
-	string wrap(const char *const str, const size_t line_length)
+	inline string wrap(const char *const str, const size_t line_length)
 	{
 		string words = str;
 		string wrapped;
@@ -352,7 +350,7 @@ namespace tables
 
 	// Convert array to char array and output as table
 	template <typename T1, typename T2>
-	int array(const T1 &aarray, T2 headerrow[] = nullptr, T2 headercolumn[] = nullptr, const options &aoptions = defaultoptions)
+	int array(const T1 &aarray, T2 headerrow[] = nullptr, T2 headercolumn[] = nullptr, const options &aoptions = {})
 	{
 		if (!tables::size(aarray))
 			return 1;
@@ -423,7 +421,7 @@ namespace tables
 	}
 
 	template <typename T>
-	int array(const size_t rows, const size_t columns, T **aarray, const char *const headerrow[] = nullptr, const char *const headercolumn[] = nullptr, const options &aoptions = defaultoptions)
+	int array(const size_t rows, const size_t columns, T **aarray, const char *const headerrow[] = nullptr, const char *const headercolumn[] = nullptr, const options &aoptions = {})
 	{
 		vector<vector<T>> aaarray(rows, vector<T>(columns));
 		for (size_t i = 0; i < rows; ++i)
@@ -460,7 +458,7 @@ namespace tables
 
 	// Convert one or more functions to array and output as table
 	template <typename T>
-	int functions(const long double xmin, const long double xmax, const long double xstep, const size_t numfunctions, function<T(T)> functions[], const options &aoptions = defaultoptions)
+	int functions(const long double xmin, const long double xmax, const long double xstep, const size_t numfunctions, function<T(T)> functions[], const options &aoptions = {})
 	{
 		if (numfunctions == 0)
 			return 1;
@@ -538,7 +536,7 @@ namespace tables
 
 	// Convert single function to array and output as table
 	template <typename T>
-	int function(const long double xmin, const long double xmax, const long double xstep, const function<T(T)> &afunction, const options &aoptions = defaultoptions)
+	int function(const long double xmin, const long double xmax, const long double xstep, const function<T(T)> &afunction, const options &aoptions = {})
 	{
 		std::function<T(T)> afunctions[] = {afunction};
 
@@ -547,7 +545,7 @@ namespace tables
 
 	// Convert single function to array and output as table
 	template <typename T>
-	int function(const long double xmin, const long double xmax, const long double xstep, T afunction(T), const options &aoptions = defaultoptions)
+	int function(const long double xmin, const long double xmax, const long double xstep, T afunction(T), const options &aoptions = {})
 	{
 		std::function<T(T)> afunctions[] = {afunction};
 

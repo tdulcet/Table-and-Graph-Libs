@@ -153,6 +153,8 @@ namespace graphs
 
 	struct options
 	{
+		options() = default;
+		options(type_type type) : type(type) {}
 		bool border = false;
 		bool axis = true;
 		bool axislabel = true;
@@ -168,9 +170,6 @@ namespace graphs
 		bool check = true;
 	};
 
-	const options defaultoptions;
-	options histogram_defaultoptions;
-
 	template <typename T>
 	constexpr size_t size(const T &array)
 	{
@@ -179,7 +178,7 @@ namespace graphs
 
 	// Number of columns needed to represent the string
 	// Adapted from: https://stackoverflow.com/a/31124065
-	int strcol(const char *const str)
+	inline int strcol(const char *const str)
 	{
 		size_t length = strlen(str);
 		for (size_t i = 0; i < length; ++i)
@@ -224,7 +223,7 @@ namespace graphs
 	// Word wrap
 	// Source: https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0
 	// Adapted from: https://stackoverflow.com/a/42016346 and https://stackoverflow.com/a/13094734
-	string wrap(const char *const str, const size_t line_length)
+	inline string wrap(const char *const str, const size_t line_length)
 	{
 		string words = str;
 		string wrapped;
@@ -272,7 +271,7 @@ namespace graphs
 
 	// Auto-scale number to unit
 	// Adapted from: https://github.com/coreutils/coreutils/blob/master/src/numfmt.c
-	void outputunit(long double number, const units_type scale, ostringstream &strm)
+	inline void outputunit(long double number, const units_type scale, ostringstream &strm)
 	{
 		unsigned x = 0;
 		long double val = number;
@@ -353,7 +352,7 @@ namespace graphs
 	}
 
 	// Convert fractions and constants to Unicode characters
-	void outputfraction(const long double number, ostringstream &strm)
+	inline void outputfraction(const long double number, ostringstream &strm)
 	{
 		bool output = false;
 
@@ -403,7 +402,7 @@ namespace graphs
 			strm << number;
 	}
 
-	size_t outputlabel(const long double label, const units_type units, ostringstream &strm)
+	inline size_t outputlabel(const long double label, const units_type units, ostringstream &strm)
 	{
 		strm.imbue(locale(""));
 
@@ -451,7 +450,7 @@ namespace graphs
 	}
 
 	// Output graph
-	int graph(const size_t height, const size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const vector<vector<unsigned short>> &array, const options &aoptions)
+	inline int graph(const size_t height, const size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const vector<vector<unsigned short>> &array, const options &aoptions)
 	{
 		if (!graphs::size(array))
 			return 1;
@@ -777,7 +776,7 @@ namespace graphs
 	}
 
 	template <typename T>
-	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, /* const */ options &aoptions = histogram_defaultoptions)
+	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = {type_histogram})
 	{
 		if (!graphs::size(aarray))
 			return 1;
@@ -869,14 +868,20 @@ namespace graphs
 			for (size_t y = ay >= ymax ? 0 : yaxis - (ay / ystep); y < yaxis and y < height; ++y)
 				aaarray[x][y] = acolor;
 		}
-
-		aoptions.type = type_histogram;
+	
+		if (aoptions.type != type_histogram) {
+			options aoptions_hist = aoptions;
+			aoptions_hist.type = type_histogram;
+		}
+		else {
+			return graph(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
+		}
 
 		return graph(height, width, xmin, xmax, ymin, ymax, aaarray, aoptions);
 	}
 
 	template <typename T>
-	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T *aarray, /* const */ options &aoptions = histogram_defaultoptions)
+	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T *aarray, const options &aoptions = {type_histogram})
 	{
 		if (rows == 0)
 			return 1;
@@ -889,7 +894,7 @@ namespace graphs
 
 	// Convert one or more arrays to graph and output
 	template <typename T>
-	int plots(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &arrays, const options &aoptions = defaultoptions)
+	int plots(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &arrays, const options &aoptions = {})
 	{
 		if (!graphs::size(arrays))
 			return 1;
@@ -1012,7 +1017,7 @@ namespace graphs
 
 	// Convert single array to graph and output
 	template <typename T>
-	int plot(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = defaultoptions)
+	int plot(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = {})
 	{
 		const std::array<T, 1> aaarray = {aarray};
 
@@ -1021,7 +1026,7 @@ namespace graphs
 
 	// Convert single array to graph and output
 	template <typename T>
-	int plot(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T **aarray, const options &aoptions = defaultoptions)
+	int plot(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T **aarray, const options &aoptions = {})
 	{
 		if (rows == 0)
 			return 1;
@@ -1036,7 +1041,7 @@ namespace graphs
 
 	// Convert one or more functions to graph and output
 	template <typename T>
-	int functions(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const size_t numfunctions, function<T(T)> functions[], const options &aoptions = defaultoptions)
+	int functions(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const size_t numfunctions, function<T(T)> functions[], const options &aoptions = {})
 	{
 		const color_type color = aoptions.color;
 
@@ -1125,7 +1130,7 @@ namespace graphs
 
 	// Convert single function to function array and output
 	template <typename T>
-	int function(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const function<T(T)> &afunction, const options &aoptions = defaultoptions)
+	int function(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const function<T(T)> &afunction, const options &aoptions = {})
 	{
 		std::function<T(T)> afunctions[] = {afunction};
 
@@ -1134,7 +1139,7 @@ namespace graphs
 
 	// Convert single function to function array and output
 	template <typename T>
-	int function(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, T afunction(T), const options &aoptions = defaultoptions)
+	int function(size_t height, size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, T afunction(T), const options &aoptions = {})
 	{
 		std::function<T(T)> afunctions[] = {afunction};
 
