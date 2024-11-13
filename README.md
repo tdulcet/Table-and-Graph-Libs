@@ -38,13 +38,13 @@ For command-line tools using these respective libraries, see the [Tables and Gra
 
 ### Usage
 
-Requires support for C++14. See the [tables.hpp](tables.hpp) file for full usage information.
+Requires support for C++17. See the [tables.hpp](tables.hpp) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [tables.cpp](tables.cpp) file.
 
 Compile with:
-* GCC: `g++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`
-* Clang: `clang++ -std=c++14 -Wall -g -O3 tables.cpp -o tables`
+* GCC: `g++ -std=c++17 -Wall -g -O3 tables.cpp -o tables`
+* Clang: `clang++ -std=c++17 -Wall -g -O3 tables.cpp -o tables`
 
 Other compilers should work as well, but are not (yet) tested.
 
@@ -68,9 +68,7 @@ int main()
 
 	// Allocate and set array
 
-	tables::options aoptions;
-	aoptions.headerrow = true;
-	aoptions.headercolumn = true;
+	tables::options aoptions = {.headerrow = true, .headercolumn = true};
 
 	tables::array(rows, columns, array, nullptr, nullptr, aoptions);
 
@@ -99,9 +97,7 @@ int main()
 	string *headerrow = nullptr;
 	string *headercolumn = nullptr;
 
-	tables::options aoptions;
-	aoptions.headerrow = true;
-	aoptions.headercolumn = true;
+	tables::options aoptions = {.headerrow = true, .headercolumn = true};
 
 	tables::array(array, headerrow, headercolumn, aoptions);
 
@@ -134,9 +130,7 @@ int main()
 
 	// Allocate and set array
 
-	tables::options aoptions;
-	aoptions.headerrow = true;
-	aoptions.headercolumn = true;
+	tables::options aoptions = {.headerrow = true, .headercolumn = true};
 
 	tables::array(rows, columns, array, headerrow, headercolumn, aoptions);
 
@@ -165,11 +159,7 @@ int main()
 
 	// Set array
 
-	tables::options aoptions;
-	aoptions.headerrow = true;
-	aoptions.headercolumn = true;
-	// or with C++20:
-	// tables::options aoptions{.headerrow = true, .headercolumn = true};
+	tables::options aoptions = {.headerrow = true, .headercolumn = true};
 
 	tables::array(array, headerrow, headercolumn, aoptions);
 
@@ -337,8 +327,7 @@ int main()
 	double xmax = 10;
 	double xstep = 0.5;
 
-	tables::options aoptions;
-	aoptions.headerrow = true;
+	tables::options aoptions = {.headerrow = true};
 
 	tables::function(xmin, xmax, xstep, afunction, aoptions);
 
@@ -362,8 +351,7 @@ int main()
 	function<double(double)> afunction = [](auto x)
 	{ return x + 1; };
 
-	tables::options aoptions;
-	aoptions.headerrow = true;
+	tables::options aoptions = {.headerrow = true};
 
 	tables::function(xmin, xmax, xstep, afunction, aoptions);
 
@@ -404,8 +392,7 @@ int main()
 	// Function parameter and return value can be any data type, as long as they are the same
 	function<double(double)> functions[] = {function1, function2};
 
-	tables::options aoptions;
-	aoptions.headerrow = true;
+	tables::options aoptions = {.headerrow = true};
 
 	tables::functions(xmin, xmax, xstep, numfunctions, functions, aoptions);
 
@@ -435,8 +422,7 @@ int main()
 											[](auto x)
 											{ return pow(x, 2); }};
 
-	tables::options aoptions;
-	aoptions.headerrow = true;
+	tables::options aoptions = {.headerrow = true};
 
 	tables::functions(xmin, xmax, xstep, numfunctions, functions, aoptions);
 
@@ -538,13 +524,13 @@ Check that the width of the table is not greater then the width of the terminal.
 
 ### Usage
 
-Requires support for C++14. See the [graphs.hpp](graphs.hpp) file for full usage information.
+Requires support for C++17. See the [graphs.hpp](graphs.hpp) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [graphs.cpp](graphs.cpp) file.
 
 Compile with:
-* GCC: `g++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`
-* Clang: `clang++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs`
+* GCC: `g++ -std=c++17 -Wall -g -O3 graphs.cpp -o graphs`
+* Clang: `clang++ -std=c++17 -Wall -g -O3 graphs.cpp -o graphs`
 
 Other compilers should work as well, but are not (yet) tested.
 

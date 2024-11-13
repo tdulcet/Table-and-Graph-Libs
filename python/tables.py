@@ -59,10 +59,8 @@ def strcol(astr: str) -> int:
 	astr = ansi.sub("", astr)
 	width = wcswidth(astr)
 	if width == -1:
-		print(
-			"\nError! wcswidth failed. Nonprintable wide character.",
-			file=sys.stderr)
-		sys.exit(1)
+		msg = "wcswidth failed. Nonprintable wide character."
+		raise ValueError(msg)
 	return width
 	# return len(astr)
 
@@ -106,7 +104,7 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 			strm += astyle[0] * (2 * padding + columnwidth[j])
 
 			if j < columns - 1:
-				if cellborder or headerrow or (j == 0 and headercolumn):
+				if cellborder or headerrow or (not j and headercolumn):
 					strm += astyle[3]
 				else:
 					strm += astyle[0]
@@ -118,14 +116,14 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 			strm += astyle[1]
 
 		for j in range(columns):
-			if (j > 0 and cellborder) or (i == 0 and j > 0 and headerrow) or (j == 1 and headercolumn):
+			if (j > 0 and cellborder) or (not i and j > 0 and headerrow) or (j == 1 and headercolumn):
 				strm += astyle[1]
 			elif j > 0 and (tableborder or (i > 0 and headerrow) or headercolumn):
 				strm += " "
 
 			awidth = columnwidth[j] - (strcol(array[i][j]) - len(array[i][j]))
 
-			if (i == 0 and headerrow) or (j == 0 and headercolumn):
+			if (not i and headerrow) or (not j and headercolumn):
 				strm += (" " * padding) + "\033[1m" + array[i][j].center(awidth) + "\033[22m" + (" " * padding)
 			else:
 				strm += (" " * padding) + (f"{array[i][j]:{awidth}}" if alignment is None else array[i][j].rjust(awidth) if alignment else array[i][j].ljust(awidth)) + (" " * padding)
@@ -136,29 +134,29 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 		if i < rows - 1 or tableborder:
 			strm += "\n"
 
-		if (i < rows - 1 and cellborder) or (i == 0 and headerrow) or (i < rows - 1 and headercolumn):
-			if tableborder and (cellborder or (i == 0 and headerrow) or headercolumn):
+		if (i < rows - 1 and cellborder) or (not i and headerrow) or (i < rows - 1 and headercolumn):
+			if tableborder and (cellborder or (not i and headerrow) or headercolumn):
 				strm += astyle[5]
 
 			for j in range(columns):
-				if cellborder or (i == 0 and headerrow) or (j == 0 and headercolumn):
+				if cellborder or (not i and headerrow) or (not j and headercolumn):
 					strm += astyle[0] * (2 * padding + columnwidth[j])
 				elif headercolumn:
 					strm += " " * (2 * padding + columnwidth[j])
 
 				if j < columns - 1:
-					if cellborder or ((i == 0 and headerrow) and (j == 0 and headercolumn)):
+					if cellborder or ((not i and headerrow) and (not j and headercolumn)):
 						strm += astyle[6]
-					elif i == 0 and headerrow:
+					elif not i and headerrow:
 						strm += astyle[9]
 					elif headercolumn:
-						if j == 0:
+						if not j:
 							strm += astyle[7]
 						else:
 							strm += " "
 
 			if tableborder:
-				if cellborder or (i == 0 and headerrow):
+				if cellborder or (not i and headerrow):
 					strm += astyle[7]
 				elif headercolumn:
 					strm += astyle[1]
@@ -172,7 +170,7 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 			strm += astyle[0] * (2 * padding + columnwidth[j])
 
 			if j < columns - 1:
-				if cellborder or (j == 0 and headercolumn):
+				if cellborder or (not j and headercolumn):
 					strm += astyle[9]
 				else:
 					strm += astyle[0]

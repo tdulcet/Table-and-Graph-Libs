@@ -173,10 +173,8 @@ def strcol(astr: str) -> int:
 	"""Returns the number of columns that the given string would take up if printed."""
 	width = wcswidth(astr)
 	if width == -1:
-		print(
-			"\nError! wcswidth failed. Nonprintable wide character.",
-			file=sys.stderr)
-		sys.exit(1)
+		msg = "wcswidth failed. Nonprintable wide character."
+		raise ValueError(msg)
 	return width
 	# return len(astr)
 
@@ -305,10 +303,10 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	if not array:
 		return 1
 
-	if height == 0:
+	if not height:
 		return 1
 
-	if width == 0:
+	if not width:
 		return 1
 
 	w = shutil.get_terminal_size()
@@ -395,7 +393,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					strm += astyle[6]
 					output = True
 				elif axaxis:
-					if i == 0:
+					if not i:
 						strm += astyle[4]
 						output = True
 					elif i >= height - ai:
@@ -414,7 +412,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 						strm += astyle[1]
 						output = True
 				elif ayaxis:
-					if j == 0:
+					if not j:
 						strm += astyle[2]
 						output = True
 					elif j >= width - aj:
@@ -435,7 +433,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 				elif yaxislabel and xaxislabel and axistick and axisunitslabel and ymin <= 0 <= ymax and xmin <= 0 <= xmax:
 					strm += "0"
 					output = True
-				elif (j >= width - aj if xaxis <= width - aj else j == 0) and yaxislabel and axislabel:
+				elif (j >= width - aj if xaxis <= width - aj else not j) and yaxislabel and axislabel:
 					strm += "x"
 					output = True
 				elif yaxislabel and axistick and axisunitslabel:
@@ -470,7 +468,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 								output = True
 							else:
 								j += aj
-				elif (i == 0 if yaxis >= ai else i >= height - ai) and xaxislabel and axislabel:
+				elif (not i if yaxis >= ai else i >= height - ai) and xaxislabel and axislabel:
 					strm += "y"
 					output = True
 				elif ylabellength and (xaxislabel if xaxis < aj else j < xaxis - ylabellength and j + aj >= xaxis - ylabellength) and (yaxis >= ai or i < height - ai) and axistick and axisunitslabel:
@@ -535,10 +533,10 @@ def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 
 	w = shutil.get_terminal_size()
 
-	if height == 0:
+	if not height:
 		height = w.lines * 4
 
-	if width == 0:
+	if not width:
 		width = w.columns * 2
 
 	if check:
@@ -558,7 +556,7 @@ def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 	height *= 2
 	width //= 2
 
-	if xmin == xmax == 0:
+	if not xmin and not xmax:
 		xmin = min(aarray)
 		xmax = max(aarray)
 
@@ -575,7 +573,7 @@ def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 			index = int((x - xmin) / xstep)
 			histogram[index] += 1
 
-	if ymin == ymax == 0:
+	if not ymin and not ymax:
 		ymin = min(histogram)
 		ymax = max(histogram)
 
@@ -610,10 +608,10 @@ def plots(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 	w = shutil.get_terminal_size()
 
-	if height == 0:
+	if not height:
 		height = w.lines * 4
 
-	if width == 0:
+	if not width:
 		width = w.columns * 2
 
 	if check:
@@ -633,11 +631,11 @@ def plots(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	if atype == type_types.block:
 		height //= 2
 
-	if xmin == xmax == 0:
+	if not xmin and not xmax:
 		xmin = min(x for aarray in aarrays for x, y in aarray)
 		xmax = max(x for aarray in aarrays for x, y in aarray)
 
-	if ymin == ymax == 0:
+	if not ymin and not ymax:
 		ymin = min(y for aarray in aarrays for x, y in aarray)
 		ymax = max(y for aarray in aarrays for x, y in aarray)
 
@@ -690,10 +688,10 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 
 	w = shutil.get_terminal_size()
 
-	if height == 0:
+	if not height:
 		height = w.lines * 4
 
-	if width == 0:
+	if not width:
 		width = w.columns * 2
 
 	if check:

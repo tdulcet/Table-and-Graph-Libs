@@ -27,7 +27,7 @@ jobs:
         $CXX --version
     - name: Script
       run: |
-        ARGS=( -std=gnu++14 -Wall -g -Og )
+        ARGS=( -std=gnu++17 -Wall -g -Og )
         if [[ $CXX == clang* ]]; then
             ARGS+=( -fsanitize=address,undefined,integer )
         else

@@ -65,55 +65,33 @@ namespace tables
 		bool check = true;
 	};
 
-	template <typename T>
-	constexpr size_t size(const T &array)
-	{
-		return distance(cbegin(array), cend(array));
-	}
-
 	// Number of columns needed to represent the string
 	// Adapted from: https://stackoverflow.com/a/31124065
-	inline int strcol(const char *str)
+	inline int strcol(const string &astr)
 	{
-		const string astr = regex_replace(str, ansi, "");
-		str = astr.c_str();
+		const string str = regex_replace(astr, ansi, "");
 
-		size_t length = strlen(str);
-		for (size_t i = 0; i < length; ++i)
-			if (iscntrl(str[i]))
+		for (const char c : str)
+			if (iscntrl(c))
 			{
-				cerr << "\nError! Control character in string.\n";
-				cout << "Control character: " << (int)str[i] << '\n';
+				cerr << "\nError: Control character in string.\n";
+				cout << "Control character: " << (int)c << '\n';
 			}
 
-		length = mbstowcs(nullptr, str, 0);
+		size_t length = mbstowcs(nullptr, str.c_str(), 0);
 		if (length == static_cast<size_t>(-1))
-		{
-			cerr << "\nError! mbstowcs failed. Invalid multibyte character.\n";
-			exit(1);
-		}
+			throw range_error("Error: mbstowcs failed. Invalid multibyte character.");
 		++length;
 
-		auto *wcstring = new wchar_t[length];
+		wstring wcstring(length, L'\0');
 
-		if (mbstowcs(wcstring, str, length) == static_cast<size_t>(-1))
-		{
-			if (wcstring)
-				delete[] wcstring;
+		if (mbstowcs(wcstring.data(), str.c_str(), length) == static_cast<size_t>(-1))
+			throw range_error("Error: mbstowcs failed. Invalid multibyte character.");
 
-			cerr << "\nError! mbstowcs failed. Invalid multibyte character.\n";
-			exit(1);
-		}
-
-		const int width = wcswidth(wcstring, length);
+		const int width = wcswidth(wcstring.c_str(), length);
 		if (width == -1)
-		{
-			cerr << "\nError! wcswidth failed. Nonprintable wide character.\n";
-			exit(1);
-		}
+			throw range_error("Error: wcswidth failed. Nonprintable wide character.");
 
-		if (wcstring)
-			delete[] wcstring;
 
 		return width;
 	}
@@ -121,7 +99,7 @@ namespace tables
 	// Word wrap
 	// Source: https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0
 	// Adapted from: https://stackoverflow.com/a/42016346 and https://stackoverflow.com/a/13094734
-	inline string wrap(const char *const str, const size_t line_length)
+	inline string wrap(const string &str, const size_t line_length)
 	{
 		string words = str;
 		string wrapped;
@@ -145,9 +123,7 @@ namespace tables
 					++tempindex;
 				}
 
-				const string temp = words.substr(index - linelen, templinelen);
-
-				const size_t width = strcol(temp.c_str());
+				const size_t width = strcol(words.substr(index - linelen, templinelen));
 
 				if (width >= line_length)
 				{
@@ -171,7 +147,7 @@ namespace tables
 	template <typename T>
 	int table(const vector<vector<basic_string<T>>> &array, const options &aoptions)
 	{
-		if (!tables::size(array))
+		if (!size(array))
 			return 1;
 
 		const bool headerrow = aoptions.headerrow;
@@ -192,7 +168,7 @@ namespace tables
 		{
 			for (size_t i = 0; i < rows; ++i)
 			{
-				const int cellwidth = strcol(array[i][j].c_str());
+				const int cellwidth = strcol(array[i][j]);
 				if (cellwidth > columnwidth[j])
 					columnwidth[j] = cellwidth;
 			}
@@ -236,7 +212,7 @@ namespace tables
 
 				if (j < (columns - 1))
 				{
-					if (cellborder or headerrow or (j == 0 and headercolumn))
+					if (cellborder or headerrow or (!j and headercolumn))
 						cout << astyle[3];
 					else
 						cout << astyle[0];
@@ -253,14 +229,14 @@ namespace tables
 
 			for (size_t j = 0; j < columns; ++j)
 			{
-				if ((j and cellborder) or (i == 0 and j and headerrow) or (j == 1 and headercolumn))
+				if ((j and cellborder) or (!i and j and headerrow) or (j == 1 and headercolumn))
 					cout << astyle[1];
 				else if (j and (tableborder or (i and headerrow) or headercolumn))
 					cout << ' ';
 
-				const int difference = columnwidth[j] - strcol(array[i][j].c_str());
+				const int difference = columnwidth[j] - strcol(array[i][j]);
 
-				if ((i == 0 and headerrow) or (j == 0 and headercolumn))
+				if ((!i and headerrow) or (!j and headercolumn))
 				{
 					const int apadding = (difference / 2);
 
@@ -278,17 +254,17 @@ namespace tables
 			if (i < (rows - 1) or tableborder)
 				cout << '\n';
 
-			if ((i < (rows - 1) and cellborder) or (i == 0 and headerrow) or (i < (rows - 1) and headercolumn))
+			if ((i < (rows - 1) and cellborder) or (!i and headerrow) or (i < (rows - 1) and headercolumn))
 			{
 				if (tableborder)
 				{
-					if (cellborder or (i == 0 and headerrow) or headercolumn)
+					if (cellborder or (!i and headerrow) or headercolumn)
 						cout << astyle[5];
 				}
 
 				for (size_t j = 0; j < columns; ++j)
 				{
-					if (cellborder or (i == 0 and headerrow) or (j == 0 and headercolumn))
+					if (cellborder or (!i and headerrow) or (!j and headercolumn))
 						for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
 							cout << astyle[0];
 					else if (headercolumn)
@@ -296,13 +272,13 @@ namespace tables
 
 					if (j < (columns - 1))
 					{
-						if (cellborder or ((i == 0 and headerrow) and (j == 0 and headercolumn)))
+						if (cellborder or ((!i and headerrow) and (!j and headercolumn)))
 							cout << astyle[6];
-						else if (i == 0 and headerrow)
+						else if (!i and headerrow)
 							cout << astyle[9];
 						else if (headercolumn)
 						{
-							if (j == 0)
+							if (!j)
 								cout << astyle[7];
 							else
 								cout << ' ';
@@ -312,7 +288,7 @@ namespace tables
 
 				if (tableborder)
 				{
-					if (cellborder or (i == 0 and headerrow))
+					if (cellborder or (!i and headerrow))
 						cout << astyle[7];
 					else if (headercolumn)
 						cout << astyle[1];
@@ -333,7 +309,7 @@ namespace tables
 
 				if (j < (columns - 1))
 				{
-					if (cellborder or (j == 0 and headercolumn))
+					if (cellborder or (!j and headercolumn))
 						cout << astyle[9];
 					else
 						cout << astyle[0];
@@ -352,17 +328,17 @@ namespace tables
 	template <typename T1, typename T2>
 	int array(const T1 &aarray, T2 headerrow[] = nullptr, T2 headercolumn[] = nullptr, const options &aoptions = {})
 	{
-		if (!tables::size(aarray))
+		if (!size(aarray))
 			return 1;
 
 		size_t i = 0;
 		size_t j = 0;
 
-		size_t rows = tables::size(aarray);
-		size_t columns = tables::size(aarray[0]);
+		size_t rows = size(aarray);
+		size_t columns = size(aarray[0]);
 
 		if (!all_of(cbegin(aarray), cend(aarray), [&columns](const auto &x)
-					{ return tables::size(x) == columns; }))
+					{ return size(x) == columns; }))
 		{
 			cerr << "Error: The rows of the array must have the same number of columns.\n";
 			return 1;
@@ -460,7 +436,7 @@ namespace tables
 	template <typename T>
 	int functions(const long double xmin, const long double xmax, const long double xstep, const size_t numfunctions, function<T(T)> functions[], const options &aoptions = {})
 	{
-		if (numfunctions == 0)
+		if (!numfunctions)
 			return 1;
 
 		if (xmin >= xmax)
@@ -481,9 +457,9 @@ namespace tables
 		const char *const aheaderrow[] = {"x", "y"};
 		// const char* const aheaderrow[] = {"", "x", "y"};
 
-		const size_t length = tables::size(aheaderrow);
+		const size_t length = size(aheaderrow);
 
-		auto *headerrow = new string[columns];
+		vector<string> headerrow(columns);
 
 		for (size_t j = 0; j < columns; ++j)
 		{
@@ -500,7 +476,7 @@ namespace tables
 		}
 
 		string *headercolumn = nullptr;
-		// headercolumn = new string[rows + 1];
+		// vector<string> headercolumn(rows + 1);
 
 		// for (size_t i = 0; i < rows + 1; ++i)
 		// {
@@ -519,19 +495,7 @@ namespace tables
 				aarray[i][j + 1] = (functions[j])(aarray[i][0]);
 		}
 
-		const int code = array(aarray, headerrow, headercolumn, aoptions);
-
-		if (headerrow)
-		{
-			delete[] headerrow;
-		}
-
-		// if (headercolumn)
-		// {
-		// delete[] headercolumn;
-		// }
-
-		return code;
+		return array(aarray, headerrow.data(), headercolumn, aoptions);
 	}
 
 	// Convert single function to array and output as table
@@ -551,5 +515,4 @@ namespace tables
 
 		return functions(xmin, xmax, xstep, 1, afunctions, aoptions);
 	}
-
 }

@@ -5,6 +5,7 @@
 # Run: python3 -OO test.py
 
 import math
+import operator
 import random
 import sys
 
@@ -87,7 +88,7 @@ print("\nOutput sorted array as table\n")
 array = ([random.randint(0, sys.maxsize)
 		  for j in range(columns)] for i in range(rows))
 sortdimension = 0
-array = sorted(array, key=lambda x: x[sortdimension])
+array = sorted(array, key=operator.itemgetter(sortdimension))
 for style in tables.style_types:
 	tables.array(array, None, None, style=style)
 

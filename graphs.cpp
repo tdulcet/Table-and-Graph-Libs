@@ -1,6 +1,6 @@
 // Teal Dulcet, CS546
 
-// Compile: g++ -std=c++14 -Wall -g -O3 graphs.cpp -o graphs
+// Compile: g++ -std=gnu++17 -Wall -g -O3 graphs.cpp -o graphs
 
 // Run: ./graphs
 
@@ -242,7 +242,7 @@ int main()
 		{
 			aoptions.style = style;
 
-			graphs::functions(height, width, xmin, xmax, ymin, ymax, graphs::size(functions), functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, size(functions), functions, aoptions);
 		}
 	}
 	{
@@ -257,7 +257,7 @@ int main()
 		{
 			aoptions.style = style;
 
-			graphs::functions(height, width, xmin, xmax, ymin, ymax, graphs::size(functions), functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, size(functions), functions, aoptions);
 		}
 	}
 	{
@@ -270,13 +270,13 @@ int main()
 
 		graphs::options aoptions;
 		aoptions.axisunitslabel = false;
-		// graphs::options aoptions{.axisunitslabel = false};
+		// graphs::options aoptions = {.axisunitslabel = false};
 
 		for (const graphs::style_type style : graphs::style_types)
 		{
 			aoptions.style = style;
 
-			graphs::functions(height, width, xmin, xmax, ymin, ymax, graphs::size(functions), functions, aoptions);
+			graphs::functions(height, width, xmin, xmax, ymin, ymax, size(functions), functions, aoptions);
 		}
 
 		/* aoptions.style = 2;
@@ -286,7 +286,7 @@ int main()
 			cout << "\e[1;1H"
 				 << "\e[2J";
 
-			graphs::functions(k, k, xmin, xmax, ymin, ymax, graphs::size(functions), functions, aoptions);
+			graphs::functions(k, k, xmin, xmax, ymin, ymax, size(functions), functions, aoptions);
 
 			usleep(200000);
 		} */

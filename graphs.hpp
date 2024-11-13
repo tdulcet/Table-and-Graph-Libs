@@ -168,52 +168,30 @@ namespace graphs
 		bool check = true;
 	};
 
-	template <typename T>
-	constexpr size_t size(const T &array)
-	{
-		return distance(cbegin(array), cend(array));
-	}
-
 	// Number of columns needed to represent the string
 	// Adapted from: https://stackoverflow.com/a/31124065
-	inline int strcol(const char *const str)
+	inline int strcol(const string &str)
 	{
-		size_t length = strlen(str);
-		for (size_t i = 0; i < length; ++i)
-			if (iscntrl(str[i]))
+		for (const char c : str)
+			if (iscntrl(c))
 			{
-				cerr << "\nError! Control character in string.\n";
-				cout << "Control character: " << (int)str[i] << '\n';
+				cerr << "\nError: Control character in string.\n";
+				cout << "Control character: " << (int)c << '\n';
 			}
 
-		length = mbstowcs(nullptr, str, 0);
+		size_t length = mbstowcs(nullptr, str.c_str(), 0);
 		if (length == static_cast<size_t>(-1))
-		{
-			cerr << "\nError! mbstowcs failed. Invalid multibyte character.\n";
-			exit(1);
-		}
+			throw range_error("Error: mbstowcs failed. Invalid multibyte character.");
 		++length;
 
-		auto *wcstring = new wchar_t[length];
+		wstring wcstring(length, L'\0');
 
-		if (mbstowcs(wcstring, str, length) == static_cast<size_t>(-1))
-		{
-			if (wcstring)
-				delete[] wcstring;
+		if (mbstowcs(wcstring.data(), str.c_str(), length) == static_cast<size_t>(-1))
+			throw range_error("Error: mbstowcs failed. Invalid multibyte character.");
 
-			cerr << "\nError! mbstowcs failed. Invalid multibyte character.\n";
-			exit(1);
-		}
-
-		const int width = wcswidth(wcstring, length);
+		const int width = wcswidth(wcstring.c_str(), length);
 		if (width == -1)
-		{
-			cerr << "\nError! wcswidth failed. Nonprintable wide character.\n";
-			exit(1);
-		}
-
-		if (wcstring)
-			delete[] wcstring;
+			throw range_error("Error: wcswidth failed. Nonprintable wide character.");
 
 		return width;
 	}
@@ -221,7 +199,7 @@ namespace graphs
 	// Word wrap
 	// Source: https://gist.github.com/tdulcet/819821ca69501822ad3f84a060c640a0
 	// Adapted from: https://stackoverflow.com/a/42016346 and https://stackoverflow.com/a/13094734
-	inline string wrap(const char *const str, const size_t line_length)
+	inline string wrap(const string &str, const size_t line_length)
 	{
 		string words = str;
 		string wrapped;
@@ -245,9 +223,7 @@ namespace graphs
 					++tempindex;
 				}
 
-				const string temp = words.substr(index - linelen, templinelen);
-
-				const size_t width = strcol(temp.c_str());
+				const size_t width = strcol(words.substr(index - linelen, templinelen));
 
 				if (width >= line_length)
 				{
@@ -343,7 +319,8 @@ namespace graphs
 			strm << setprecision(0) << fixed << number;
 		}
 
-		strm << (power < graphs::size(suffix_power_char) ? suffix_power_char[power] : "(error)");
+		// power == 1 and scale == units_scale_SI ? "k" :
+		strm << (power < size(suffix_power_char) ? suffix_power_char[power] : "(error)");
 
 		if (scale == units_scale_IEC_I and power > 0)
 			strm << "i";
@@ -360,7 +337,7 @@ namespace graphs
 			long double intpart = 0;
 			const long double fractionpart = abs(modf(number, &intpart));
 
-			for (size_t i = 0; i < graphs::size(fractions) and !output; ++i)
+			for (size_t i = 0; i < size(fractions) and !output; ++i)
 			{
 				if (abs(fractionpart - fractionvalues[i]) <= DBL_EPSILON * n)
 				{
@@ -377,7 +354,7 @@ namespace graphs
 
 			if (n > DBL_EPSILON)
 			{
-				for (size_t i = 0; i < graphs::size(constants) and !output; ++i)
+				for (size_t i = 0; i < size(constants) and !output; ++i)
 				{
 					if (abs(fmod(number, constantvalues[i])) <= DBL_EPSILON * n)
 					{
@@ -442,7 +419,7 @@ namespace graphs
 			break;
 		}
 
-		const size_t length = strcol(strm.str().c_str());
+		const size_t length = strcol(strm.str());
 
 		return length;
 	}
@@ -450,7 +427,7 @@ namespace graphs
 	// Output graph
 	inline int graph(const size_t height, const size_t width, const long double xmin, const long double xmax, const long double ymin, const long double ymax, const vector<vector<unsigned short>> &array, const options &aoptions)
 	{
-		if (!graphs::size(array))
+		if (!size(array))
 			return 1;
 
 		const bool border = aoptions.border;
@@ -461,10 +438,10 @@ namespace graphs
 		const type_type type = aoptions.type;
 		const char *const title = aoptions.title;
 
-		if (height == 0)
+		if (!height)
 			return 1;
 
-		if (width == 0)
+		if (!width)
 			return 1;
 
 		struct winsize w;
@@ -580,7 +557,7 @@ namespace graphs
 					}
 					else if (axaxis)
 					{
-						if (i == 0)
+						if (!i)
 						{
 							cout << astyle[4];
 							output = true;
@@ -611,7 +588,7 @@ namespace graphs
 					}
 					else if (ayaxis)
 					{
-						if (j == 0)
+						if (!j)
 						{
 							cout << astyle[2];
 							output = true;
@@ -645,7 +622,7 @@ namespace graphs
 						cout << '0';
 						output = true;
 					}
-					else if ((xaxis <= (width - aj) ? j >= (width - aj) : j == 0) and yaxislabel and axislabel)
+					else if ((xaxis <= (width - aj) ? j >= (width - aj) : !j) and yaxislabel and axislabel)
 					{
 						cout << 'x';
 						output = true;
@@ -691,7 +668,7 @@ namespace graphs
 							}
 						}
 					}
-					else if ((yaxis >= ai ? i == 0 : i >= (height - ai)) and xaxislabel and axislabel)
+					else if ((yaxis >= ai ? !i : i >= (height - ai)) and xaxislabel and axislabel)
 					{
 						cout << 'y';
 						output = true;
@@ -720,7 +697,7 @@ namespace graphs
 								if (type == type_histogram)
 								{
 									if (!dot)
-										dot = (graphs::size(bars) - l) - 1;
+										dot = (size(bars) - l) - 1;
 								}
 								else if (type == type_block)
 									dot += blockvalues[k][l];
@@ -776,7 +753,7 @@ namespace graphs
 	template <typename T>
 	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = {})
 	{
-		if (!graphs::size(aarray))
+		if (!size(aarray))
 			return 1;
 
 		const color_type color = aoptions.color;
@@ -784,10 +761,10 @@ namespace graphs
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-		if (height == 0)
+		if (!height)
 			height = w.ws_row * 4;
 
-		if (width == 0)
+		if (!width)
 			width = w.ws_col * 2;
 
 		if (aoptions.check)
@@ -811,12 +788,12 @@ namespace graphs
 		height *= 2;
 		width /= 2;
 
-		if (xmin == 0 and xmax == 0)
+		if (!xmin and !xmax)
 		{
-			const auto &minmax = minmax_element(begin(aarray), end(aarray));
+			const auto &[amin, amax] = minmax_element(cbegin(aarray), cend(aarray));
 
-			xmin = *minmax.first;
-			xmax = *minmax.second;
+			xmin = *amin;
+			xmax = *amax;
 		}
 
 		if (xmin >= xmax)
@@ -838,12 +815,12 @@ namespace graphs
 			}
 		}
 
-		if (ymin == 0 and ymax == 0)
+		if (!ymin and !ymax)
 		{
-			const auto &minmax = minmax_element(histogram.begin(), histogram.end());
+			const auto &[amin, amax] = minmax_element(histogram.cbegin(), histogram.cend());
 
-			ymin = *minmax.first;
-			ymax = *minmax.second;
+			ymin = *amin;
+			ymax = *amax;
 		}
 
 		if (ymin >= ymax)
@@ -859,15 +836,16 @@ namespace graphs
 
 		const unsigned acolor = color + 1;
 
-		for (size_t x = 0; x < graphs::size(histogram); ++x)
+		for (size_t x = 0; x < size(histogram); ++x)
 		{
 			const size_t ay = histogram[x];
 
 			for (size_t y = ay >= ymax ? 0 : yaxis - (ay / ystep); y < yaxis and y < height; ++y)
 				aaarray[x][y] = acolor;
 		}
-	
-		if (aoptions.type != type_histogram) {
+
+		if (aoptions.type != type_histogram)
+		{
 			options hist_options = aoptions;
 			hist_options.type = type_histogram;
 			return graph(height, width, xmin, xmax, ymin, ymax, aaarray, hist_options);
@@ -878,7 +856,7 @@ namespace graphs
 	template <typename T>
 	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T *aarray, const options &aoptions = {})
 	{
-		if (rows == 0)
+		if (!rows)
 			return 1;
 
 		vector<T> aaarray(rows);
@@ -891,12 +869,12 @@ namespace graphs
 	template <typename T>
 	int plots(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &arrays, const options &aoptions = {})
 	{
-		if (!graphs::size(arrays))
+		if (!size(arrays))
 			return 1;
 
 		if (!all_of(cbegin(arrays), cend(arrays), [](const auto &array)
 					{ return all_of(cbegin(array), cend(array), [](const auto &x)
-									{ return graphs::size(x) == 2; }); }))
+									{ return size(x) == 2; }); }))
 		{
 			cerr << "Error: The arrays must have two columns.\n";
 			return 1;
@@ -907,10 +885,10 @@ namespace graphs
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-		if (height == 0)
+		if (!height)
 			height = w.ws_row * 4;
 
-		if (width == 0)
+		if (!width)
 			width = w.ws_col * 2;
 
 		if (aoptions.check)
@@ -934,24 +912,24 @@ namespace graphs
 		if (aoptions.type == type_block)
 			height /= 2;
 
-		if (xmin == 0 and xmax == 0)
+		if (!xmin and !xmax)
 		{
 			const auto compare = [](const auto &a, const auto &b)
 			{ return a[0] < b[0]; };
-			const auto &result = accumulate(begin(arrays), end(arrays), make_pair(arrays[0][0], arrays[0][0]), [compare](const auto &current, const auto &array)
-										   { const auto &minmax = minmax_element(begin(array), end(array), compare); return make_pair(min(current.first, *minmax.first, compare), max(current.second, *minmax.second, compare)); });
-			xmin = result.first[0];
-			xmax = result.second[0];
+			const auto &[amin, amax] = accumulate(cbegin(arrays), cend(arrays), make_pair(arrays[0][0], arrays[0][0]), [&compare](const auto &current, const auto &array)
+												  { const auto &[amin, amax] = minmax_element(cbegin(array), cend(array), compare); return make_pair(min(current.first, *amin, compare), max(current.second, *amax, compare)); });
+			xmin = amin[0];
+			xmax = amax[0];
 		}
 
-		if (ymin == 0 and ymax == 0)
+		if (!ymin and !ymax)
 		{
 			const auto compare = [](const auto &a, const auto &b)
 			{ return a[1] < b[1]; };
-			const auto &result = accumulate(begin(arrays), end(arrays), make_pair(arrays[0][0], arrays[0][0]), [compare](const auto &current, const auto &array)
-										   { const auto &minmax = minmax_element(begin(array), end(array), compare); return make_pair(min(current.first, *minmax.first, compare), max(current.second, *minmax.second, compare)); });
-			ymin = result.first[1];
-			ymax = result.second[1];
+			const auto &[amin, amax] = accumulate(cbegin(arrays), cend(arrays), make_pair(arrays[0][0], arrays[0][0]), [&compare](const auto &current, const auto &array)
+												  { const auto &[amin, amax] = minmax_element(cbegin(array), cend(array), compare); return make_pair(min(current.first, *amin, compare), max(current.second, *amax, compare)); });
+			ymin = amin[1];
+			ymax = amax[1];
 		}
 
 		if (xmin >= xmax)
@@ -973,12 +951,12 @@ namespace graphs
 
 		vector<vector<unsigned short>> aarray(width, vector<unsigned short>(height, 0));
 
-		for (size_t j = 0; j < graphs::size(arrays); ++j)
+		for (size_t j = 0; j < size(arrays); ++j)
 		{
 			const auto &array = arrays[j];
-			const unsigned acolor = graphs::size(arrays) == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
+			const unsigned acolor = size(arrays) == 1 ? color + 1 : (j % (size(colors) - 2)) + 3;
 
-			for (size_t i = 0; i < graphs::size(array); ++i)
+			for (size_t i = 0; i < size(array); ++i)
 			{
 				const auto &x = array[i][0], &y = array[i][1];
 
@@ -987,10 +965,10 @@ namespace graphs
 					const size_t ax = (x / xstep) + xaxis;
 					const size_t ay = (yaxis - (y / ystep)) - 1;
 
-					for (const auto &mark : marks[aoptions.mark])
+					for (const auto &[ix, iy] : marks[aoptions.mark])
 					{
-						const size_t x = ax + mark[0];
-						const size_t y = ay + mark[1];
+						const size_t x = ax + ix;
+						const size_t y = ay + iy;
 
 						if (x < width and y < height)
 						{
@@ -1023,7 +1001,7 @@ namespace graphs
 	template <typename T>
 	int plot(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T **aarray, const options &aoptions = {})
 	{
-		if (rows == 0)
+		if (!rows)
 			return 1;
 
 		const size_t columns = 2;
@@ -1040,16 +1018,16 @@ namespace graphs
 	{
 		const color_type color = aoptions.color;
 
-		if (numfunctions == 0)
+		if (!numfunctions)
 			return 1;
 
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-		if (height == 0)
+		if (!height)
 			height = w.ws_row * 4;
 
-		if (width == 0)
+		if (!width)
 			width = w.ws_col * 2;
 
 		if (aoptions.check)
@@ -1097,7 +1075,7 @@ namespace graphs
 
 		for (size_t j = 0; j < numfunctions; ++j)
 		{
-			const unsigned short acolor = numfunctions == 1 ? color + 1 : (j % (graphs::size(colors) - 2)) + 3;
+			const unsigned short acolor = numfunctions == 1 ? color + 1 : (j % (size(colors) - 2)) + 3;
 
 			for (size_t i = 0; i < rows * xres; ++i)
 			{
@@ -1140,5 +1118,4 @@ namespace graphs
 
 		return functions(height, width, xmin, xmax, ymin, ymax, 1, afunctions, aoptions);
 	}
-
 }
