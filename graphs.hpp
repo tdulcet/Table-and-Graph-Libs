@@ -153,8 +153,6 @@ namespace graphs
 
 	struct options
 	{
-		options() = default;
-		options(type_type type) : type(type) {}
 		bool border = false;
 		bool axis = true;
 		bool axislabel = true;
@@ -776,7 +774,7 @@ namespace graphs
 	}
 
 	template <typename T>
-	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = {type_histogram})
+	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = {.type = type_histogram})
 	{
 		if (!graphs::size(aarray))
 			return 1;
@@ -881,7 +879,7 @@ namespace graphs
 	}
 
 	template <typename T>
-	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T *aarray, const options &aoptions = {type_histogram})
+	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const size_t rows, T *aarray, const options &aoptions = {.type = type_histogram})
 	{
 		if (rows == 0)
 			return 1;
