@@ -165,6 +165,7 @@ namespace graphs
 		const char *title = nullptr;
 		style_type style = style_light;
 		color_type color = color_red;
+		ostream &ostr = cout;
 		bool check = true;
 	};
 
@@ -176,7 +177,7 @@ namespace graphs
 			if (iscntrl(c))
 			{
 				cerr << "\nError: Control character in string.\n";
-				cout << "Control character: " << (int)c << '\n';
+				cerr << "Control character: " << (int)c << '\n';
 			}
 
 		size_t length = mbstowcs(nullptr, str.c_str(), 0);
@@ -493,18 +494,20 @@ namespace graphs
 		setlocale(LC_ALL, "");
 
 		if (title and title[0] != '\0')
-			cout << wrap(title, awidth) << '\n';
+			aoptions.ostr << wrap(title, awidth) << '\n';
 
 		const char *const *astyle = styles[aoptions.style];
 
+		ostringstream strm;
+
 		if (border)
 		{
-			cout << astyle[2];
+			strm << astyle[2];
 
 			for (size_t k = 0; k < awidth; ++k)
-				cout << astyle[0];
+				strm << astyle[0];
 
-			cout << astyle[4] << '\n';
+			strm << astyle[4] << '\n';
 		}
 
 		for (size_t i = 0; i < height; i += ai)
@@ -539,7 +542,7 @@ namespace graphs
 			}
 
 			if (border)
-				cout << astyle[1];
+				strm << astyle[1];
 
 			for (size_t j = 0; j < width; j += aj)
 			{
@@ -552,19 +555,19 @@ namespace graphs
 				{
 					if (axaxis and ayaxis)
 					{
-						cout << astyle[6];
+						strm << astyle[6];
 						output = true;
 					}
 					else if (axaxis)
 					{
 						if (!i)
 						{
-							cout << astyle[4];
+							strm << astyle[4];
 							output = true;
 						}
 						else if (i >= (height - ai))
 						{
-							cout << astyle[10];
+							strm << astyle[10];
 							output = true;
 						}
 						else if (axistick)
@@ -575,14 +578,14 @@ namespace graphs
 							{
 								if (i <= k and (i + ai) > k)
 								{
-									cout << astyle[xaxis >= aj ? 7 : 5];
+									strm << astyle[xaxis >= aj ? 7 : 5];
 									output = true;
 								}
 							}
 						}
 						if (!output)
 						{
-							cout << astyle[1];
+							strm << astyle[1];
 							output = true;
 						}
 					}
@@ -590,12 +593,12 @@ namespace graphs
 					{
 						if (!j)
 						{
-							cout << astyle[2];
+							strm << astyle[2];
 							output = true;
 						}
 						else if (j >= (width - aj))
 						{
-							cout << astyle[4];
+							strm << astyle[4];
 							output = true;
 						}
 						else if (axistick)
@@ -606,25 +609,25 @@ namespace graphs
 							{
 								if (j <= k and (j + aj) > k)
 								{
-									cout << astyle[yaxis <= (height - ai) ? 3 : 9];
+									strm << astyle[yaxis <= (height - ai) ? 3 : 9];
 									output = true;
 								}
 							}
 						}
 						if (!output)
 						{
-							cout << astyle[0];
+							strm << astyle[0];
 							output = true;
 						}
 					}
 					else if (yaxislabel and xaxislabel and axistick and axisunitslabel and ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0)
 					{
-						cout << '0';
+						strm << '0';
 						output = true;
 					}
 					else if ((xaxis <= (width - aj) ? j >= (width - aj) : !j) and yaxislabel and axislabel)
 					{
-						cout << 'x';
+						strm << 'x';
 						output = true;
 					}
 					else if (yaxislabel and axistick and axisunitslabel)
@@ -651,12 +654,12 @@ namespace graphs
 						{
 							output = false;
 
-							ostringstream strm;
-							size_t length = outputlabel(label, aoptions.xunits, strm);
+							ostringstream astrm;
+							size_t length = outputlabel(label, aoptions.xunits, astrm);
 							length *= aj;
 							if ((j >= xaxis or (j + length) < (ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0 ? xaxis - ai : xaxis)) and (j + length) < (width - aj) and (xaxis <= (width - aj) or j > aj))
 							{
-								cout << strm.str();
+								strm << astrm.str();
 
 								if (length > aj)
 									j += length - aj;
@@ -670,12 +673,12 @@ namespace graphs
 					}
 					else if ((yaxis >= ai ? !i : i >= (height - ai)) and xaxislabel and axislabel)
 					{
-						cout << 'y';
+						strm << 'y';
 						output = true;
 					}
 					else if (ylabellength and (xaxis < aj ? xaxislabel : j < (xaxis - ylabellength) and (j + aj) >= (xaxis - ylabellength)) and (yaxis >= ai or i < (height - ai)) and axistick and axisunitslabel)
 					{
-						cout << ylabelstrm.str();
+						strm << ylabelstrm.str();
 						output = true;
 						if (ylabellength > aj)
 							j += ylabellength - aj;
@@ -718,34 +721,35 @@ namespace graphs
 						--color;
 
 					if (color)
-						cout << colors[color];
+						strm << colors[color];
 
-					cout << (type == type_histogram ? bars[dot] : type == type_block ? blocks[dot]
+					strm << (type == type_histogram ? bars[dot] : type == type_block ? blocks[dot]
 																					 : dots[dot]);
 
 					if (color)
-						cout << colors[0];
+						strm << colors[0];
 				}
 			}
 
 			if (border)
-				cout << astyle[1];
+				strm << astyle[1];
 
 			if (i < (height - ai) or border)
-				cout << '\n';
+				strm << '\n';
 		}
 
 		if (border)
 		{
-			cout << astyle[8];
+			strm << astyle[8];
 
 			for (size_t k = 0; k < awidth; ++k)
-				cout << astyle[0];
+				strm << astyle[0];
 
-			cout << astyle[10];
+			strm << astyle[10];
 		}
 
-		cout << '\n';
+		strm << '\n';
+		aoptions.ostr << strm.str();
 
 		return 0;
 	}

@@ -405,8 +405,8 @@ int main()
 				array[i][j] = rand() % 2;
 
 		tables::options aoptions;
-		aoptions.boolalpha = true;
-		// tables::options aoptions = {.boolalpha = true};
+		aoptions.alignment |= ios_base::boolalpha;
+		// tables::options aoptions = {.alignment |= ios_base::boolalpha};
 
 		for (const tables::style_type style : tables::style_types)
 		{

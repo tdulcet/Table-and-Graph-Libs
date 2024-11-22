@@ -198,14 +198,18 @@ Default value: `False`
 Option: `padding`\
 Default value: `1`
 
-#### Alignment
+#### Format and Alignment
 
 Option: `alignment`\
 Values:
 
-* `None` (default)
-* `False` (left)
-* `True` (right)
+* `""` (default)
+* `"<"` (left)
+* `">"` (right)
+* `"="` (internal, numeric types only)
+* `"^"` (center)
+
+See the [Python documentation](https://docs.python.org/3/library/string.html#formatspec) for the full available options.
 
 #### Title
 
@@ -235,6 +239,16 @@ Values:
 	![](../images/light%20dashed%20table.png)
 7. `style_types.heavy_dashed`: Heavy Dashed
 	![](../images/heavy%20dashed%20table.png)
+
+#### Output file
+
+Option: `file`\
+Values:
+
+* `sys.stdout` (default)
+* `sys.stderr`
+
+Any other text [file object](https://docs.python.org/3/glossary.html#term-file-object).
 
 #### Check size
 
@@ -541,6 +555,16 @@ This option is only used when plotting a single array and when graphing a single
 ##### Graph
 
 ![](../images/graph%20colors.png)
+
+#### Output file
+
+Option: `file`\
+Values:
+
+* `sys.stdout` (default)
+* `sys.stderr`
+
+Any other text [file object](https://docs.python.org/3/glossary.html#term-file-object).
 
 #### Check size
 

@@ -463,20 +463,17 @@ Default value: `false`
 Option: `padding`\
 Default value: `1`
 
-#### Alignment
+#### Format and Alignment
 
 Option: `alignment`\
 Values:
 
-* `nullptr`
-* `left` (default)
-* `right`
-* `internal` (integer and floating-point types only)
+* (default)
+* `std::ios_base::left`
+* `std::ios_base::right`
+* `std::ios_base::internal` (integer and floating-point types only)
 
-#### bool to alpha
-
-Option: `boolalpha`\
-Default value: `false`
+See [`ios_base::fmtflags`](https://en.cppreference.com/w/cpp/io/ios_base/fmtflags) for full available options. Use `std::ios_base::boolalpha` for bool to alpha.
 
 #### Title
 
@@ -506,6 +503,17 @@ Values:
 	![](images/light%20dashed%20table.png)
 7. `style_heavy_dashed`: Heavy Dashed
 	![](images/heavy%20dashed%20table.png)
+
+#### Output stream
+
+Option: `ostr`\
+Values:
+
+* `std::cout` (default)
+* `std::cerr`
+* `std::clog`
+
+Any other subclass of `ostream`, including `iostream`, `ofstream` and `ostringstream`
 
 #### Check size
 
@@ -949,6 +957,17 @@ This option is only used when plotting a single array and when graphing a single
 
 ![](images/graph%20colors.png)
 
+#### Output stream
+
+Option: `ostr`\
+Values:
+
+* `std::cout` (default)
+* `std::cerr`
+* `std::clog`
+
+Any other subclass of `ostream`, including `iostream`, `ofstream` and `ostringstream`
+
 #### Check size
 
 Option: `check`\
@@ -967,7 +986,6 @@ Pull requests welcome! Ideas for contributions:
 Both:
 * Add more options
 	* Add options to word wrap and truncate long text in table cells
-	* Add option to center text in table cells
 * Add more examples
 * Improve the performance
 * Handle newlines and tabs in the tables
@@ -979,5 +997,6 @@ Both:
 * Port to other languages (C, Java, Rust, etc.)
 
 C++:
+* Add option to center text in table cells
 * Update the CI to test with more compilers
 * Support tables with the `wchar_t`, `char16_t` and `char32_t` C data types and the `wstring`, `u16string` and `u32string` C++ data types.

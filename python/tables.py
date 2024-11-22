@@ -8,7 +8,7 @@ import shutil
 import sys
 import textwrap
 from enum import IntEnum, auto
-from typing import Any, Callable, List, Optional, Sequence
+from typing import Any, Callable, List, Optional, Sequence, TextIO
 
 if sys.platform != "win32":
 	import ctypes
@@ -66,7 +66,7 @@ def strcol(astr: str) -> int:
 
 
 def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False,
-		  padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light, check: bool = True) -> int:
+		  padding: int = 1, alignment: str = "", title: Optional[str] = None, style: style_types = style_types.light, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Output char array as table."""
 	if not array:
 		return 1
@@ -91,7 +91,7 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 		return 1
 
 	if title:
-		print(textwrap.fill(title, width=width))
+		print(textwrap.fill(title, width=width), file=file)
 
 	astyle = styles[style]
 
@@ -124,9 +124,9 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 			awidth = columnwidth[j] - (strcol(array[i][j]) - len(array[i][j]))
 
 			if (not i and headerrow) or (not j and headercolumn):
-				strm += (" " * padding) + "\033[1m" + array[i][j].center(awidth) + "\033[22m" + (" " * padding)
+				strm += (" " * padding) + "\033[1m" + f"{array[i][j]:^{awidth}}" + "\033[22m" + (" " * padding)
 			else:
-				strm += (" " * padding) + (f"{array[i][j]:{awidth}}" if alignment is None else array[i][j].rjust(awidth) if alignment else array[i][j].ljust(awidth)) + (" " * padding)
+				strm += (" " * padding) + f"{array[i][j]:{alignment}{awidth}}" + (" " * padding)
 
 		if tableborder:
 			strm += astyle[1]
@@ -177,12 +177,12 @@ def table(array: List[List[str]], headerrow: bool = False, headercolumn: bool = 
 
 		strm += astyle[10]
 
-	print(strm)
+	print(strm, file=file)
 
 	return 0
 
 
-def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[str]] = None, aheadercolumn: Optional[Sequence[str]] = None, headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[str]] = None, aheadercolumn: Optional[Sequence[str]] = None, headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: str = "", title: Optional[str] = None, style: style_types = style_types.light, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Convert array to char array and output as table."""
 	if not aarray:
 		return 1
@@ -228,10 +228,10 @@ def array(aarray: Sequence[Sequence[Any]], aheaderrow: Optional[Sequence[str]] =
 		j = 1 if aheadercolumn else 0
 		aaarray[i][j:] = map(str, aarray[ii][:columns - j])
 
-	return table(aaarray, headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style)
+	return table(aaarray, headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style, file, check)
 
 
-def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Callable[[float], float]], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: str = "", title: Optional[str] = None, style: style_types = style_types.light, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Convert one or more functions to array and output as table."""
 	if not afunctions:
 		return 1
@@ -261,9 +261,9 @@ def functions(xmin: float, xmax: float, xstep: float, afunctions: Sequence[Calla
 
 		aarray[i][1:] = [function(temp) for function in afunctions]
 
-	return array(aarray, aheaderrow, None, headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style)
+	return array(aarray, aheaderrow, None, headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style, file, check)
 
 
-def function(xmin: float, xmax: float, xstep: float, afunction: Callable[[float], float], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: Optional[bool] = None, title: Optional[str] = None, style: style_types = style_types.light) -> int:
+def function(xmin: float, xmax: float, xstep: float, afunction: Callable[[float], float], headerrow: bool = False, headercolumn: bool = False, tableborder: bool = True, cellborder: bool = False, padding: int = 1, alignment: str = "", title: Optional[str] = None, style: style_types = style_types.light, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Convert single function to array and output as table."""
-	return functions(xmin, xmax, xstep, [afunction], headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style)
+	return functions(xmin, xmax, xstep, (afunction,), headerrow, headercolumn, tableborder, cellborder, padding, alignment, title, style, file, check)

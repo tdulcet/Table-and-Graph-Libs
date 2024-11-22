@@ -58,10 +58,10 @@ namespace tables
 		bool tableborder = true;
 		bool cellborder = false;
 		unsigned padding = 1;
-		ios_base &(*alignment)(ios_base &) = left;
-		bool boolalpha = false;
+		ios_base::fmtflags alignment;
 		const char *title = nullptr;
 		style_type style = style_light;
+		ostream &ostr = cout;
 		bool check = true;
 	};
 
@@ -75,7 +75,7 @@ namespace tables
 			if (iscntrl(c))
 			{
 				cerr << "\nError: Control character in string.\n";
-				cout << "Control character: " << (int)c << '\n';
+				cerr << "Control character: " << (int)c << '\n';
 			}
 
 		size_t length = mbstowcs(nullptr, str.c_str(), 0);
@@ -91,7 +91,6 @@ namespace tables
 		const int width = wcswidth(wcstring.c_str(), length);
 		if (width == -1)
 			throw range_error("Error: wcswidth failed. Nonprintable wide character.");
-
 
 		return width;
 	}
@@ -194,45 +193,45 @@ namespace tables
 		}
 
 		if (title and title[0] != '\0')
-			cout << wrap(title, width) << '\n';
-
-		if (aoptions.alignment)
-			cout << aoptions.alignment;
+			aoptions.ostr << wrap(title, width) << '\n';
 
 		const char *const *astyle = styles[aoptions.style];
 
+		ostringstream strm;
+		strm << setiosflags(aoptions.alignment);
+
 		if (tableborder)
 		{
-			cout << astyle[2];
+			strm << astyle[2];
 
 			for (size_t j = 0; j < columns; ++j)
 			{
 				for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
-					cout << astyle[0];
+					strm << astyle[0];
 
 				if (j < (columns - 1))
 				{
 					if (cellborder or headerrow or (!j and headercolumn))
-						cout << astyle[3];
+						strm << astyle[3];
 					else
-						cout << astyle[0];
+						strm << astyle[0];
 				}
 			}
 
-			cout << astyle[4] << '\n';
+			strm << astyle[4] << '\n';
 		}
 
 		for (size_t i = 0; i < rows; ++i)
 		{
 			if (tableborder)
-				cout << astyle[1];
+				strm << astyle[1];
 
 			for (size_t j = 0; j < columns; ++j)
 			{
 				if ((j and cellborder) or (!i and j and headerrow) or (j == 1 and headercolumn))
-					cout << astyle[1];
+					strm << astyle[1];
 				else if (j and (tableborder or (i and headerrow) or headercolumn))
-					cout << ' ';
+					strm << ' ';
 
 				const int difference = columnwidth[j] - strcol(array[i][j]);
 
@@ -240,48 +239,48 @@ namespace tables
 				{
 					const int apadding = (difference / 2);
 
-					cout << string(padding + apadding, ' ') << "\e[1m" << array[i][j] << "\e[22m" << string(padding + (difference - apadding), ' ');
+					strm << string(padding + apadding, ' ') << "\e[1m" << array[i][j] << "\e[22m" << string(padding + (difference - apadding), ' ');
 				}
 				else
 				{
-					cout << string(padding, ' ') << setw(difference + array[i][j].length()) << array[i][j] << string(padding, ' ');
+					strm << string(padding, ' ') << setw(difference + array[i][j].length()) << array[i][j] << string(padding, ' ');
 				}
 			}
 
 			if (tableborder)
-				cout << astyle[1];
+				strm << astyle[1];
 
 			if (i < (rows - 1) or tableborder)
-				cout << '\n';
+				strm << '\n';
 
 			if ((i < (rows - 1) and cellborder) or (!i and headerrow) or (i < (rows - 1) and headercolumn))
 			{
 				if (tableborder)
 				{
 					if (cellborder or (!i and headerrow) or headercolumn)
-						cout << astyle[5];
+						strm << astyle[5];
 				}
 
 				for (size_t j = 0; j < columns; ++j)
 				{
 					if (cellborder or (!i and headerrow) or (!j and headercolumn))
 						for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
-							cout << astyle[0];
+							strm << astyle[0];
 					else if (headercolumn)
-						cout << string((2 * padding) + columnwidth[j], ' ');
+						strm << string((2 * padding) + columnwidth[j], ' ');
 
 					if (j < (columns - 1))
 					{
 						if (cellborder or ((!i and headerrow) and (!j and headercolumn)))
-							cout << astyle[6];
+							strm << astyle[6];
 						else if (!i and headerrow)
-							cout << astyle[9];
+							strm << astyle[9];
 						else if (headercolumn)
 						{
 							if (!j)
-								cout << astyle[7];
+								strm << astyle[7];
 							else
-								cout << ' ';
+								strm << ' ';
 						}
 					}
 				}
@@ -289,37 +288,38 @@ namespace tables
 				if (tableborder)
 				{
 					if (cellborder or (!i and headerrow))
-						cout << astyle[7];
+						strm << astyle[7];
 					else if (headercolumn)
-						cout << astyle[1];
+						strm << astyle[1];
 				}
 
-				cout << '\n';
+				strm << '\n';
 			}
 		}
 
 		if (tableborder)
 		{
-			cout << astyle[8];
+			strm << astyle[8];
 
 			for (size_t j = 0; j < columns; ++j)
 			{
 				for (size_t k = 0; k < (2 * padding) + columnwidth[j]; ++k)
-					cout << astyle[0];
+					strm << astyle[0];
 
 				if (j < (columns - 1))
 				{
 					if (cellborder or (!j and headercolumn))
-						cout << astyle[9];
+						strm << astyle[9];
 					else
-						cout << astyle[0];
+						strm << astyle[0];
 				}
 			}
 
-			cout << astyle[10];
+			strm << astyle[10];
 		}
 
-		cout << '\n';
+		strm << '\n';
+		aoptions.ostr << strm.str();
 
 		return 0;
 	}
@@ -379,9 +379,7 @@ namespace tables
 			for (size_t jj = 0; j < columns; ++j)
 			{
 				ostringstream strm;
-
-				if (aoptions.boolalpha)
-					strm << boolalpha;
+				strm << setiosflags(aoptions.alignment);
 
 				strm << aarray[ii][jj];
 				aaarray[i][j] = strm.str();

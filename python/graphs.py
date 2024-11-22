@@ -10,7 +10,7 @@ import textwrap
 from datetime import datetime, timezone
 from enum import Enum, IntEnum, auto
 from fractions import Fraction
-from typing import Callable, List, Optional, Sequence, Tuple
+from typing import Callable, List, Optional, Sequence, TextIO, Tuple
 
 if sys.platform != "win32":
 	import ctypes
@@ -298,7 +298,7 @@ def outputlabel(label: float, units: units_types) -> Tuple[int, str]:
 	return length, strm
 
 
-def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, title: Optional[str] = None, check: bool = True) -> int:
+def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, title: Optional[str] = None, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Output graph."""
 	if not array:
 		return 1
@@ -344,7 +344,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	ydivisor = 2 * ai * ((((4 * height) // ai) // 160) + 2)
 
 	if title:
-		print(textwrap.fill(title, width=awidth))
+		print(textwrap.fill(title, width=awidth), file=file)
 
 	astyle = styles[style]
 
@@ -521,12 +521,12 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	if border:
 		strm += astyle[8] + (astyle[0] * awidth) + astyle[10]
 
-	print(strm)
+	print(strm, file=file)
 
 	return 0
 
 
-def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Convert one or more arrays to graph and output."""
 	if not aarray:
 		return 1
@@ -594,10 +594,10 @@ def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 			aaarray[x][y] = acolor
 			y += 1
 
-	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, type_types.histogram, style, title)
+	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, type_types.histogram, style, title, file)
 
 
-def plots(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, mark: mark_types = mark_types.dot, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+def plots(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarrays: Sequence[Sequence[Sequence[float]]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, mark: mark_types = mark_types.dot, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Convert one or more arrays to graph and output."""
 	if not aarrays:
 		return 1
@@ -673,15 +673,15 @@ def plots(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 						else:
 							aaarray[x][y] = acolor
 
-	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, title)
+	return graph(height, width, xmin, xmax, ymin, ymax, aaarray, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, title, file)
 
 
-def plot(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, mark: mark_types = mark_types.dot, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
+def plot(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, aarray: Sequence[Sequence[float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, mark: mark_types = mark_types.dot, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Convert single array to graph and output."""
-	return plots(height, width, xmin, xmax, ymin, ymax, [aarray], border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, mark, style, color, title)
+	return plots(height, width, xmin, xmax, ymin, ymax, (aarray,), border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, mark, style, color, title, file, check)
 
 
-def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, check: bool = True) -> int:
+def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunctions: Sequence[Callable[[float], float]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Convert one or more functions to graph and output."""
 	if not afunctions:
 		return 1
@@ -747,9 +747,9 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 				else:
 					array[ax][ay] = acolor
 
-	return graph(height, width, xmin, xmax, ymin, ymax, array, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, title)
+	return graph(height, width, xmin, xmax, ymin, ymax, array, border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, title, file)
 
 
-def function(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None) -> int:
+def function(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, afunction: Callable[[float], float], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, color: color_types = color_types.red, title: Optional[str] = None, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Convert single function to function array and output."""
-	return functions(height, width, xmin, xmax, ymin, ymax, [afunction], border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, color, title)
+	return functions(height, width, xmin, xmax, ymin, ymax, (afunction,), border, axis, axislabel, axistick, axisunitslabel, xunits, yunits, atype, style, color, title, file, check)
