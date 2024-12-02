@@ -189,7 +189,7 @@ namespace graphs
 	// Intermediate fragment representation potentially holding multiple pixels (e.g. 2x4 as braille)
 	// most optimal representation possible with only 4 bytes in size, applicable for all types of characters
 	struct fragment {
-		color color;
+		color col;
 		uint8_t data_point_bitfield; // stores up to 8 data points
 	};
 
@@ -848,7 +848,7 @@ namespace graphs
 			for (size_t y = 0; y < y_tex; y++) {
 				// in texture, y=0 is at the top, so we need to invert the y-axis
 				const size_t index = x_pos + (height - 1 - y) * width;
-				tex[index].color.col_4 = aoptions.color;
+				tex[index].col.col_4 = aoptions.color;
 				tex[index].data_point_bitfield = 8; // use full height of character
 			}
 
@@ -856,7 +856,7 @@ namespace graphs
 			if (y_cap > 0) {
 				// in texture, y=0 is at the top, so we need to invert the y-axis
 				const size_t index = x_pos + (height - 1 - y_tex) * width;
-				tex[index].color.col_4 = aoptions.color;
+				tex[index].col.col_4 = aoptions.color;
 				tex[index].data_point_bitfield = y_cap; // use remainder to fill up character
 			}
 		}
@@ -867,7 +867,7 @@ namespace graphs
 				const size_t index = x + y * width;
 				const auto& frag = tex[index];
 				// draw fragment
-				cout << colors[frag.color.col_4];
+				cout << colors[frag.col.col_4];
 				cout << bars[frag.data_point_bitfield];
 				cout << colors[0];
 			}
