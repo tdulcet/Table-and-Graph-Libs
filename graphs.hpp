@@ -54,7 +54,7 @@ namespace graphs
 		// {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}	 // No border
 	};
 
-	enum color_type
+	enum color_type: uint8_t
 	{
 		color_default,
 		color_black,
@@ -169,29 +169,7 @@ namespace graphs
 		bool check = true;
 	};
 
-	// Structure for 24-bit true colors
-	struct true_color
-	{
-		uint8_t red;
-		uint8_t green;
-		uint8_t blue;
-	};
-	// Using the existing color_type enum for the 4-bit colors (not using std::variant due to its larger size)
-	using color = union {
-		color_type col_4;
-		uint8_t col_8;
-        struct { // 24-bit true color
-            uint8_t r;
-            uint8_t g;
-            uint8_t b;
-        };
-	};
-	// Intermediate fragment representation potentially holding multiple pixels (e.g. 2x4 as braille)
-	// most optimal representation possible with only 4 bytes in size, applicable for all types of characters
-	struct fragment {
-		color col;
-		uint8_t data_point_bitfield; // stores up to 8 data points
-	};
+	
 
 	// Number of columns needed to represent the string
 	// Adapted from: https://stackoverflow.com/a/31124065
@@ -779,9 +757,69 @@ namespace graphs
 	}
 
 	// EXPERIMENTAL BEG
-	template <typename T> // TODO: remove templating?
-	void histogram_experimental(size_t height, size_t width, double x_min, double x_max, double y_min, double y_max, const T &data, const options &aoptions = {}) {
+
+	// Using the existing color_type enum for the 4-bit colors (not using std::variant due to its larger size)
+	union Color {
+		color_type col_4; // 4-bit color
+		uint8_t col_8; // 8-bit color
+		struct {
+			uint8_t r;
+			uint8_t g;
+			uint8_t b;
+		} col_24; // 24-bit true color
+	};
+	enum class ColorBits: uint8_t { e4, e8, e24 };
+
+	// Intermediate fragment representation potentially holding multiple pixels (e.g. 2x4 as braille)
+	// most optimal representation possible with only 4 bytes in size, applicable for all types of characters
+	struct Fragment {
+		Color color;
+		uint8_t data; // stores up to 8 data points or up to 255 values
+	};
+	struct Options {
+		size_t width = 0; // Width in terminal characters. Set to 0 for automatic size based on terminal.
+		size_t height = 0; // Height in terminal characters. Set to 0 for automatic size based on terminal.
+		
+		struct Axis {
+			double min = 0; // Start of axis. Set to 0 for automatic size based on data.
+			double max = 0; // End of axis. Set to 0 for automatic size based on data.
+			bool enabled = true;
+			bool label = true;
+			bool ticks = true;
+			bool tick_labels = true;
+			units_type tick_label_type = units_fracts;
+		};
+		Axis x = {};
+		Axis y = {};
+
+		type_type character_set = type_braille;
+		style_type style = style_light;
+		ColorBits color_type = ColorBits::e4;
+		bool validate = true; // validate sizes for graph draw
+		bool border = false;
+
+		struct Histogram {
+			size_t bar_width = 1; // size of each bar in x-axis (in data points, e.g. braille has width of 2 per terminal character)
+		};
+		// Union for different graph type options
+		union {
+			Histogram histogram;
+		};
+		
+		std::ostream &ostr = cout;
+		const char *title = nullptr;
+	};
+	template <typename T>
+	void histogram_experimental(const Options& options, const T &data) {
 		cout << "Experimental histogram\n";
+
+		// TODO: automatically set sizes if stuff is 0
+		const double x_max = options.x.max;
+		const double x_min = options.x.min;
+		const double y_max = options.y.max;
+		const double y_min = options.y.min;
+		const size_t width = options.width;
+		const size_t height = options.height;
 
 		// precalc graph span
 		const double x_size = x_max - x_min;
@@ -793,7 +831,7 @@ namespace graphs
 		const size_t x_points = width * char_width;
 		const size_t y_points = height * char_height;
 		// for histograms, every sample needs at least one data point to occupy in x
-		const size_t x_bar_size = 1; // temporarily fixed to 1
+		const size_t x_bar_size = options.histogram.bar_width;
 		// given the x_bar_size (which should be exposed as an option), see how many points will be placed between bars
 		const double x_bar_spacer = (double)x_points / ((double)x_bar_size * x_size) - 1;
 
@@ -802,18 +840,6 @@ namespace graphs
 			cerr << "width is too small to fit all histogram bars\n";
 			return;
 		}
-
-		cout << "width : " << width << '\n';
-		cout << "height: " << height << '\n';
-		cout << "x_size: " << x_size << '\n';
-		cout << "y_size: " << y_size << '\n';
-		cout << '\n';
-		cout << "char_width: " << char_width << '\n';
-		cout << "char_height: " << char_height << '\n';
-		cout << "x_points: " << x_points << '\n';
-		cout << "y_points: " << y_points << '\n';
-		cout << "x_bar_size: " << x_bar_size << '\n';
-		cout << "x_bar_spacer: " << x_bar_spacer << '\n';
 
 		// simple histogram as vector of sample counts
 		vector<size_t> histogram(x_size, 0);
@@ -827,8 +853,8 @@ namespace graphs
 			}
 		}
 
-		// create 2D array of temporary fragments for the graph
-		vector<fragment> tex(width * height);
+		// create 2D array of temporary Fragments for the graph
+		vector<Fragment> tex(width * height);
 		// insert draw histogram data into texture
 		for (size_t x = 0; x < histogram.size(); x++) {
 			// calc bar position on x-axis
@@ -840,7 +866,7 @@ namespace graphs
 			const double y_scaled = (double)y_histo / y_size;
 			// scale back up via point size
 			const size_t y_target = y_scaled * (double)y_points;
-			// calc fragment position and remainder for cap
+			// calc Fragment position and remainder for cap
 			const size_t y_tex = y_target / char_height;
 			const size_t y_cap = y_target % char_height;
 
@@ -848,16 +874,16 @@ namespace graphs
 			for (size_t y = 0; y < y_tex; y++) {
 				// in texture, y=0 is at the top, so we need to invert the y-axis
 				const size_t index = x_pos + (height - 1 - y) * width;
-				tex[index].col.col_4 = aoptions.color;
-				tex[index].data_point_bitfield = 8; // use full height of character
+				tex[index].color.col_4 = color_red;
+				tex[index].data = 8; // use full height of character
 			}
 
 			// draw bar cap
 			if (y_cap > 0) {
 				// in texture, y=0 is at the top, so we need to invert the y-axis
 				const size_t index = x_pos + (height - 1 - y_tex) * width;
-				tex[index].col.col_4 = aoptions.color;
-				tex[index].data_point_bitfield = y_cap; // use remainder to fill up character
+				tex[index].color.col_4 = color_red;
+				tex[index].data = y_cap; // use remainder to fill up character
 			}
 		}
 
@@ -866,9 +892,9 @@ namespace graphs
 			for (size_t x = 0; x < width; x++) {
 				const size_t index = x + y * width;
 				const auto& frag = tex[index];
-				// draw fragment
-				cout << colors[frag.col.col_4];
-				cout << bars[frag.data_point_bitfield];
+				// draw Fragment
+				cout << colors[frag.color.col_4];
+				cout << bars[frag.data];
 				cout << colors[0];
 			}
 			cout << '\n';
