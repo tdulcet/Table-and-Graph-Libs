@@ -1,6 +1,8 @@
 // Teal Dulcet, CS546
 #pragma once
+#include <cassert>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <cstring>
 #include <cmath>
@@ -776,6 +778,8 @@ namespace graphs
 		Color color;
 		uint8_t data; // stores up to 8 data points or up to 255 values
 	};
+	// store fragments on temporary buffer to pass between draws
+	using Texture = std::unique_ptr<std::vector<Fragment>>;
 	struct Options {
 		size_t width = 0; // Width in terminal characters. Set to 0 for automatic size based on terminal.
 		size_t height = 0; // Height in terminal characters. Set to 0 for automatic size based on terminal.
@@ -798,19 +802,21 @@ namespace graphs
 		bool validate = true; // validate sizes for graph draw
 		bool border = false;
 
+		// some idea?:
+		std::vector<Color> colors;
+		std::vector<size_t> x_offset; // x-axis offset for each data point of graph at that index
+
+		// graph-specific options
 		struct Histogram {
 			size_t bar_width = 1; // size of each bar in x-axis (in data points, e.g. braille has width of 2 per terminal character)
-		};
-		// Union for different graph type options
-		union {
-			Histogram histogram;
-		};
+		} histogram;
 		
-		std::ostream &ostr = cout;
-		const char *title = nullptr;
+		std::ostream &ostr = std::cout;
+		const char* title = nullptr;
 	};
 	template <typename T>
-	void histogram_experimental(const Options& options, const T &data) {
+	auto histogram_experimental(const Options& options, const std::vector<T>& data, const Color& color = {color_red}, Texture&& texture = std::make_unique<std::vector<Fragment>>()) -> Texture&& {
+		static_assert(std::numeric_limits<T>::is_integer, "Only integer types are supported for histogram data");
 		cout << "Experimental histogram\n";
 
 		// TODO: automatically set sizes if stuff is 0
@@ -833,12 +839,12 @@ namespace graphs
 		// for histograms, every sample needs at least one data point to occupy in x
 		const size_t x_bar_size = options.histogram.bar_width;
 		// given the x_bar_size (which should be exposed as an option), see how many points will be placed between bars
-		const double x_bar_spacer = (double)x_points / ((double)x_bar_size * x_size) - 1;
+		const size_t x_bar_spacer = (double)x_points / ((double)x_bar_size * x_size) - 1;
 
 		// histogram specific: each bar needs at least one data point
-		if ((double)x_points / x_size < 1) {
+		if ((double)x_points / (double)x_bar_size < x_size) {
 			cerr << "width is too small to fit all histogram bars\n";
-			return;
+			return std::move(texture);
 		}
 
 		// simple histogram as vector of sample counts
@@ -854,7 +860,9 @@ namespace graphs
 		}
 
 		// create 2D array of temporary Fragments for the graph
-		vector<Fragment> tex(width * height);
+		if (texture->size() == 0) texture->resize(width * height);
+		assert(texture->size() == width * height);
+		vector<Fragment>& tex = *texture;
 		// insert draw histogram data into texture
 		for (size_t x = 0; x < histogram.size(); x++) {
 			// calc bar position on x-axis
@@ -874,7 +882,7 @@ namespace graphs
 			for (size_t y = 0; y < y_tex; y++) {
 				// in texture, y=0 is at the top, so we need to invert the y-axis
 				const size_t index = x_pos + (height - 1 - y) * width;
-				tex[index].color.col_4 = color_red;
+				tex[index].color = color;
 				tex[index].data = 8; // use full height of character
 			}
 
@@ -882,7 +890,7 @@ namespace graphs
 			if (y_cap > 0) {
 				// in texture, y=0 is at the top, so we need to invert the y-axis
 				const size_t index = x_pos + (height - 1 - y_tex) * width;
-				tex[index].color.col_4 = color_red;
+				tex[index].color = color;
 				tex[index].data = y_cap; // use remainder to fill up character
 			}
 		}
@@ -898,6 +906,18 @@ namespace graphs
 				cout << colors[0];
 			}
 			cout << '\n';
+		}
+		return std::move(texture);
+	}
+	// print histogram using multiple data sets
+	template <typename T>
+	void histogram_experimental(const Options& options, const std::vector<std::vector<T>>& datasets, const std::vector<Color>& colors = {}) {
+		Texture texture = std::make_unique<std::vector<Fragment>>();
+		// recursively call for extra data sets
+		for (size_t i = 0; i < datasets.size(); i++) {
+			// pick default color if not enough colors are provided
+			Color color = i < colors.size() ? colors[i] : Color{color_red};
+			texture = histogram_experimental(options, datasets[i], color, std::move(texture));
 		}
 	}
 	// EXPERIMENTAL END
