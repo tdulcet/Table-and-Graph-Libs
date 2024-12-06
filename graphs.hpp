@@ -171,8 +171,6 @@ namespace graphs
 		bool check = true;
 	};
 
-	
-
 	// Number of columns needed to represent the string
 	// Adapted from: https://stackoverflow.com/a/31124065
 	inline int strcol(const string &str)
@@ -787,24 +785,21 @@ namespace graphs
 		struct Axis {
 			double min = 0; // Start of axis. Set to 0 for automatic size based on data.
 			double max = 0; // End of axis. Set to 0 for automatic size based on data.
-			bool enabled = true;
-			bool label = true;
+			bool drawn = true;
+			bool label = true; // TODO: allow setting custom label string?
 			bool ticks = true;
 			bool tick_labels = true;
 			units_type tick_label_type = units_fracts;
 		};
 		Axis x = {};
 		Axis y = {};
-
+		
 		type_type character_set = type_braille;
 		style_type style = style_light;
-		ColorBits color_type = ColorBits::e4;
+		ColorBits color_type = ColorBits::e4; // bit depth of color representation
 		bool validate = true; // validate sizes for graph draw
-		bool border = false;
-
-		// some idea?:
-		std::vector<Color> colors;
-		std::vector<size_t> x_offset; // x-axis offset for each data point of graph at that index
+		bool border = false; // draw border around the graph
+		/* 5 bytes padding */
 
 		// graph-specific options
 		struct Histogram {
@@ -814,8 +809,9 @@ namespace graphs
 		std::ostream &ostr = std::cout;
 		const char* title = nullptr;
 	};
+	// print histogram using single data set, drawn on top of existing texture
 	template <typename T>
-	auto histogram_experimental(const Options& options, const std::vector<T>& data, const Color& color = {color_red}, Texture&& texture = std::make_unique<std::vector<Fragment>>()) -> Texture&& {
+	auto histogram_experimental(const std::vector<T>& data, Texture&& texture, const Options& options = {}, const Color& color = {color_red}) -> Texture&& {
 		static_assert(std::numeric_limits<T>::is_integer, "Only integer types are supported for histogram data");
 		cout << "Experimental histogram\n";
 
@@ -909,16 +905,26 @@ namespace graphs
 		}
 		return std::move(texture);
 	}
-	// print histogram using multiple data sets
+	// print histogram using single data set
 	template <typename T>
-	void histogram_experimental(const Options& options, const std::vector<std::vector<T>>& datasets, const std::vector<Color>& colors = {}) {
-		Texture texture = std::make_unique<std::vector<Fragment>>();
-		// recursively call for extra data sets
+	auto histogram_experimental(const std::vector<T>& data, const Options& options = {}, const Color& color = {color_red}) -> Texture&& {
+		return histogram_experimental(data, std::make_unique<Texture::element_type>(), options, color);
+	}
+	// print histogram using multiple data sets, drawn on top of existing texture
+	template <typename T>
+	auto histogram_experimental(const std::vector<std::vector<T>>& datasets, Texture&& texture, const Options& options = {}, const std::vector<Color>& colors = {}) -> Texture&&  {
+		// recursively call for each data set
 		for (size_t i = 0; i < datasets.size(); i++) {
 			// pick default color if not enough colors are provided
 			Color color = i < colors.size() ? colors[i] : Color{color_red};
-			texture = histogram_experimental(options, datasets[i], color, std::move(texture));
+			texture = histogram_experimental(datasets[i], std::move(texture), options, colors[i]);
 		}
+		return std::move(texture);
+	}
+	// print histogram using multiple data sets
+	template <typename T>
+	auto histogram_experimental(const std::vector<std::vector<T>>& datasets, const Options& options = {}, const std::vector<Color>& colors = {}) -> Texture&&  {
+		return histogram_experimental(datasets, std::make_unique<Texture::element_type>(), options, colors);
 	}
 	// EXPERIMENTAL END
 
