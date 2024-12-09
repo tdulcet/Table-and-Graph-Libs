@@ -763,9 +763,9 @@ namespace graphs
 		color_type col_4; // 4-bit color
 		uint8_t col_8; // 8-bit color
 		struct {
-			uint8_t r;
-			uint8_t g;
-			uint8_t b;
+			uint8_t red;
+			uint8_t green;
+			uint8_t blue;
 		} col_24; // 24-bit true color
 	};
 	enum class ColorBits: uint8_t { e4, e8, e24 };
@@ -804,7 +804,16 @@ namespace graphs
 		ColorBits color_type = ColorBits::e4; // bit depth of color representation
 		bool check = true; // validate sizes for graph draw
 		bool border = false; // draw border around the graph
+		bool draw_immediately = true; // draw graph immediately after creation. otherwise call draw/graph with the returned texture
 	};
+	// use a graph texture to draw a graph into the terminal
+	void graph(Texture& texture, Options &options) {
+		// TODO
+	}
+	// use a graph texture to draw a graph into the terminal
+	void draw(Texture& texture, Options &options) {
+		graph(texture, options);
+	}
 	// print histogram using single data set, optionally drawn on top of existing texture
 	template <typename T>
 	auto histogram_experimental(const T &data, const Options &options = {}, const Color &color = {color_red}, Texture &&texture = std::make_unique<Texture::element_type>()) -> Texture&& {
