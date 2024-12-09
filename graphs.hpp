@@ -807,11 +807,24 @@ namespace graphs
 		bool draw_immediately = true; // draw graph immediately after creation. otherwise call draw/graph with the returned texture
 	};
 	// use a graph texture to draw a graph into the terminal
-	void graph(Texture& texture, Options &options) {
-		// TODO
+	inline void graph(Texture& texture, const Options &options) {
+		vector<Fragment>& tex = *texture;
+		
+		// draw graph for experimental preview purposes only
+		for (size_t y = 0; y < options.height; y++) {
+			for (size_t x = 0; x < options.width; x++) {
+				const size_t index = x + y * options.width;
+				const auto& frag = tex[index];
+				// draw Fragment
+				cout << colors[frag.color.col_4];
+				cout << bars[frag.data];
+				cout << colors[0];
+			}
+			cout << '\n';
+		}
 	}
 	// use a graph texture to draw a graph into the terminal
-	void draw(Texture& texture, Options &options) {
+	inline void draw(Texture& texture, const Options &options) {
 		graph(texture, options);
 	}
 	// print histogram using single data set, optionally drawn on top of existing texture
@@ -895,18 +908,7 @@ namespace graphs
 			}
 		}
 
-		// draw graph for experimental preview purposes only
-		for (size_t y = 0; y < height; y++) {
-			for (size_t x = 0; x < width; x++) {
-				const size_t index = x + y * width;
-				const auto& frag = tex[index];
-				// draw Fragment
-				cout << colors[frag.color.col_4];
-				cout << bars[frag.data];
-				cout << colors[0];
-			}
-			cout << '\n';
-		}
+		if (options.draw_immediately) draw(texture, options);
 		return std::move(texture);
 	}
 	// print histogram using multiple data sets, drawn on top of existing texture
