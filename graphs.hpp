@@ -922,6 +922,46 @@ namespace graphs
 		}
 		return std::move(texture);
 	}
+
+	// plot from single data set, optionally drawn on top of existing texture
+	template <typename T>
+	auto plot_experimental(const T &data, const Options &options = {}, const Color &color = {color_red}, Texture &&texture = std::make_unique<Texture::element_type>()) -> Texture&& {
+		cout << "Experimental plot\n";
+
+		// precalc spans
+		const long double x_span = options.x.max - options.x.min;
+		const long double y_span = options.y.max - options.y.min;
+		const long double x_span_recip = 1.0 / x_span;
+		const long double y_span_recip = 1.0 / y_span;
+
+		// create 2D array of temporary Fragments for the graph
+		if (texture->size() == 0) texture->resize(options.width * options.height);
+		assert(texture->size() == options.width * options.height);
+		vector<Fragment>& tex = *texture;
+
+		// insert draw plot data into texture
+		for (const auto [x, y]: data) {
+			// check if value is between limits
+			if (x >= options.x.min && x < options.x.max && y >= options.y.min && y < options.y.max) {
+				// calculate terminal character position
+				const long double x_term = ((long double)x - options.x.min) * x_span_recip * (long double)options.width;
+				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
+				// calculate sub-fragment position (2x4 for braille)
+				const size_t x_sub = (x_term - std::floor(x_term)) * 2;
+				const size_t y_sub = (y_term - std::floor(y_term)) * 4;
+
+				// draw Fragment
+				const size_t index = (size_t)x_term + (size_t)y_term * options.width;
+				// TODO: mix colors here when color is 24-bit (can we mix 8-bit color?)
+				tex[index].color = color;
+				// TODO: which bit should correspond to which braille dot?
+				// the dot position within this fragment is (x_sub, y_sub)
+				// bottom left is (0, 0), top right is (1, 3)
+				tex[index].data |= 1 << (x_sub + y_sub * 2);
+			}
+		}
+		return std::move(texture);
+	}
 	// EXPERIMENTAL END
 
 	template <typename T>
