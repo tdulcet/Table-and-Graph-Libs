@@ -544,7 +544,7 @@ Other compilers should work as well, but are not (yet) tested.
 
 Run with: `./graphs`
 
-If `height` is `0`, it will be set to the current height of the terminal (number of rows times four). If `width` is `0`, it will be set to the current width of the terminal (number of columns times two).
+If `height` is `0`, it will be set to the current height of the terminal (number of rows). If `width` is `0`, it will be set to the current width of the terminal (number of columns).
 
 #### Output array as histogram
 
@@ -557,8 +557,8 @@ using namespace std;
 
 int main()
 {
-	size_t height = 160;
-	size_t width = 160;
+	size_t height = 40;
+	size_t width = 80;
 
 	long double xmin = -20;
 	long double xmax = 20;
@@ -588,8 +588,8 @@ using namespace std;
 
 int main()
 {
-	size_t height = 160;
-	size_t width = 160;
+	size_t height = 40;
+	size_t width = 80;
 
 	long double xmin = -20;
 	long double xmax = 20;
@@ -623,8 +623,8 @@ using namespace std;
 
 int main()
 {
-	size_t height = 160;
-	size_t width = 160;
+	size_t height = 40;
+	size_t width = 80;
 
 	long double xmin = -20;
 	long double xmax = 20;
@@ -654,8 +654,8 @@ using namespace std;
 
 int main()
 {
-	size_t height = 160;
-	size_t width = 160;
+	size_t height = 40;
+	size_t width = 80;
 
 	long double xmin = -20;
 	long double xmax = 20;
@@ -696,8 +696,8 @@ double afunction(double x)
 
 int main()
 {
-	size_t height = 160;
-	size_t width = 160;
+	size_t height = 40;
+	size_t width = 80;
 
 	long double xmin = -20;
 	long double xmax = 20;
@@ -719,8 +719,8 @@ using namespace std;
 
 int main()
 {
-	size_t height = 160;
-	size_t width = 160;
+	size_t height = 40;
+	size_t width = 80;
 
 	long double xmin = -20;
 	long double xmax = 20;
@@ -759,8 +759,8 @@ double function2(double x)
 
 int main()
 {
-	size_t height = 160;
-	size_t width = 160;
+	size_t height = 40;
+	size_t width = 80;
 
 	long double xmin = -20;
 	long double xmax = 20;
@@ -787,8 +787,8 @@ using namespace std;
 
 int main()
 {
-	size_t height = 160;
-	size_t width = 160;
+	size_t height = 40;
+	size_t width = 80;
 
 	long double xmin = -20;
 	long double xmax = 20;
@@ -875,9 +875,16 @@ Values:
 1. `type_braille`: Braille (default)
 	![](images/type%20braille%20graph.png)
 2. `type_block`: Block
+3. `type_block_quadrant`: Block quadrant
 	![](images/type%20block%20graph.png)
+4. `type_separated_block_quadrant`: Separated block quadrant
+5. `type_block_sextant`: Block sextant
+6. `type_separated_block_sextant`: Separated block sextant
+7. `type_block_octant`: Block octant
 
-The Braille type has the highest resolution of 2×4 pixels per character, while the block type uses 2×2. This option is only used for plots and graphs. Histograms use 1×8 pixels per character.
+The Braille and block octant types have the highest density of 2×4 pixels per character, while the two block sextant types use 2×3, the two block quadrant types use 2×2 and the block type uses 1×1. This option is only used for plots and graphs. Histograms use 1×8 pixels per character.
+
+The block sextant type requires support for Unicode 13.0, while the separated block quadrant, separated block sextant and block octant types require support for Unicode 16.0.
 
 #### Mark type
 

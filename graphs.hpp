@@ -77,24 +77,40 @@ namespace graphs
 
 	enum color_type const color_types[] = {color_default, color_black, color_red, color_green, color_yellow, color_blue, color_magenta, color_cyan, color_white, color_gray, color_bright_red, color_bright_green, color_bright_yellow, color_bright_blue, color_bright_magenta, color_bright_cyan, color_bright_white};
 
-	const char *const colors[] = {"\e[39m", "\e[30m", "\e[31m", "\e[32m", "\e[33m", "\e[34m", "\e[35m", "\e[36m", "\e[37m", "\e[90m", "\e[91m", "\e[92m", "\e[93m", "\e[94m", "\e[95m", "\e[96m", "\e[97m"};
+	const unsigned char colors[] = {39, 30, 31, 32, 33, 34, 35, 36, 37, 90, 91, 92, 93, 94, 95, 96, 97};
 
 	const char *const dots[] = {"⠀", "⠁", "⠂", "⠃", "⠄", "⠅", "⠆", "⠇", "⠈", "⠉", "⠊", "⠋", "⠌", "⠍", "⠎", "⠏", "⠐", "⠑", "⠒", "⠓", "⠔", "⠕", "⠖", "⠗", "⠘", "⠙", "⠚", "⠛", "⠜", "⠝", "⠞", "⠟", "⠠", "⠡", "⠢", "⠣", "⠤", "⠥", "⠦", "⠧", "⠨", "⠩", "⠪", "⠫", "⠬", "⠭", "⠮", "⠯", "⠰", "⠱", "⠲", "⠳", "⠴", "⠵", "⠶", "⠷", "⠸", "⠹", "⠺", "⠻", "⠼", "⠽", "⠾", "⠿", "⡀", "⡁", "⡂", "⡃", "⡄", "⡅", "⡆", "⡇", "⡈", "⡉", "⡊", "⡋", "⡌", "⡍", "⡎", "⡏", "⡐", "⡑", "⡒", "⡓", "⡔", "⡕", "⡖", "⡗", "⡘", "⡙", "⡚", "⡛", "⡜", "⡝", "⡞", "⡟", "⡠", "⡡", "⡢", "⡣", "⡤", "⡥", "⡦", "⡧", "⡨", "⡩", "⡪", "⡫", "⡬", "⡭", "⡮", "⡯", "⡰", "⡱", "⡲", "⡳", "⡴", "⡵", "⡶", "⡷", "⡸", "⡹", "⡺", "⡻", "⡼", "⡽", "⡾", "⡿", "⢀", "⢁", "⢂", "⢃", "⢄", "⢅", "⢆", "⢇", "⢈", "⢉", "⢊", "⢋", "⢌", "⢍", "⢎", "⢏", "⢐", "⢑", "⢒", "⢓", "⢔", "⢕", "⢖", "⢗", "⢘", "⢙", "⢚", "⢛", "⢜", "⢝", "⢞", "⢟", "⢠", "⢡", "⢢", "⢣", "⢤", "⢥", "⢦", "⢧", "⢨", "⢩", "⢪", "⢫", "⢬", "⢭", "⢮", "⢯", "⢰", "⢱", "⢲", "⢳", "⢴", "⢵", "⢶", "⢷", "⢸", "⢹", "⢺", "⢻", "⢼", "⢽", "⢾", "⢿", "⣀", "⣁", "⣂", "⣃", "⣄", "⣅", "⣆", "⣇", "⣈", "⣉", "⣊", "⣋", "⣌", "⣍", "⣎", "⣏", "⣐", "⣑", "⣒", "⣓", "⣔", "⣕", "⣖", "⣗", "⣘", "⣙", "⣚", "⣛", "⣜", "⣝", "⣞", "⣟", "⣠", "⣡", "⣢", "⣣", "⣤", "⣥", "⣦", "⣧", "⣨", "⣩", "⣪", "⣫", "⣬", "⣭", "⣮", "⣯", "⣰", "⣱", "⣲", "⣳", "⣴", "⣵", "⣶", "⣷", "⣸", "⣹", "⣺", "⣻", "⣼", "⣽", "⣾", "⣿"};
 	const int dotvalues[][4] = {{0x1, 0x2, 0x4, 0x40}, {0x8, 0x10, 0x20, 0x80}};
 
-	const char *const blocks[] = {" ", "▖", "▗", "▄", "▘", "▌", "▚", "▙", "▝", "▞", "▐", "▟", "▀", "▛", "▜", "█"};
-	const int blockvalues[][2] = {{4, 1}, {8, 2}};
+	const char *const blocks[] = {"\u00A0", "█"};
 
-	const char *const bars[] = {" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"};
+	const char *const blocks_quadrant[] = {"\u00A0", "▘", "▝", "▀", "▖", "▌", "▞", "▛", "▗", "▚", "▐", "▜", "▄", "▙", "▟", "█"};
+
+	const char *const separated_blocks_quadrant[] = {"\u00A0", "𜰡", "𜰢", "𜰣", "𜰤", "𜰥", "𜰦", "𜰧", "𜰨", "𜰩", "𜰪", "𜰫", "𜰬", "𜰭", "𜰮", "𜰯"};
+
+	const char *const blocks_sextant[] = {"\u00A0", "🬀", "🬁", "🬂", "🬃", "🬄", "🬅", "🬆", "🬇", "🬈", "🬉", "🬊", "🬋", "🬌", "🬍", "🬎", "🬏", "🬐", "🬑", "🬒", "🬓", "▌", "🬔", "🬕", "🬖", "🬗", "🬘", "🬙", "🬚", "🬛", "🬜", "🬝", "🬞", "🬟", "🬠", "🬡", "🬢", "🬣", "🬤", "🬥", "🬦", "🬧", "▐", "🬨", "🬩", "🬪", "🬫", "🬬", "🬭", "🬮", "🬯", "🬰", "🬱", "🬲", "🬳", "🬴", "🬵", "🬶", "🬷", "🬸", "🬹", "🬺", "🬻", "█"};
+
+	const char *const separated_blocks_sextant[] = {"\u00A0", "𜹑", "𜹒", "𜹓", "𜹔", "𜹕", "𜹖", "𜹗", "𜹘", "𜹙", "𜹚", "𜹛", "𜹜", "𜹝", "𜹞", "𜹟", "𜹠", "𜹡", "𜹢", "𜹣", "𜹤", "𜹥", "𜹦", "𜹧", "𜹨", "𜹩", "𜹪", "𜹫", "𜹬", "𜹭", "𜹮", "𜹯", "𜹰", "𜹱", "𜹲", "𜹳", "𜹴", "𜹵", "𜹶", "𜹷", "𜹸", "𜹹", "𜹺", "𜹻", "𜹼", "𜹽", "𜹾", "𜹿", "𜺀", "𜺁", "𜺂", "𜺃", "𜺄", "𜺅", "𜺆", "𜺇", "𜺈", "𜺉", "𜺊", "𜺋", "𜺌", "𜺍", "𜺎", "𜺏"};
+
+	const char *const blocks_octant[] = {"\u00A0", "𜺨", "𜺫", "🮂", "𜴀", "▘", "𜴁", "𜴂", "𜴃", "𜴄", "▝", "𜴅", "𜴆", "𜴇", "𜴈", "▀", "𜴉", "𜴊", "𜴋", "𜴌", "🯦", "𜴍", "𜴎", "𜴏", "𜴐", "𜴑", "𜴒", "𜴓", "𜴔", "𜴕", "𜴖", "𜴗", "𜴘", "𜴙", "𜴚", "𜴛", "𜴜", "𜴝", "𜴞", "𜴟", "🯧", "𜴠", "𜴡", "𜴢", "𜴣", "𜴤", "𜴥", "𜴦", "𜴧", "𜴨", "𜴩", "𜴪", "𜴫", "𜴬", "𜴭", "𜴮", "𜴯", "𜴰", "𜴱", "𜴲", "𜴳", "𜴴", "𜴵", "🮅", "𜺣", "𜴶", "𜴷", "𜴸", "𜴹", "𜴺", "𜴻", "𜴼", "𜴽", "𜴾", "𜴿", "𜵀", "𜵁", "𜵂", "𜵃", "𜵄", "▖", "𜵅", "𜵆", "𜵇", "𜵈", "▌", "𜵉", "𜵊", "𜵋", "𜵌", "▞", "𜵍", "𜵎", "𜵏", "𜵐", "▛", "𜵑", "𜵒", "𜵓", "𜵔", "𜵕", "𜵖", "𜵗", "𜵘", "𜵙", "𜵚", "𜵛", "𜵜", "𜵝", "𜵞", "𜵟", "𜵠", "𜵡", "𜵢", "𜵣", "𜵤", "𜵥", "𜵦", "𜵧", "𜵨", "𜵩", "𜵪", "𜵫", "𜵬", "𜵭", "𜵮", "𜵯", "𜵰", "𜺠", "𜵱", "𜵲", "𜵳", "𜵴", "𜵵", "𜵶", "𜵷", "𜵸", "𜵹", "𜵺", "𜵻", "𜵼", "𜵽", "𜵾", "𜵿", "𜶀", "𜶁", "𜶂", "𜶃", "𜶄", "𜶅", "𜶆", "𜶇", "𜶈", "𜶉", "𜶊", "𜶋", "𜶌", "𜶍", "𜶎", "𜶏", "▗", "𜶐", "𜶑", "𜶒", "𜶓", "▚", "𜶔", "𜶕", "𜶖", "𜶗", "▐", "𜶘", "𜶙", "𜶚", "𜶛", "▜", "𜶜", "𜶝", "𜶞", "𜶟", "𜶠", "𜶡", "𜶢", "𜶣", "𜶤", "𜶥", "𜶦", "𜶧", "𜶨", "𜶩", "𜶪", "𜶫", "▂", "𜶬", "𜶭", "𜶮", "𜶯", "𜶰", "𜶱", "𜶲", "𜶳", "𜶴", "𜶵", "𜶶", "𜶷", "𜶸", "𜶹", "𜶺", "𜶻", "𜶼", "𜶽", "𜶾", "𜶿", "𜷀", "𜷁", "𜷂", "𜷃", "𜷄", "𜷅", "𜷆", "𜷇", "𜷈", "𜷉", "𜷊", "𜷋", "𜷌", "𜷍", "𜷎", "𜷏", "𜷐", "𜷑", "𜷒", "𜷓", "𜷔", "𜷕", "𜷖", "𜷗", "𜷘", "𜷙", "𜷚", "▄", "𜷛", "𜷜", "𜷝", "𜷞", "▙", "𜷟", "𜷠", "𜷡", "𜷢", "▟", "𜷣", "▆", "𜷤", "𜷥", "█"};
+
+	const char *const bars[] = {"\u00A0", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"};
 
 	enum type_type
 	{
 		type_braille,
 		type_block,
+		type_block_quadrant,
+		type_separated_block_quadrant,
+		type_block_sextant,
+		type_separated_block_sextant,
+		type_block_octant,
 		type_histogram // Set automatically by the histogram() function
 	};
 
-	enum type_type const type_types[] = {type_braille, type_block /* , type_histogram */};
+	enum type_type const type_types[] = {type_braille, type_block, type_block_quadrant, type_separated_block_quadrant, type_block_sextant, type_separated_block_sextant, type_block_octant /* , type_histogram */};
+
+	const unsigned short densities[][2] = {{4, 2}, {1, 1}, {2, 2}, {2, 2}, {3, 2}, {3, 2}, {4, 2}, {8, 1}};
 
 	enum plot_type
 	{
@@ -104,7 +120,7 @@ namespace graphs
 
 	enum plot_type const plot_types[] = {plot_scatter, plot_line};
 
-	const short marks[][8][2] = {{{0, 0}}, {{0, 1}, {-1, 0}, {0, 0}, {1, 0}, {0, -1}}, {{-1, 1}, {0, 1}, {1, 1}, {-1, 0}, {1, 0}, {-1, -1}, {0, -1}, {1, -1}}};
+	const vector<vector<pair<short, short>>> marks = {{{0, 0}}, {{0, 1}, {-1, 0}, {0, 0}, {1, 0}, {0, -1}}, {{-1, 1}, {0, 1}, {1, 1}, {-1, 0}, {1, 0}, {-1, -1}, {0, -1}, {1, -1}}};
 
 	enum mark_type
 	{
@@ -378,8 +394,9 @@ namespace graphs
 			strm << number;
 	}
 
-	inline size_t outputlabel(const long double label, const units_type units, ostringstream &strm)
+	inline size_t outputlabel(const long double label, const units_type units, string &str)
 	{
+		ostringstream strm;
 		strm.imbue(locale(""));
 
 		switch (units)
@@ -420,9 +437,19 @@ namespace graphs
 			break;
 		}
 
-		const size_t length = strcol(strm.str());
+		str = strm.str();
+		const size_t length = strcol(str);
 
 		return length;
+	}
+
+	inline string outputcolor(const color_type color)
+	{
+		ostringstream strm;
+
+		strm << "\e[" << int(colors[color]) << "m";
+
+		return strm.str();
 	}
 
 	// Output graph
@@ -437,7 +464,6 @@ namespace graphs
 		const bool axistick = aoptions.axistick;
 		const bool axisunitslabel = aoptions.axisunitslabel;
 		const type_type type = aoptions.type;
-		const char *const title = aoptions.title;
 
 		if (!height)
 			return 1;
@@ -448,9 +474,7 @@ namespace graphs
 		struct winsize w;
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-		const size_t ai = type == type_histogram ? 8 : type == type_block ? 2
-																		  : 4;
-		const size_t aj = type == type_histogram ? 1 : 2;
+		const auto [ai, aj] = densities[type];
 
 		const size_t aheight = height / ai;
 		const size_t awidth = width / aj;
@@ -493,8 +517,8 @@ namespace graphs
 
 		setlocale(LC_ALL, "");
 
-		if (title and title[0] != '\0')
-			aoptions.ostr << wrap(title, awidth) << '\n';
+		if (aoptions.title and aoptions.title[0] != '\0')
+			aoptions.ostr << wrap(aoptions.title, awidth) << '\n';
 
 		const char *const *astyle = styles[aoptions.style];
 
@@ -515,7 +539,7 @@ namespace graphs
 			const bool ayaxis = yaxis <= (height - ai) ? i <= yaxis and (i + ai) > yaxis : i < yaxis and (i + ai) >= yaxis;
 			const bool yaxislabel = yaxis <= (height - ai) ? i <= (yaxis + ai) and (i + ai) > (yaxis + ai) : i < (yaxis - ai) and (i + ai) >= (yaxis - ai);
 
-			ostringstream ylabelstrm;
+			string ylabelstr;
 			size_t ylabellength = 0;
 
 			if (axis and axistick and axisunitslabel and yaxis >= 0 and yaxis <= height)
@@ -536,7 +560,7 @@ namespace graphs
 
 				if (output)
 				{
-					ylabellength = outputlabel(label, aoptions.yunits, ylabelstrm);
+					ylabellength = outputlabel(label, aoptions.yunits, ylabelstr);
 					ylabellength *= aj;
 				}
 			}
@@ -654,12 +678,12 @@ namespace graphs
 						{
 							output = false;
 
-							ostringstream astrm;
-							size_t length = outputlabel(label, aoptions.xunits, astrm);
+							string astr;
+							size_t length = outputlabel(label, aoptions.xunits, astr);
 							length *= aj;
 							if ((j >= xaxis or (j + length) < (ymin <= 0 and ymax >= 0 and xmin <= 0 and xmax >= 0 ? xaxis - ai : xaxis)) and (j + length) < (width - aj) and (xaxis <= (width - aj) or j > aj))
 							{
-								strm << astrm.str();
+								strm << astr;
 
 								if (length > aj)
 									j += length - aj;
@@ -678,7 +702,7 @@ namespace graphs
 					}
 					else if (ylabellength and (xaxis < aj ? xaxislabel : j < (xaxis - ylabellength) and (j + aj) >= (xaxis - ylabellength)) and (yaxis >= ai or i < (height - ai)) and axistick and axisunitslabel)
 					{
-						strm << ylabelstrm.str();
+						strm << ylabelstr;
 						output = true;
 						if (ylabellength > aj)
 							j += ylabellength - aj;
@@ -697,15 +721,24 @@ namespace graphs
 							const unsigned short value = array[j + k][i + l];
 							if (value)
 							{
-								if (type == type_histogram)
+								switch (type)
 								{
+								case type_braille:
+									dot += dotvalues[k][l];
+									break;
+								case type_block:
+								case type_block_quadrant:
+								case type_separated_block_quadrant:
+								case type_block_sextant:
+								case type_separated_block_sextant:
+								case type_block_octant:
+									dot += 1 << (l * aj + k);
+									break;
+								case type_histogram:
 									if (!dot)
 										dot = (size(bars) - l) - 1;
+									break;
 								}
-								else if (type == type_block)
-									dot += blockvalues[k][l];
-								else
-									dot += dotvalues[k][l];
 							}
 							if (color)
 							{
@@ -721,13 +754,38 @@ namespace graphs
 						--color;
 
 					if (color)
-						strm << colors[color];
+						strm << outputcolor(color_type(color));
 
-					strm << (type == type_histogram ? bars[dot] : type == type_block ? blocks[dot]
-																					 : dots[dot]);
+					switch (type)
+					{
+					case type_braille:
+						strm << dots[dot];
+						break;
+					case type_block:
+						strm << blocks[dot];
+						break;
+					case type_block_quadrant:
+						strm << blocks_quadrant[dot];
+						break;
+					case type_separated_block_quadrant:
+						strm << separated_blocks_quadrant[dot];
+						break;
+					case type_block_sextant:
+						strm << blocks_sextant[dot];
+						break;
+					case type_separated_block_sextant:
+						strm << separated_blocks_sextant[dot];
+						break;
+					case type_block_octant:
+						strm << blocks_octant[dot];
+						break;
+					case type_histogram:
+						strm << bars[dot];
+						break;
+					}
 
 					if (color)
-						strm << colors[0];
+						strm << outputcolor(color_default);
 				}
 			}
 
@@ -766,31 +824,30 @@ namespace graphs
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
 		if (!height)
-			height = w.ws_row * 4;
+			height = w.ws_row;
 
 		if (!width)
-			width = w.ws_col * 2;
+			width = w.ws_col;
 
 		if (aoptions.check)
 		{
-			const size_t aheight = height / 4;
-			const size_t awidth = width / 2;
-
-			if (aheight > w.ws_row)
+			if (height > w.ws_row)
 			{
-				cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
+				cerr << "The height of the graph (" << height << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
 				return 1;
 			}
 
-			if (awidth > w.ws_col)
+			if (width > w.ws_col)
 			{
-				cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
+				cerr << "The width of the graph (" << width << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
 				return 1;
 			}
 		}
 
-		height *= 2;
-		width /= 2;
+		const auto [ai, aj] = densities[type_histogram];
+
+		height *= ai;
+		width *= aj;
 
 		if (!xmin and !xmax)
 		{
@@ -890,31 +947,30 @@ namespace graphs
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
 		if (!height)
-			height = w.ws_row * 4;
+			height = w.ws_row;
 
 		if (!width)
-			width = w.ws_col * 2;
+			width = w.ws_col;
 
 		if (aoptions.check)
 		{
-			const size_t aheight = height / 4;
-			const size_t awidth = width / 2;
-
-			if (aheight > w.ws_row)
+			if (height > w.ws_row)
 			{
-				cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
+				cerr << "The height of the graph (" << height << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
 				return 1;
 			}
 
-			if (awidth > w.ws_col)
+			if (width > w.ws_col)
 			{
-				cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
+				cerr << "The width of the graph (" << width << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
 				return 1;
 			}
 		}
 
-		if (aoptions.type == type_block)
-			height /= 2;
+		const auto [ai, aj] = densities[aoptions.type];
+
+		height *= ai;
+		width *= aj;
 
 		if (!xmin and !xmax)
 		{
@@ -1029,31 +1085,30 @@ namespace graphs
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
 		if (!height)
-			height = w.ws_row * 4;
+			height = w.ws_row;
 
 		if (!width)
-			width = w.ws_col * 2;
+			width = w.ws_col;
 
 		if (aoptions.check)
 		{
-			const size_t aheight = height / 4;
-			const size_t awidth = width / 2;
-
-			if (aheight > w.ws_row)
+			if (height > w.ws_row)
 			{
-				cerr << "The height of the graph (" << aheight << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
+				cerr << "The height of the graph (" << height << ") is greater then the height of the terminal (" << w.ws_row << ").\n";
 				return 1;
 			}
 
-			if (awidth > w.ws_col)
+			if (width > w.ws_col)
 			{
-				cerr << "The width of the graph (" << awidth << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
+				cerr << "The width of the graph (" << width << ") is greater then the width of the terminal (" << w.ws_col << ").\n";
 				return 1;
 			}
 		}
 
-		if (aoptions.type == type_block)
-			height /= 2;
+		const auto [ai, aj] = densities[aoptions.type];
+
+		height *= ai;
+		width *= aj;
 
 		if (xmin >= xmax)
 		{

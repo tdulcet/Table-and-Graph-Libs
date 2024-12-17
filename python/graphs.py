@@ -74,10 +74,7 @@ class color_types(IntEnum):
 	bright_white = auto()
 
 
-colors = ("\033[39m", "\033[30m", "\033[31m", "\033[32m", "\033[33m",
-		  "\033[34m", "\033[35m", "\033[36m", "\033[37m", "\033[90m",
-		  "\033[91m", "\033[92m", "\033[93m", "\033[94m", "\033[95m",
-		  "\033[96m", "\033[97m")
+colors = (39, 30, 31, 32, 33, 34, 35, 36, 37, 90, 91, 92, 93, 94, 95, 96, 97)
 
 dots = (
 	"⠀", "⠁", "⠂", "⠃", "⠄", "⠅", "⠆", "⠇", "⠈", "⠉", "⠊", "⠋", "⠌", "⠍", "⠎",
@@ -100,19 +97,34 @@ dots = (
 	"⣿")
 dotvalues = ((0x1, 0x2, 0x4, 0x40), (0x8, 0x10, 0x20, 0x80))
 
-blocks = (" ", "▖", "▗", "▄", "▘", "▌", "▚",
-		  "▙", "▝", "▞", "▐", "▟", "▀", "▛", "▜", "█")
-blockvalues = ((4, 1), (8, 2))
+blocks = ("\xA0", "█")
 
-bars = (" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█")
+blocks_quadrant = ("\xA0", "▘", "▝", "▀", "▖", "▌", "▞", "▛", "▗", "▚", "▐", "▜", "▄", "▙", "▟", "█")
+
+separated_blocks_quadrant = ("\xA0", "𜰡", "𜰢", "𜰣", "𜰤", "𜰥", "𜰦", "𜰧", "𜰨", "𜰩", "𜰪", "𜰫", "𜰬", "𜰭", "𜰮", "𜰯")
+
+blocks_sextant = ("\xA0", "🬀", "🬁", "🬂", "🬃", "🬄", "🬅", "🬆", "🬇", "🬈", "🬉", "🬊", "🬋", "🬌", "🬍", "🬎", "🬏", "🬐", "🬑", "🬒", "🬓", "▌", "🬔", "🬕", "🬖", "🬗", "🬘", "🬙", "🬚", "🬛", "🬜", "🬝", "🬞", "🬟", "🬠", "🬡", "🬢", "🬣", "🬤", "🬥", "🬦", "🬧", "▐", "🬨", "🬩", "🬪", "🬫", "🬬", "🬭", "🬮", "🬯", "🬰", "🬱", "🬲", "🬳", "🬴", "🬵", "🬶", "🬷", "🬸", "🬹", "🬺", "🬻", "█")
+
+separated_blocks_sextant = ("\xA0", "𜹑", "𜹒", "𜹓", "𜹔", "𜹕", "𜹖", "𜹗", "𜹘", "𜹙", "𜹚", "𜹛", "𜹜", "𜹝", "𜹞", "𜹟", "𜹠", "𜹡", "𜹢", "𜹣", "𜹤", "𜹥", "𜹦", "𜹧", "𜹨", "𜹩", "𜹪", "𜹫", "𜹬", "𜹭", "𜹮", "𜹯", "𜹰", "𜹱", "𜹲", "𜹳", "𜹴", "𜹵", "𜹶", "𜹷", "𜹸", "𜹹", "𜹺", "𜹻", "𜹼", "𜹽", "𜹾", "𜹿", "𜺀", "𜺁", "𜺂", "𜺃", "𜺄", "𜺅", "𜺆", "𜺇", "𜺈", "𜺉", "𜺊", "𜺋", "𜺌", "𜺍", "𜺎", "𜺏")
+
+blocks_octant = ("\xA0", "𜺨", "𜺫", "🮂", "𜴀", "▘", "𜴁", "𜴂", "𜴃", "𜴄", "▝", "𜴅", "𜴆", "𜴇", "𜴈", "▀", "𜴉", "𜴊", "𜴋", "𜴌", "🯦", "𜴍", "𜴎", "𜴏", "𜴐", "𜴑", "𜴒", "𜴓", "𜴔", "𜴕", "𜴖", "𜴗", "𜴘", "𜴙", "𜴚", "𜴛", "𜴜", "𜴝", "𜴞", "𜴟", "🯧", "𜴠", "𜴡", "𜴢", "𜴣", "𜴤", "𜴥", "𜴦", "𜴧", "𜴨", "𜴩", "𜴪", "𜴫", "𜴬", "𜴭", "𜴮", "𜴯", "𜴰", "𜴱", "𜴲", "𜴳", "𜴴", "𜴵", "🮅", "𜺣", "𜴶", "𜴷", "𜴸", "𜴹", "𜴺", "𜴻", "𜴼", "𜴽", "𜴾", "𜴿", "𜵀", "𜵁", "𜵂", "𜵃", "𜵄", "▖", "𜵅", "𜵆", "𜵇", "𜵈", "▌", "𜵉", "𜵊", "𜵋", "𜵌", "▞", "𜵍", "𜵎", "𜵏", "𜵐", "▛", "𜵑", "𜵒", "𜵓", "𜵔", "𜵕", "𜵖", "𜵗", "𜵘", "𜵙", "𜵚", "𜵛", "𜵜", "𜵝", "𜵞", "𜵟", "𜵠", "𜵡", "𜵢", "𜵣", "𜵤", "𜵥", "𜵦", "𜵧", "𜵨", "𜵩", "𜵪", "𜵫", "𜵬", "𜵭", "𜵮", "𜵯", "𜵰", "𜺠", "𜵱", "𜵲", "𜵳", "𜵴", "𜵵", "𜵶", "𜵷", "𜵸", "𜵹", "𜵺", "𜵻", "𜵼", "𜵽", "𜵾", "𜵿", "𜶀", "𜶁", "𜶂", "𜶃", "𜶄", "𜶅", "𜶆", "𜶇", "𜶈", "𜶉", "𜶊", "𜶋", "𜶌", "𜶍", "𜶎", "𜶏", "▗", "𜶐", "𜶑", "𜶒", "𜶓", "▚", "𜶔", "𜶕", "𜶖", "𜶗", "▐", "𜶘", "𜶙", "𜶚", "𜶛", "▜", "𜶜", "𜶝", "𜶞", "𜶟", "𜶠", "𜶡", "𜶢", "𜶣", "𜶤", "𜶥", "𜶦", "𜶧", "𜶨", "𜶩", "𜶪", "𜶫", "▂", "𜶬", "𜶭", "𜶮", "𜶯", "𜶰", "𜶱", "𜶲", "𜶳", "𜶴", "𜶵", "𜶶", "𜶷", "𜶸", "𜶹", "𜶺", "𜶻", "𜶼", "𜶽", "𜶾", "𜶿", "𜷀", "𜷁", "𜷂", "𜷃", "𜷄", "𜷅", "𜷆", "𜷇", "𜷈", "𜷉", "𜷊", "𜷋", "𜷌", "𜷍", "𜷎", "𜷏", "𜷐", "𜷑", "𜷒", "𜷓", "𜷔", "𜷕", "𜷖", "𜷗", "𜷘", "𜷙", "𜷚", "▄", "𜷛", "𜷜", "𜷝", "𜷞", "▙", "𜷟", "𜷠", "𜷡", "𜷢", "▟", "𜷣", "▆", "𜷤", "𜷥", "█")
+
+bars = ("\xA0", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█")
 
 
 class type_types(IntEnum):
 	braille = 0
 	block = auto()
+	block_quadrant = auto()
+	separated_block_quadrant = auto()
+	block_sextant = auto()
+	separated_block_sextant = auto()
+	block_octant = auto()
 	histogram = auto() # Set automatically by the histogram() function
 
-atype_types = (type_types.braille, type_types.block)
+atype_types = (type_types.braille, type_types.block, type_types.block_quadrant, type_types.separated_block_quadrant, type_types.block_sextant, type_types.separated_block_sextant, type_types.block_octant)
+
+densities = ((4, 2), (1, 1), (2, 2), (2, 2), (3, 2), (3, 2), (4, 2), (8, 1))
 
 marks = (((0, 0),), ((0, 1), (-1, 0), (0, 0), (1, 0), (0, -1)),
 		 ((-1, 1), (0, 1), (1, 1), (-1, 0), (1, 0), (-1, -1), (0, -1), (1, -1)))
@@ -298,6 +310,10 @@ def outputlabel(label: float, units: units_types) -> Tuple[int, str]:
 	return length, strm
 
 
+def outputcolor(color: color_types) -> str:
+	return f"\033[{colors[color]}m"
+
+
 def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: float, array: List[List[int]], border: bool = False, axis: bool = True, axislabel: bool = True, axistick: bool = True, axisunitslabel: bool = True, xunits: units_types = units_types.fracts, yunits: units_types = units_types.fracts, atype: type_types = type_types.braille, style: style_types = style_types.light, title: Optional[str] = None, file: TextIO = sys.stdout, check: bool = True) -> int:
 	"""Output graph."""
 	if not array:
@@ -311,8 +327,7 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 
 	w = shutil.get_terminal_size()
 
-	ai = 8 if atype == type_types.histogram else 2 if atype == type_types.block else 4
-	aj = 1 if atype == type_types.histogram else 2
+	ai, aj = densities[atype]
 
 	aheight = height // ai
 	awidth = width // aj
@@ -485,13 +500,13 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					for l in range(min(ai, height - i)):
 						value = array[j + k][i + l]
 						if value:
-							if atype == type_types.histogram:
+							if atype == type_types.braille:
+								dot += dotvalues[k][l]
+							elif atype in {type_types.block, type_types.block_quadrant, type_types.separated_block_quadrant, type_types.block_sextant, type_types.separated_block_sextant, type_types.block_octant}:
+								dot += 1 << (l * aj + k)
+							elif atype == type_types.histogram:
 								if not dot:
 									dot = (len(bars) - l) - 1
-							elif atype == type_types.block:
-								dot += blockvalues[k][l]
-							else:
-								dot += dotvalues[k][l]
 						if color:
 							if value and color != value:
 								color = 1
@@ -502,12 +517,27 @@ def graph(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 					color -= 1
 
 				if color:
-					strm += colors[color]
+					strm += outputcolor(color)
 
-				strm += bars[dot] if atype == type_types.histogram else blocks[dot] if atype == type_types.block else dots[dot]
+				if atype == type_types.braille:
+					strm += dots[dot]
+				elif atype == type_types.block:
+					strm += blocks[dot]
+				elif atype == type_types.block_quadrant:
+					strm += blocks_quadrant[dot]
+				elif atype == type_types.separated_block_quadrant:
+					strm += separated_blocks_quadrant[dot]
+				elif atype == type_types.block_sextant:
+					strm += blocks_sextant[dot]
+				elif atype == type_types.separated_block_sextant:
+					strm += separated_blocks_sextant[dot]
+				elif atype == type_types.block_octant:
+					strm += blocks_octant[dot]
+				elif atype == type_types.histogram:
+					strm += bars[dot]
 
 				if color:
-					strm += colors[0]
+					strm += outputcolor(color_types.default)
 
 			j += aj
 
@@ -534,27 +564,26 @@ def histogram(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 	w = shutil.get_terminal_size()
 
 	if not height:
-		height = w.lines * 4
+		height = w.lines
 
 	if not width:
-		width = w.columns * 2
+		width = w.columns
 
 	if check:
-		aheight = height // 4
-		awidth = width // 2
-
-		if aheight > w.lines:
+		if height > w.lines:
 			print(
-				f"The height of the graph ({aheight}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
+				f"The height of the graph ({height}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
 			return 1
 
-		if awidth > w.columns:
+		if width > w.columns:
 			print(
-				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
+				f"The width of the graph ({width}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
 
-	height *= 2
-	width //= 2
+	ai, aj = densities[type_types.histogram]
+
+	height *= ai
+	width *= aj
 
 	if not xmin and not xmax:
 		xmin = min(aarray)
@@ -609,27 +638,26 @@ def plots(height: int, width: int, xmin: float, xmax: float, ymin: float, ymax: 
 	w = shutil.get_terminal_size()
 
 	if not height:
-		height = w.lines * 4
+		height = w.lines
 
 	if not width:
-		width = w.columns * 2
+		width = w.columns
 
 	if check:
-		aheight = height // 4
-		awidth = width // 2
-
-		if aheight > w.lines:
+		if height > w.lines:
 			print(
-				f"The height of the graph ({aheight}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
+				f"The height of the graph ({height}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
 			return 1
 
-		if awidth > w.columns:
+		if width > w.columns:
 			print(
-				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
+				f"The width of the graph ({width}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
 
-	if atype == type_types.block:
-		height //= 2
+	ai, aj = densities[atype]
+
+	height *= ai
+	width *= aj
 
 	if not xmin and not xmax:
 		xmin = min(x for aarray in aarrays for x, y in aarray)
@@ -689,27 +717,26 @@ def functions(height: int, width: int, xmin: float, xmax: float, ymin: float, ym
 	w = shutil.get_terminal_size()
 
 	if not height:
-		height = w.lines * 4
+		height = w.lines
 
 	if not width:
-		width = w.columns * 2
+		width = w.columns
 
 	if check:
-		aheight = height // 4
-		awidth = width // 2
-
-		if aheight > w.lines:
+		if height > w.lines:
 			print(
-				f"The height of the graph ({aheight}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
+				f"The height of the graph ({height}) is greater then the height of the terminal ({w.lines}).", file=sys.stderr)
 			return 1
 
-		if awidth > w.columns:
+		if height > w.columns:
 			print(
-				f"The width of the graph ({awidth}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
+				f"The width of the graph ({height}) is greater then the width of the terminal ({w.columns}).", file=sys.stderr)
 			return 1
 
-	if atype == type_types.block:
-		height //= 2
+	ai, aj = densities[atype]
+
+	height *= ai
+	width *= aj
 
 	if xmin >= xmax:
 		print("xmin must be less than xmax.", file=sys.stderr)

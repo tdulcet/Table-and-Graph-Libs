@@ -107,8 +107,8 @@ for style in tables.style_types:
 	tables.functions(xmin, xmax, xstep, [
 		lambda x: 2 * x, lambda x: x ** 2], headerrow=True, style=style)
 
-height = 160
-width = 160
+height = 40
+width = 80
 
 xmin = -20
 xmax = 20

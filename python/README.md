@@ -273,15 +273,15 @@ Complete versions of all of the examples below and more can be found in the [tes
 
 Run with: `python3 -OO test.py`.
 
-If `height` is `0`, it will be set to the current height of the terminal (number of rows times four). If `width` is `0`, it will be set to the current width of the terminal (number of columns times two).
+If `height` is `0`, it will be set to the current height of the terminal (number of rows). If `width` is `0`, it will be set to the current width of the terminal (number of columns).
 
 #### Output array as histogram
 
 ```py
 import graphs
 
-height = 160
-width = 160
+height = 40
+width = 80
 
 xmin = -20
 xmax = 20
@@ -302,8 +302,8 @@ If `xmin` and `xmax` are both `0`, they will be set to the respective minimum an
 ```py
 import graphs
 
-height = 160
-width = 160
+height = 40
+width = 80
 
 xmin = -20
 xmax = 20
@@ -329,8 +329,8 @@ import graphs
 def afunction(x):
 	return x + 1
 
-height = 160
-width = 160
+height = 40
+width = 80
 
 xmin = -20
 xmax = 20
@@ -347,8 +347,8 @@ graphs.function(height, width, xmin, xmax, ymin, ymax, afunction)
 ```py
 import graphs
 
-height = 160
-width = 160
+height = 40
+width = 80
 
 xmin = -20
 xmax = 20
@@ -373,8 +373,8 @@ def function1(x):
 def function2(x):
 	return x ** 2
 
-height = 160
-width = 160
+height = 40
+width = 80
 
 xmin = -20
 xmax = 20
@@ -394,8 +394,8 @@ graphs.functions(height, width, xmin, xmax, ymin, ymax, functions)
 ```py
 import graphs
 
-height = 160
-width = 160
+height = 40
+width = 80
 
 xmin = -20
 xmax = 20
@@ -474,9 +474,16 @@ Values:
 1. `type_types.braille`: Braille (default)
 	![](../images/type%20braille%20graph.png)
 2. `type_types.block`: Block
+3. `type_types.block_quadrant`: Block quadrant
 	![](../images/type%20block%20graph.png)
+4. `type_types.separated_block_quadrant`: Separated block quadrant
+5. `type_types.block_sextant`: Block sextant
+6. `type_types.separated_block_sextant`: Separated block sextant
+7. `type_types.block_octant`: Block octant
 
-The Braille type has the highest resolution of 2×4 pixels per character, while the block type uses 2×2. This option is only used for plots and graphs. Histograms use 1×8 pixels per character.
+The Braille and block octant types have the highest density of 2×4 pixels per character, while the two block sextant types use 2×3, the two block quadrant types use 2×2 and the block type uses 1×1. This option is only used for plots and graphs. Histograms use 1×8 pixels per character.
+
+The block sextant type requires support for Unicode 13.0, while the separated block quadrant, separated block sextant and block octant types require support for Unicode 16.0.
 
 #### Mark type
 
