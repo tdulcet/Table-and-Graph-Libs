@@ -806,33 +806,27 @@ namespace graphs
 		bool border = false; // draw border around the graph
 		bool draw_immediately = true; // draw graph immediately after creation. otherwise call draw/graph with the returned texture
 	};
-	inline void graph(Texture& texture, const Options &options);
 	// intermediate representation of a graph texture for ease of passing around
 	struct Intermediate {
 		// use a graph texture to draw into the terminal
 		inline void draw() {
-			graph(texture, options);
+			// draw graph for experimental preview purposes only
+			for (size_t y = 0; y < options.height; y++) {
+				for (size_t x = 0; x < options.width; x++) {
+					const size_t index = x + y * options.width;
+					const auto& frag = texture[index];
+					// draw Fragment
+					cout << colors[frag.color.col_4];
+					cout << dots[frag.data];
+					cout << colors[0];
+				}
+				cout << '\n';
+			}
 		}
 
 		Texture texture;
 		const Options options;
 	};
-
-	// use a graph texture to draw a graph into the terminal
-	inline void graph(Texture& texture, const Options &options) {
-		// draw graph for experimental preview purposes only
-		for (size_t y = 0; y < options.height; y++) {
-			for (size_t x = 0; x < options.width; x++) {
-				const size_t index = x + y * options.width;
-				const auto& frag = texture[index];
-				// draw Fragment
-				cout << colors[frag.color.col_4];
-				cout << dots[frag.data];
-				cout << colors[0];
-			}
-			cout << '\n';
-		}
-	}
 
 	// plot from single data set
 	template <typename T>
