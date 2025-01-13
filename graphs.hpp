@@ -777,7 +777,7 @@ namespace graphs
 		uint8_t data; // stores up to 8 data points or up to 255 values
 	};
 	// store fragments on temporary buffer to pass between draws
-	using Texture = std::unique_ptr<std::vector<Fragment>>;
+	using Texture = std::vector<Fragment>;
 	struct Axis {
 		long double min = 0;
 		long double max = 0;
@@ -806,126 +806,37 @@ namespace graphs
 		bool border = false; // draw border around the graph
 		bool draw_immediately = true; // draw graph immediately after creation. otherwise call draw/graph with the returned texture
 	};
+	inline void graph(Texture& texture, const Options &options);
+	// intermediate representation of a graph texture for ease of passing around
+	struct Intermediate {
+		// use a graph texture to draw into the terminal
+		inline void draw() {
+			graph(texture, options);
+		}
+
+		Texture texture;
+		const Options options;
+	};
+
 	// use a graph texture to draw a graph into the terminal
 	inline void graph(Texture& texture, const Options &options) {
-		vector<Fragment>& tex = *texture;
-		
 		// draw graph for experimental preview purposes only
 		for (size_t y = 0; y < options.height; y++) {
 			for (size_t x = 0; x < options.width; x++) {
 				const size_t index = x + y * options.width;
-				const auto& frag = tex[index];
+				const auto& frag = texture[index];
 				// draw Fragment
 				cout << colors[frag.color.col_4];
-				cout << bars[frag.data];
+				cout << dots[frag.data];
 				cout << colors[0];
 			}
 			cout << '\n';
 		}
 	}
-	// use a graph texture to draw a graph into the terminal
-	inline void draw(Texture& texture, const Options &options) {
-		graph(texture, options);
-	}
-	// print histogram using single data set, optionally drawn on top of existing texture
+
+	// plot from single data set
 	template <typename T>
-	auto histogram_experimental(const T &data, const Options &options = {}, const Color &color = {color_red}, Texture &&texture = std::make_unique<Texture::element_type>()) -> Texture&& {
-		cout << "Experimental histogram\n";
-
-		// TODO: automatically set sizes if stuff is 0
-		const double x_max = options.x.max;
-		const double x_min = options.x.min;
-		const double y_max = options.y.max;
-		const double y_min = options.y.min;
-		const size_t width = options.width;
-		const size_t height = options.height;
-
-		// precalc graph span
-		const double x_size = x_max - x_min;
-		const double y_size = y_max - y_min;
-		// need width+height of chosen character set (using bar characters as example)
-		const size_t char_width = 1; // bar supports 1 state per character width
-		const size_t char_height = 8; // bar supports 8 states per character height
-		// calc how many data points we can represent with current character set and width/height
-		const size_t x_points = width * char_width;
-		const size_t y_points = height * char_height;
-		// for histograms, every sample needs at least one data point to occupy in x
-		const size_t x_bar_size = 1;
-		// given the x_bar_size (which should be exposed as an option), see how many points will be placed between bars
-		const size_t x_bar_spacer = (double)x_points / ((double)x_bar_size * x_size) - 1;
-
-		// histogram specific: each bar needs at least one data point
-		if ((double)x_points / (double)x_bar_size < x_size) {
-			cerr << "width is too small to fit all histogram bars\n";
-			return std::move(texture);
-		}
-
-		// simple histogram as vector of sample counts
-		vector<size_t> histogram(x_size, 0);
-		for (const auto &x: data) {
-			// check if value is between limits
-			if (x >= x_min && x < x_max) {
-				// calculate index on x-axis
-				const size_t index = x - x_min;
-				// increment height of the bar
-				++histogram[index];
-			}
-		}
-
-		// create 2D array of temporary Fragments for the graph
-		if (texture->size() == 0) texture->resize(width * height);
-		assert(texture->size() == width * height);
-		vector<Fragment>& tex = *texture;
-		// insert draw histogram data into texture
-		for (size_t x = 0; x < histogram.size(); x++) {
-			// calc bar position on x-axis
-			const size_t x_pos = x * (x_bar_size + x_bar_spacer);
-
-			// read bar size from histogram
-			const size_t y_histo = histogram[x];
-			// scale to 0-1 range via max bar size
-			const double y_scaled = (double)y_histo / y_size;
-			// scale back up via point size
-			const size_t y_target = y_scaled * (double)y_points;
-			// calc Fragment position and remainder for cap
-			const size_t y_tex = y_target / char_height;
-			const size_t y_cap = y_target % char_height;
-
-			// draw bar body
-			for (size_t y = 0; y < y_tex; y++) {
-				// in texture, y=0 is at the top, so we need to invert the y-axis
-				const size_t index = x_pos + (height - 1 - y) * width;
-				tex[index].color = color;
-				tex[index].data = 8; // use full height of character
-			}
-
-			// draw bar cap
-			if (y_cap > 0) {
-				// in texture, y=0 is at the top, so we need to invert the y-axis
-				const size_t index = x_pos + (height - 1 - y_tex) * width;
-				tex[index].color = color;
-				tex[index].data = y_cap; // use remainder to fill up character
-			}
-		}
-
-		if (options.draw_immediately) draw(texture, options);
-		return std::move(texture);
-	}
-	// print histogram using multiple data sets, drawn on top of existing texture
-	template <typename T>
-	auto histogram_experimental(const T &data, const size_t rows, const Options &options = {}, const std::vector<Color> &colors = {}, Texture &&texture = std::make_unique<Texture::element_type>()) -> Texture&&  {
-		// recursively call for each data set
-		for (size_t row = 0; row < rows; row++) {
-			// pick default color if not enough colors are provided
-			Color color = row < colors.size() ? colors[row] : Color{color_red};
-			texture = histogram_experimental(data[row], options, color, std::move(texture));
-		}
-		return std::move(texture);
-	}
-
-	// plot from single data set, optionally drawn on top of existing texture
-	template <typename T>
-	auto plot_experimental(const T &data, const Options &options = {}, const Color &color = {color_red}, Texture &&texture = std::make_unique<Texture::element_type>()) -> Texture&& {
+	auto plot_experimental(const T &data, const Options &options = {}, const Color &color = {color_red}) -> Intermediate {
 		cout << "Experimental plot\n";
 
 		// precalc spans
@@ -934,10 +845,9 @@ namespace graphs
 		const long double x_span_recip = 1.0 / x_span;
 		const long double y_span_recip = 1.0 / y_span;
 
-		// create 2D array of temporary Fragments for the graph
-		if (texture->size() == 0) texture->resize(options.width * options.height);
-		assert(texture->size() == options.width * options.height);
-		vector<Fragment>& tex = *texture;
+		// create new intermediate object for texture and options
+		assert(options.width > 0 && options.height > 0); // enforce valid size for now
+		Intermediate intermediate = { Texture(options.width * options.height), options };
 
 		// insert draw plot data into texture
 		for (const auto [x, y]: data) {
@@ -953,14 +863,48 @@ namespace graphs
 				// draw Fragment
 				const size_t index = (size_t)x_term + (size_t)y_term * options.width;
 				// TODO: mix colors here when color is 24-bit (can we mix 8-bit color?)
-				tex[index].color = color;
+				intermediate.texture[index].color = color;
 				// TODO: which bit should correspond to which braille dot?
 				// the dot position within this fragment is (x_sub, y_sub)
 				// bottom left is (0, 0), top right is (1, 3)
-				tex[index].data |= 1 << (x_sub + y_sub * 2);
+				intermediate.texture[index].data |= 1 << (x_sub + y_sub * 2);
 			}
 		}
-		return std::move(texture);
+		return intermediate;
+	}
+	// plot from single data set, drawn on top of existing graph
+	template <typename T>
+	void plot_experimental(const T &data, Intermediate &intermediate, const Color &color = {color_red}) {
+		cout << "Experimental plot\n";
+
+		// precalc spans
+		const Options& options = intermediate.options;
+		const long double x_span = options.x.max - options.x.min;
+		const long double y_span = options.y.max - options.y.min;
+		const long double x_span_recip = 1.0 / x_span;
+		const long double y_span_recip = 1.0 / y_span;
+
+		// insert draw plot data into texture
+		for (const auto [x, y]: data) {
+			// check if value is between limits
+			if (x >= options.x.min && x < options.x.max && y >= options.y.min && y < options.y.max) {
+				// calculate terminal character position
+				const long double x_term = ((long double)x - options.x.min) * x_span_recip * (long double)options.width;
+				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
+				// calculate sub-fragment position (2x4 for braille)
+				const size_t x_sub = (x_term - std::floor(x_term)) * 2;
+				const size_t y_sub = (y_term - std::floor(y_term)) * 4;
+
+				// draw Fragment
+				const size_t index = (size_t)x_term + (size_t)y_term * options.width;
+				// TODO: mix colors here when color is 24-bit (can we mix 8-bit color?)
+				intermediate.texture[index].color = color;
+				// TODO: which bit should correspond to which braille dot?
+				// the dot position within this fragment is (x_sub, y_sub)
+				// bottom left is (0, 0), top right is (1, 3)
+				intermediate.texture[index].data |= 1 << (x_sub + y_sub * 2);
+			}
+		}
 	}
 	// EXPERIMENTAL END
 
