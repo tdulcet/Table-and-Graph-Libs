@@ -33,9 +33,9 @@ python3 -m pip install wcwidth
 ```
 See the [tables.py](tables.py) file for full usage information.
 
-Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
+Complete versions of all of the examples below and more can be found in the [`__main__.py`](__main__.py) file.
 
-Run with: `python3 -OO test.py`.
+Run with: `python3 -OO .`.
 
 #### Output str array as table
 
@@ -269,9 +269,9 @@ python3 -m pip install wcwidth
 ```
 See the [graphs.py](graphs.py) file for full usage information.
 
-Complete versions of all of the examples below and more can be found in the [test.py](test.py) file.
+Complete versions of all of the examples below and more can be found in the [`__main__.py`](__main__.py) file.
 
-Run with: `python3 -OO test.py`.
+Run with: `python3 -OO .`.
 
 If `height` is `0`, it will be set to the current height of the terminal (number of rows). If `width` is `0`, it will be set to the current width of the terminal (number of columns).
 

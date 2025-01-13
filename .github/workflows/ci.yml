@@ -93,4 +93,4 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Script
       run: |
-        python -X dev python/test.py
+        python -X dev python/

@@ -2,7 +2,7 @@
 
 # Teal Dulcet, CS546
 
-# Run: python3 -OO test.py
+# Run: python3 -OO .
 
 import math
 import operator
