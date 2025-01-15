@@ -45,8 +45,8 @@ constexpr long double function5(long double x)
 
 int main()
 {
-	const size_t height = 160;
-	const size_t width = 160;
+	const size_t height = 40;
+	const size_t width = 80;
 
 	const long double xmin = -20;
 	const long double xmax = 20;

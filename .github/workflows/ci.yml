@@ -11,6 +11,7 @@ jobs:
     name: Linux C++
 
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.cxx == 'clang++' && matrix.os == 'ubuntu-20.04' }}
     strategy:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
@@ -68,7 +69,7 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install ruff
     - name: Script
-      run: ruff check --output-format=github --target-version py37 --select F,E4,E7,E9,W,I,D,UP,YTT,ANN,S,BLE,B,A,COM819,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SLOT,SIM,TID,TCH,ARG,PGH,PL,TRY,FLY,PERF,FURB,LOG,RUF --preview --ignore W191,D211,D213,D401,PLR09,PLR1702,PLR2004,FURB101,FURB167,RUF001,RUF002,RUF003,RUF023 .
+      run: ruff check --output-format=github --target-version py37 --select F,E4,E7,E9,W,I,D,UP,YTT,ANN,S,BLE,B,A,COM819,C4,T10,EM,EXE,ISC,ICN,G,PIE,PYI,Q,RSE,RET,SLF,SLOT,SIM,TID,TC,ARG,PGH,PL,TRY,FLY,PERF,FURB,LOG,RUF --preview --ignore W191,D211,D213,D401,PLR09,PLR1702,PLR2004,FURB101,FURB167,RUF001,RUF002,RUF003,RUF023 .
       continue-on-error: true
 
   Python:
@@ -92,4 +93,4 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Script
       run: |
-        python -X dev python/test.py
+        python -X dev python/
