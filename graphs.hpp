@@ -853,13 +853,17 @@ namespace graphs
 				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
 
 				// calculate sub-fragment position (2x4 for braille)
-				const size_t x_sub = (x_term - std::floor(x_term)) * 2;
-				const size_t y_sub = (y_term - std::floor(y_term)) * 4;
+				const size_t char_width = 2;
+				const size_t char_height = 4;
+				size_t x_sub = (x_term - std::floor(x_term)) * char_width;
+				size_t y_sub = (y_term - std::floor(y_term)) * char_height;
+				// invert y_sub
+				y_sub = char_height - 1 - y_sub;
 
 				// draw Fragment
 				const size_t index = (size_t)x_term + (options.height - 1 - (size_t)y_term) * options.width;
 				intermediate.texture[index].color = color; // TODO: mix color here
-				intermediate.texture[index].data |= dotvalues[x_sub][3-y_sub];
+				intermediate.texture[index].data |= dotvalues[x_sub][y_sub];
 			}
 		}
 		return intermediate;
@@ -885,13 +889,17 @@ namespace graphs
 				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
 
 				// calculate sub-fragment position (2x4 for braille)
-				const size_t x_sub = (x_term - std::floor(x_term)) * 2;
-				const size_t y_sub = (y_term - std::floor(y_term)) * 4;
+				const size_t char_width = 2;
+				const size_t char_height = 4;
+				size_t x_sub = (x_term - std::floor(x_term)) * char_width;
+				size_t y_sub = (y_term - std::floor(y_term)) * char_height;
+				// invert y_sub
+				y_sub = char_height - 1 - y_sub;
 
 				// draw Fragment
 				const size_t index = (size_t)x_term + (options.height - 1 - (size_t)y_term) * options.width;
 				intermediate.texture[index].color = color; // TODO: mix color here
-				intermediate.texture[index].data |= dotvalues[x_sub][3-y_sub];
+				intermediate.texture[index].data |= dotvalues[x_sub][y_sub];
 			}
 		}
 	}
