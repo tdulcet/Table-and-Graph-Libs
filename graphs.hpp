@@ -818,7 +818,15 @@ namespace graphs
 					const auto& frag = texture[index];
 					// draw Fragment
 					cout << colors[frag.color.col_4];
-					cout << dots[frag.data];
+					switch (options.character_set) {
+						case type_braille:
+							cout << dots[frag.data];
+							break;
+						case type_block:
+							cout << blocks[frag.data];
+							break;
+						default: break;
+					}
 					cout << colors[0];
 				}
 				cout << '\n';
@@ -829,45 +837,6 @@ namespace graphs
 		const Options options;
 	};
 
-	// plot from single data set
-	template <typename T>
-	auto plot_experimental(const T &data, const Options &options = {}, const Color &color = {color_red}) -> Intermediate {
-		cout << "Experimental plot\n";
-
-		// precalc spans
-		const long double x_span = options.x.max - options.x.min;
-		const long double y_span = options.y.max - options.y.min;
-		const long double x_span_recip = 1.0 / x_span;
-		const long double y_span_recip = 1.0 / y_span;
-
-		// create new intermediate object for texture and options
-		assert(options.width > 0 && options.height > 0); // enforce valid size for now
-		Intermediate intermediate = { Texture(options.width * options.height), options };
-
-		// draw plot data into texture
-		for (const auto [x, y]: data) {
-			// check if value is between limits
-			if (x >= options.x.min && x < options.x.max && y >= options.y.min && y < options.y.max) {
-				// calculate terminal character position
-				const long double x_term = ((long double)x - options.x.min) * x_span_recip * (long double)options.width;
-				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
-
-				// calculate sub-fragment position (2x4 for braille)
-				const size_t char_width = 2;
-				const size_t char_height = 4;
-				size_t x_sub = (x_term - std::floor(x_term)) * char_width;
-				size_t y_sub = (y_term - std::floor(y_term)) * char_height;
-				// invert y_sub
-				y_sub = char_height - 1 - y_sub;
-
-				// draw Fragment
-				const size_t index = (size_t)x_term + (options.height - 1 - (size_t)y_term) * options.width;
-				intermediate.texture[index].color = color; // TODO: mix color here
-				intermediate.texture[index].data |= dotvalues[x_sub][y_sub];
-			}
-		}
-		return intermediate;
-	}
 	// plot from single data set, drawn on top of existing graph
 	template <typename T>
 	void plot_experimental(const T &data, Intermediate &intermediate, const Color &color = {color_red}) {
@@ -889,8 +858,20 @@ namespace graphs
 				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
 
 				// calculate sub-fragment position (2x4 for braille)
-				const size_t char_width = 2;
-				const size_t char_height = 4;
+				size_t char_width = 0;
+				size_t char_height = 0;
+				// TODO: could put this in a separate function to avoid switch statement and reuse in other plot funcs
+				switch (options.character_set) {
+					case type_braille:
+						char_width = 2;
+						char_height = 4;
+						break;
+					case type_block:
+						char_width = 2;
+						char_height = 2;
+						break;
+					default: break;
+				}
 				size_t x_sub = (x_term - std::floor(x_term)) * char_width;
 				size_t y_sub = (y_term - std::floor(y_term)) * char_height;
 				// invert y_sub
@@ -899,9 +880,37 @@ namespace graphs
 				// draw Fragment
 				const size_t index = (size_t)x_term + (options.height - 1 - (size_t)y_term) * options.width;
 				intermediate.texture[index].color = color; // TODO: mix color here
-				intermediate.texture[index].data |= dotvalues[x_sub][y_sub];
+
+				uint8_t value = 0;
+				switch (options.character_set) {
+					case type_braille:
+						value = dotvalues[x_sub][y_sub];
+						break;
+					case type_block:
+						value = blockvalues[x_sub][y_sub];
+						break;
+					default: break;
+				}
+				intermediate.texture[index].data |= value;
 			}
 		}
+	}
+	// plot from single data set
+	template <typename T>
+	auto plot_experimental(const T &data, const Options &options = {}, const Color &color = {color_red}) -> Intermediate {
+		cout << "Experimental plot\n";
+
+		// precalc spans
+		const long double x_span = options.x.max - options.x.min;
+		const long double y_span = options.y.max - options.y.min;
+		const long double x_span_recip = 1.0 / x_span;
+		const long double y_span_recip = 1.0 / y_span;
+
+		// create new intermediate object for texture and options
+		assert(options.width > 0 && options.height > 0); // enforce valid size for now
+		Intermediate intermediate = { Texture(options.width * options.height), options };
+		plot_experimental(data, intermediate, color);
+		return intermediate;
 	}
 	// EXPERIMENTAL END
 
