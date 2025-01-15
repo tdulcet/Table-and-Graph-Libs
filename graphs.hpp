@@ -874,18 +874,20 @@ namespace graphs
 				for (size_t x = 0; x < options.width; x++) {
 					const size_t index = x + y * options.width;
 					const auto& frag = texture[index];
-					// draw Fragment
-					cout << colors[frag.color.col_4];
+					// begin color draw(
+					cout << outputcolor(frag.color.col_4);
+					// draw character
 					switch (options.character_set) {
 						case type_braille:
 							cout << dots[frag.data];
 							break;
-						case type_block:
-							cout << blocks[frag.data];
+						case type_block_quadrant:
+							cout << blocks_quadrant[frag.data];
 							break;
 						default: break;
 					}
-					cout << colors[0];
+					// reset color (TODO: could be optimized to only reset when color changes)
+					cout << outputcolor(color_type::color_default);
 				}
 				cout << '\n';
 			}
@@ -924,7 +926,7 @@ namespace graphs
 						char_width = 2;
 						char_height = 4;
 						break;
-					case type_block:
+					case type_block_quadrant:
 						char_width = 2;
 						char_height = 2;
 						break;
@@ -940,12 +942,13 @@ namespace graphs
 				intermediate.texture[index].color = color; // TODO: mix color here
 
 				uint8_t value = 0;
+				// TODO: put this in separate function to reuse in other plot funcs
 				switch (options.character_set) {
 					case type_braille:
 						value = dotvalues[x_sub][y_sub];
 						break;
-					case type_block:
-						value = blockvalues[x_sub][y_sub];
+					case type_block_quadrant:
+						value = 1 << (x_sub + y_sub * char_width);
 						break;
 					default: break;
 				}
