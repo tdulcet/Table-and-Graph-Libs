@@ -1,5 +1,6 @@
 // Teal Dulcet, CS546
 #pragma once
+#include <bitset>
 #include <cassert>
 #include <iostream>
 #include <memory>
@@ -789,10 +790,10 @@ namespace graphs
 	struct Options {
 		size_t width = 0; // Width in terminal characters. Set to 0 for automatic size based on terminal.
 		size_t height = 0; // Height in terminal characters. Set to 0 for automatic size based on terminal.
-		
+
 		Axis x = {};
 		Axis y = {};
-		
+
 		type_type character_set = type_braille;
 		plot_type plot = plot_scatter;
 		style_type style = style_light;
@@ -843,25 +844,22 @@ namespace graphs
 		assert(options.width > 0 && options.height > 0); // enforce valid size for now
 		Intermediate intermediate = { Texture(options.width * options.height), options };
 
-		// insert draw plot data into texture
+		// draw plot data into texture
 		for (const auto [x, y]: data) {
 			// check if value is between limits
 			if (x >= options.x.min && x < options.x.max && y >= options.y.min && y < options.y.max) {
 				// calculate terminal character position
 				const long double x_term = ((long double)x - options.x.min) * x_span_recip * (long double)options.width;
 				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
+
 				// calculate sub-fragment position (2x4 for braille)
 				const size_t x_sub = (x_term - std::floor(x_term)) * 2;
 				const size_t y_sub = (y_term - std::floor(y_term)) * 4;
 
 				// draw Fragment
-				const size_t index = (size_t)x_term + (size_t)y_term * options.width;
-				// TODO: mix colors here when color is 24-bit (can we mix 8-bit color?)
-				intermediate.texture[index].color = color;
-				// TODO: which bit should correspond to which braille dot?
-				// the dot position within this fragment is (x_sub, y_sub)
-				// bottom left is (0, 0), top right is (1, 3)
-				intermediate.texture[index].data |= 1 << (x_sub + y_sub * 2);
+				const size_t index = (size_t)x_term + (options.height - 1 - (size_t)y_term) * options.width;
+				intermediate.texture[index].color = color; // TODO: mix color here
+				intermediate.texture[index].data |= dotvalues[x_sub][3-y_sub];
 			}
 		}
 		return intermediate;
@@ -885,18 +883,15 @@ namespace graphs
 				// calculate terminal character position
 				const long double x_term = ((long double)x - options.x.min) * x_span_recip * (long double)options.width;
 				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
+
 				// calculate sub-fragment position (2x4 for braille)
 				const size_t x_sub = (x_term - std::floor(x_term)) * 2;
 				const size_t y_sub = (y_term - std::floor(y_term)) * 4;
 
 				// draw Fragment
-				const size_t index = (size_t)x_term + (size_t)y_term * options.width;
-				// TODO: mix colors here when color is 24-bit (can we mix 8-bit color?)
-				intermediate.texture[index].color = color;
-				// TODO: which bit should correspond to which braille dot?
-				// the dot position within this fragment is (x_sub, y_sub)
-				// bottom left is (0, 0), top right is (1, 3)
-				intermediate.texture[index].data |= 1 << (x_sub + y_sub * 2);
+				const size_t index = (size_t)x_term + (options.height - 1 - (size_t)y_term) * options.width;
+				intermediate.texture[index].color = color; // TODO: mix color here
+				intermediate.texture[index].data |= dotvalues[x_sub][3-y_sub];
 			}
 		}
 	}
