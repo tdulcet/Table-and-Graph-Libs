@@ -894,6 +894,11 @@ namespace graphs
 				intermediate.texture[index].data |= value;
 			}
 		}
+
+		// draw plot into terminal immediately if requested
+		if (options.draw_immediately) {
+			intermediate.draw();
+		}
 	}
 	// plot from single data set
 	template <typename T>
