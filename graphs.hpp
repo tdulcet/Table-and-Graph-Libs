@@ -840,6 +840,7 @@ namespace graphs
 	struct Axis {
 		long double min = 0;
 		long double max = 0;
+		bool drawn = true;
 		bool labels = true;
 		bool ticks = true;
 		bool units_label = true;
