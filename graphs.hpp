@@ -1,6 +1,9 @@
 // Teal Dulcet, CS546
 #pragma once
+#include <bitset>
+#include <cassert>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <cstring>
 #include <cmath>
@@ -54,7 +57,7 @@ namespace graphs
 		// {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "}	 // No border
 	};
 
-	enum color_type
+	enum color_type: uint8_t
 	{
 		color_default,
 		color_black,
@@ -811,6 +814,153 @@ namespace graphs
 
 		return 0;
 	}
+
+	// EXPERIMENTAL BEG
+
+	// Using the existing color_type enum for the 4-bit colors (not using std::variant due to its larger size)
+	union Color {
+		color_type col_4; // 4-bit color
+		uint8_t col_8; // 8-bit color
+		struct {
+			uint8_t red;
+			uint8_t green;
+			uint8_t blue;
+		} col_24; // 24-bit true color
+	};
+	enum class ColorBits: uint8_t { e4, e8, e24 };
+
+	// Intermediate fragment representation potentially holding multiple pixels (e.g. 2x4 as braille)
+	// most optimal representation possible with only 4 bytes in size, applicable for all types of characters
+	struct Fragment {
+		Color color;
+		uint8_t data; // stores up to 8 data points or up to 255 values
+	};
+	// store fragments on temporary buffer to pass between draws
+	using Texture = std::vector<Fragment>;
+	struct Axis {
+		long double min = 0;
+		long double max = 0;
+		bool drawn = true;
+		bool labels = true;
+		bool ticks = true;
+		bool units_label = true;
+		units_type units = units_fracts;
+	};
+	struct Options {
+		size_t width = 0; // Width in terminal characters. Set to 0 for automatic size based on terminal.
+		size_t height = 0; // Height in terminal characters. Set to 0 for automatic size based on terminal.
+
+		Axis x = {};
+		Axis y = {};
+
+		type_type character_set = type_braille;
+		plot_type plot = plot_scatter;
+		style_type style = style_light;
+		graph_type graph = graph_dot;
+
+		std::string title;
+		std::ostream &ostr = std::cout;
+
+		ColorBits color_type = ColorBits::e4; // bit depth of color representation
+		bool check = true; // validate sizes for graph draw
+		bool border = false; // draw border around the graph
+		bool draw_immediately = true; // draw graph immediately after creation. otherwise call draw/graph with the returned texture
+	};
+	// intermediate representation of a graph texture for ease of passing around
+	struct Intermediate {
+		// use a graph texture to draw into the terminal
+		inline void draw() {
+			// draw graph for experimental preview purposes only
+			for (size_t y = 0; y < options.height; y++) {
+				for (size_t x = 0; x < options.width; x++) {
+					const size_t index = x + y * options.width;
+					const auto& frag = texture[index];
+					// begin color draw(
+					cout << outputcolor(frag.color.col_4);
+					// draw character
+					switch (options.character_set) {
+						case type_braille:
+							cout << dots[frag.data];
+							break;
+						case type_block_quadrant:
+							cout << blocks_quadrant[frag.data];
+							break;
+						default: break;
+					}
+					// reset color (TODO: could be optimized to only reset when color changes)
+					cout << outputcolor(color_type::color_default);
+				}
+				cout << '\n';
+			}
+		}
+
+		Texture texture;
+		const Options options;
+	};
+
+	// plot from single data set, drawn on top of existing graph
+	template <typename T>
+	void plot_experimental(const T &data, Intermediate &intermediate, Color color = {color_red}) {
+		cout << "Experimental plot\n";
+
+		// precalc spans
+		const Options& options = intermediate.options;
+		const long double x_span = options.x.max - options.x.min;
+		const long double y_span = options.y.max - options.y.min;
+		const long double x_span_recip = 1.0 / x_span;
+		const long double y_span_recip = 1.0 / y_span;
+
+		// insert draw plot data into texture
+		for (const auto [x, y]: data) {
+			// check if value is between limits
+			if (x >= options.x.min && x < options.x.max && y >= options.y.min && y < options.y.max) {
+				// calculate terminal character position
+				const long double x_term = ((long double)x - options.x.min) * x_span_recip * (long double)options.width;
+				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
+
+				// calculate sub-fragment position (2x4 for braille)
+				const auto [char_width, char_height] = densities[options.character_set];
+				size_t x_sub = (x_term - std::floor(x_term)) * char_width;
+				size_t y_sub = (y_term - std::floor(y_term)) * char_height;
+				// invert y_sub
+				y_sub = char_height - 1 - y_sub;
+
+				// draw Fragment
+				const size_t index = (size_t)x_term + (options.height - 1 - (size_t)y_term) * options.width;
+				intermediate.texture[index].color = color; // TODO: mix color here
+
+				uint8_t value = 0;
+				// TODO: put this in separate function to reuse in other plot funcs
+				switch (options.character_set) {
+					case type_braille:
+						value = dotvalues[x_sub][y_sub];
+						break;
+					case type_block_quadrant:
+						value = 1 << (x_sub + y_sub * char_width);
+						break;
+					default: break;
+				}
+				intermediate.texture[index].data |= value;
+			}
+		}
+
+		// draw plot into terminal immediately if requested
+		if (options.draw_immediately) {
+			intermediate.draw();
+		}
+	}
+	// plot from single data set
+	template <typename T>
+	auto plot_experimental(const T &data, const Options &options = {}, Color color = {color_red}) -> Intermediate {
+		cout << "Experimental plot\n";
+
+		// create new intermediate object for texture and options
+		assert(options.width > 0 && options.height > 0); // enforce valid size for now
+		Intermediate intermediate = { Texture(options.width * options.height), options };
+		plot_experimental(data, intermediate, color);
+		return intermediate;
+	}
+	// EXPERIMENTAL END
 
 	template <typename T>
 	int histogram(size_t height, size_t width, long double xmin, long double xmax, long double ymin, long double ymax, const T &aarray, const options &aoptions = {})
