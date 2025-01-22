@@ -966,13 +966,7 @@ namespace graphs
 	template <typename T>
 	auto plot_experimental(const T &data, const Options &options = {}, Color color = {color_red}) -> Intermediate {
 		cout << "Experimental plot\n";
-
-		// precalc spans
-		const long double x_span = options.x.max - options.x.min;
-		const long double y_span = options.y.max - options.y.min;
-		const long double x_span_recip = 1.0 / x_span;
-		const long double y_span_recip = 1.0 / y_span;
-
+		
 		// create new intermediate object for texture and options
 		assert(options.width > 0 && options.height > 0); // enforce valid size for now
 		Intermediate intermediate = { Texture(options.width * options.height), options };
