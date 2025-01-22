@@ -899,7 +899,7 @@ namespace graphs
 
 	// plot from single data set, drawn on top of existing graph
 	template <typename T>
-	void plot_experimental(const T &data, Intermediate &intermediate, const Color &color = {color_red}) {
+	void plot_experimental(const T &data, Intermediate &intermediate, Color color = {color_red}) {
 		cout << "Experimental plot\n";
 
 		// precalc spans
@@ -963,7 +963,7 @@ namespace graphs
 	}
 	// plot from single data set
 	template <typename T>
-	auto plot_experimental(const T &data, const Options &options = {}, const Color &color = {color_red}) -> Intermediate {
+	auto plot_experimental(const T &data, const Options &options = {}, Color color = {color_red}) -> Intermediate {
 		cout << "Experimental plot\n";
 
 		// precalc spans
