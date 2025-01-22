@@ -919,20 +919,7 @@ namespace graphs
 				const long double y_term = ((long double)y - options.y.min) * y_span_recip * (long double)options.height;
 
 				// calculate sub-fragment position (2x4 for braille)
-				size_t char_width = 0;
-				size_t char_height = 0;
-				// TODO: could put this in a separate function to avoid switch statement and reuse in other plot funcs
-				switch (options.character_set) {
-					case type_braille:
-						char_width = 2;
-						char_height = 4;
-						break;
-					case type_block_quadrant:
-						char_width = 2;
-						char_height = 2;
-						break;
-					default: break;
-				}
+				const auto [char_width, char_height] = densities[options.character_set];
 				size_t x_sub = (x_term - std::floor(x_term)) * char_width;
 				size_t y_sub = (y_term - std::floor(y_term)) * char_height;
 				// invert y_sub
@@ -966,7 +953,7 @@ namespace graphs
 	template <typename T>
 	auto plot_experimental(const T &data, const Options &options = {}, Color color = {color_red}) -> Intermediate {
 		cout << "Experimental plot\n";
-		
+
 		// create new intermediate object for texture and options
 		assert(options.width > 0 && options.height > 0); // enforce valid size for now
 		Intermediate intermediate = { Texture(options.width * options.height), options };
