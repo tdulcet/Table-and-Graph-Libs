@@ -11,10 +11,9 @@ jobs:
     name: Linux C++
 
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.cxx == 'clang++' && matrix.os == 'ubuntu-20.04' }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-22.04, ubuntu-24.04]
         cxx: [g++, clang++]
       fail-fast: false
     env:
@@ -83,8 +82,6 @@ jobs:
         include:
           - os: ubuntu-22.04
             python-version: "3.7"
-          - os: ubuntu-20.04
-            python-version: "3.6"
       fail-fast: false
     steps:
     - uses: actions/checkout@v4
