@@ -1,4 +1,4 @@
-// Teal Dulcet, CS546
+// Copyright © Teal Dulcet
 #pragma once
 #include <iostream>
 #include <sstream>

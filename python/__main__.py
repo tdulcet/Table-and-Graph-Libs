@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Teal Dulcet, CS546
+# Copyright © Teal Dulcet
 
 # Run: python3 -OO .
 

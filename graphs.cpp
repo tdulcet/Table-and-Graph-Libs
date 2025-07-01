@@ -1,4 +1,4 @@
-// Teal Dulcet, CS546
+// Copyright © Teal Dulcet
 
 // Compile: g++ -std=gnu++17 -Wall -g -O3 graphs.cpp -o graphs
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Teal Dulcet, CS546
+# Copyright © Teal Dulcet
 
 import locale
 import re
