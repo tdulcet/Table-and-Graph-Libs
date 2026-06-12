@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-22.04, ubuntu-24.04, ubuntu-26.04]
         cxx: [g++, clang++]
       fail-fast: false
     env:
@@ -27,7 +27,7 @@ jobs:
         $CXX --version
     - name: Script
       run: |
-        ARGS=( -std=gnu++17 -Wall -g -Og )
+        ARGS=( -std=gnu++17 -Wall -Wextra -g -Og )
         if [[ $CXX == clang* ]]; then
             ARGS+=( -fsanitize=address,undefined,integer )
         else
