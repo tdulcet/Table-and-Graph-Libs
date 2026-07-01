@@ -99,8 +99,10 @@ tables.array(array)
 ```py
 import tables
 
+
 def afunction(x):
 	return x + 1
+
 
 xmin = -10
 xmax = 10
@@ -132,11 +134,14 @@ Output same as example above.
 ```py
 import tables
 
+
 def function1(x):
 	return 2 * x
 
+
 def function2(x):
-	return x ** 2
+	return x**2
+
 
 xmin = -10
 xmax = 10
@@ -160,7 +165,7 @@ xmax = 10
 xstep = 0.5
 
 # Function parameter and return value can be any data type, as long as they are the same
-functions = [lambda x: 2 * x, lambda x: x ** 2]
+functions = [lambda x: 2 * x, lambda x: x**2]
 
 tables.functions(xmin, xmax, xstep, functions, headerrow=True)
 ```
@@ -326,8 +331,10 @@ Use `graphs.plots()` to plot multiple arrays, which can be of different sizes.
 ```py
 import graphs
 
+
 def afunction(x):
 	return x + 1
+
 
 height = 40
 width = 80
@@ -367,11 +374,14 @@ Output same as example above.
 ```py
 import graphs
 
+
 def function1(x):
 	return 2 * x
 
+
 def function2(x):
-	return x ** 2
+	return x**2
+
 
 height = 40
 width = 80
@@ -403,7 +413,7 @@ ymin = -20
 ymax = 20
 
 # Function parameter and return value can be any data type, as long as they are the same
-functions = [lambda x: 2 * x, lambda x: x ** 2]
+functions = [lambda x: 2 * x, lambda x: x**2]
 
 graphs.functions(height, width, xmin, xmax, ymin, ymax, functions)
 ```

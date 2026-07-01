@@ -938,8 +938,8 @@ def functions(
 	for j, function in enumerate(afunctions):
 		acolor = color + 1 if len(afunctions) == 1 else j % (len(colors) - 2) + 3
 
-		for i in (x / xres for x in range(rows * xres)):
-			x = i * xstep + xmin
+		for i in range(rows * xres):
+			x = (i / xres) * xstep + xmin
 			y = function(x)
 
 			if xmin <= x < xmax and ymin <= y < ymax:

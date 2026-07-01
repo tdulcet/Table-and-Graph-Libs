@@ -19,7 +19,7 @@ jobs:
     env:
       CXX: ${{ matrix.cxx }}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Before script
       run: |
         sudo apt-get update -y
@@ -27,7 +27,7 @@ jobs:
         $CXX --version
     - name: Script
       run: |
-        ARGS=( -std=gnu++17 -Wall -Wextra -g -Og )
+        ARGS=( -std=gnu++20 -Wall -Wextra -g -Og )
         if [[ $CXX == clang* ]]; then
             ARGS+=( -fsanitize=address,undefined,integer )
         else
@@ -38,17 +38,17 @@ jobs:
         $CXX "${ARGS[@]}" graphs.cpp -o graphs
         ./graphs
     - name: Cppcheck
-      run: cppcheck --enable=all .
+      run: cppcheck --std=c++20 --enable=all .
     - name: Clang-Tidy
       if: ${{ matrix.cxx == 'clang++' }}
-      run: clang-tidy -checks='bugprone-*,-bugprone-easily-swappable-parameters,cert-*,clang-analyzer-*,misc-*,-misc-no-recursion,modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-const-return-type,readability-container-*,readability-duplicate-include,readability-else-after-return,readability-make-member-function-cons,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-string-compare,readability-use-*' -header-filter='.*' *.cpp -- -Wall -O3 -std=c++17
+      run: clang-tidy -checks='bugprone-*,-bugprone-easily-swappable-parameters,cert-*,clang-analyzer-*,misc-*,-misc-no-recursion,modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,readability-const-return-type,readability-container-*,readability-duplicate-include,readability-else-after-return,readability-make-member-function-cons,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-string-compare,readability-use-*' -header-filter='.*' *.cpp -- -Wall -O3 -std=c++20
 
   Pylint:
     name: Pylint
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
@@ -62,7 +62,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
@@ -84,7 +84,7 @@ jobs:
             python-version: "3.7"
       fail-fast: false
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
       with:

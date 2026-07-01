@@ -58,7 +58,7 @@ namespace tables
 		bool tableborder = true;
 		bool cellborder = false;
 		unsigned padding = 1;
-		ios_base::fmtflags alignment;
+		ios_base::fmtflags alignment{};
 		const char *title = nullptr;
 		style_type style = style_light;
 		ostream &ostr = cout;
@@ -168,8 +168,7 @@ namespace tables
 			for (size_t i = 0; i < rows; ++i)
 			{
 				const int cellwidth = strcol(array[i][j]);
-				if (cellwidth > columnwidth[j])
-					columnwidth[j] = cellwidth;
+				columnwidth[j] = std::max(cellwidth, columnwidth[j]);
 			}
 		}
 

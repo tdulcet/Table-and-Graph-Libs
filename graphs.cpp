@@ -1,10 +1,9 @@
 // Copyright © Teal Dulcet
 
-// Compile: g++ -std=gnu++17 -Wall -g -O3 graphs.cpp -o graphs
+// Compile: g++ -std=gnu++20 -Wall -g -O3 graphs.cpp -o graphs
 
 // Run: ./graphs
 
-#include <cctype>
 #include <array>
 #include <vector>
 #include <random>
@@ -13,32 +12,32 @@
 
 using namespace std;
 
-constexpr long double afunction(long double x)
+static constexpr long double afunction(long double x)
 {
 	return x + 1;
 }
 
-constexpr long double function1(long double x)
+static constexpr long double function1(long double x)
 {
 	return 2 * x;
 }
 
-constexpr long double function2(long double x)
+static constexpr long double function2(long double x)
 {
 	return pow(x, 2);
 }
 
-constexpr long double function3(long double x)
+static constexpr long double function3(long double x)
 {
 	return sin(x);
 }
 
-constexpr long double function4(long double x)
+static constexpr long double function4(long double x)
 {
 	return cos(x);
 }
 
-constexpr long double function5(long double x)
+static constexpr long double function5(long double x)
 {
 	return tan(x);
 }
@@ -261,8 +260,8 @@ int main()
 		}
 	}
 	{
-		const long double xmin = -(2 * M_PI);
-		const long double xmax = 2 * M_PI;
+		const long double xmin = -(2 * numbers::pi_v<long double>);
+		const long double xmax = 2 * numbers::pi_v<long double>;
 		const long double ymin = -4;
 		const long double ymax = 4;
 

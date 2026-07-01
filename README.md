@@ -38,13 +38,13 @@ For command-line tools using these respective libraries, see the [Tables and Gra
 
 ### Usage
 
-Requires support for C++17. See the [tables.hpp](tables.hpp) file for full usage information.
+Requires support for C++20. See the [tables.hpp](tables.hpp) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [tables.cpp](tables.cpp) file.
 
 Compile with:
-* GCC: `g++ -std=c++17 -Wall -g -O3 tables.cpp -o tables`
-* Clang: `clang++ -std=c++17 -Wall -g -O3 tables.cpp -o tables`
+* GCC: `g++ -std=c++20 -Wall -g -O3 tables.cpp -o tables`
+* Clang: `clang++ -std=c++20 -Wall -g -O3 tables.cpp -o tables`
 
 Other compilers should work as well, but are not (yet) tested.
 
@@ -532,13 +532,13 @@ Check that the width of the table is not greater then the width of the terminal.
 
 ### Usage
 
-Requires support for C++17. See the [graphs.hpp](graphs.hpp) file for full usage information.
+Requires support for C++20. See the [graphs.hpp](graphs.hpp) file for full usage information.
 
 Complete versions of all of the examples below and more can be found in the [graphs.cpp](graphs.cpp) file.
 
 Compile with:
-* GCC: `g++ -std=c++17 -Wall -g -O3 graphs.cpp -o graphs`
-* Clang: `clang++ -std=c++17 -Wall -g -O3 graphs.cpp -o graphs`
+* GCC: `g++ -std=c++20 -Wall -g -O3 graphs.cpp -o graphs`
+* Clang: `clang++ -std=c++20 -Wall -g -O3 graphs.cpp -o graphs`
 
 Other compilers should work as well, but are not (yet) tested.
 
@@ -1000,6 +1000,7 @@ Both:
 * Support more graph/plot colors
 	* Support 256 and 24-bit color
 	* Support combining/blending colors when functions cross
+* Switch from `wcswidth` to grapheme clusters for determining the width of strings
 * Update the `-t, --table` options of column command from [util-linux](https://en.wikipedia.org/wiki/Util-linux) to use the Table library
 * Port to other languages (C, Java, Rust, etc.)
 

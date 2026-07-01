@@ -61,12 +61,12 @@ for style in tables.style_types:
 	tables.array(array, headerrow, headercolumn, headerrow=True, headercolumn=True, cellborder=True, style=style)
 	tables.array(array, headerrow, headercolumn, headerrow=True, headercolumn=True, style=style)
 	tables.array(array, headerrow[:-1], None, headerrow=True, style=style)
-	tables.array(array, None, [headerrow[0]] + headercolumn[:-1], headercolumn=True, style=style)
+	tables.array(array, None, [headerrow[0], *headercolumn[:-1]], headercolumn=True, style=style)
 	tables.array(array, None, None, cellborder=True, style=style)
 	tables.array(array, None, None, tableborder=False, style=style)
 	tables.array(array, headerrow, headercolumn, tableborder=False, headerrow=True, headercolumn=True, style=style)
 	tables.array(array, headerrow[:-1], None, tableborder=False, headerrow=True, style=style)
-	tables.array(array, None, [headerrow[0]] + headercolumn[:-1], tableborder=False, headercolumn=True, style=style)
+	tables.array(array, None, [headerrow[0], *headercolumn[:-1]], tableborder=False, headercolumn=True, style=style)
 	tables.array(array, None, None, tableborder=False, cellborder=True, style=style)
 
 array = [[bool(random.getrandbits(1)) for j in range(columns)] for i in range(rows)]

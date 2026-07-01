@@ -144,7 +144,7 @@ namespace graphs
 	const long double fractionvalues[] = {1.0L / 4.0L, 1.0L / 2.0L, 3.0L / 4.0L, 1.0L / 7.0L, 1.0L / 9.0L, 1.0L / 10.0L, 1.0L / 3.0L, 2.0L / 3.0L, 1.0L / 5.0L, 2.0L / 5.0L, 3.0L / 5.0L, 4.0L / 5.0L, 1.0L / 6.0L, 5.0L / 6.0L, 1.0L / 8.0L, 3.0L / 8.0L, 5.0L / 8.0L, 7.0L / 8.0L};
 
 	const char *const constants[] = {"π", "e"};
-	const long double constantvalues[] = {M_PI, M_E};
+	const long double constantvalues[] = {numbers::pi_v<long double>, numbers::e_v<long double>};
 
 	enum units_type
 	{
@@ -322,7 +322,7 @@ namespace graphs
 			strm << setprecision(LDBL_DIG) << number;
 			const string str = strm.str();
 
-			const unsigned length = 5 + (number < 0 ? 1 : 0);
+			const unsigned length = 5 + (number < 0);
 			if (str.length() > length)
 			{
 				const int prec = anumber < 10 ? 3 : anumber < 100 ? 2

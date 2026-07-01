@@ -1,10 +1,9 @@
 // Copyright © Teal Dulcet
 
-// Compile: g++ -std=gnu++17 -Wall -g -O3 tables.cpp -o tables
+// Compile: g++ -std=gnu++20 -Wall -g -O3 tables.cpp -o tables
 
 // Run: ./tables
 
-#include <cctype>
 #include <cmath>
 #include <algorithm>
 #include <array>
@@ -14,23 +13,23 @@
 
 using namespace std;
 
-constexpr long double afunction(long double x)
+static constexpr long double afunction(long double x)
 {
 	return x + 1;
 }
 
-constexpr long double function1(long double x)
+static constexpr long double function1(long double x)
 {
 	return 2 * x;
 }
 
-constexpr long double function2(long double x)
+static constexpr long double function2(long double x)
 {
 	return pow(x, 2);
 }
 
-int dimensions = 0;
-int sortdimension = 0;
+static int dimensions = 0;
+static int sortdimension = 0;
 
 /* template <typename T>
 int compare(const void *pa, const void *pb)
@@ -61,7 +60,7 @@ int compare(const void *pa, const void *pb)
 } */
 
 template <typename T>
-bool compare(const T &a, const T &b)
+static bool compare(const T &a, const T &b)
 {
 	if (a[sortdimension] == b[sortdimension])
 		for (int i = 0; i < dimensions; ++i)
